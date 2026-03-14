@@ -1,144 +1,48 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Domfacetten - Produktübersicht</title>
-    <link rel="stylesheet" href="./assets/base.css">
-    <link rel="stylesheet" href="./assets/products.css">
-    <link rel="stylesheet" href="./assets/header.css">
-    <link rel="stylesheet" href="./assets/animation.css">
-    <link rel="stylesheet" href="./assets/footer.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" href="../images/smallLogo.png" type="image/png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@0,400..700;1,400..700&family=Rufina:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <header>
-        <nav class="mainNavBar">
-            <ul class = "navList">
-                <li><img src="./images/FirmenlogoStrippedDown.svg" alt="Domfacetten"></li>
-                <li><a href="productPage.html">Alle Produkte</a></li>
-                <li><a href="me.html" id="me">Mein Bereich</a></li>
-                <li><span class="searchSymbol"><i class="fas fa-search"></i></span></li>
-            </ul>
-        </nav>
-        <aside>
-            <div class = "placeholder">
-                <div class="burger">
-                    <i class="fa-solid fa-bars"></i>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Domfacetten - Produktübersicht</title>
+        <link rel="stylesheet" href="/frontend/assets/base.css" />
+        <link rel="stylesheet" href="/frontend/assets/header.css">
+        <link rel="stylesheet" href="/frontend/assets/index.css" />
+        <link rel="stylesheet" href="/frontend/assets/products.css">
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        />
+        <link rel="icon" href="../images/smallLogo.png" type="image/png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@0,400..700;1,400..700&family=Rufina:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <header>
+            <div class="header-container">
+                <div class="logo-container">
+                    <img src="./images/Firmenlogo.svg" alt="Logo" />
                 </div>
-                <div class = "mobileViewHeaderContent">
-                    <ul>
-                        <li><a href="productPage.html">Alle Produkte</a></li>
-                        <li><a href="me.html" id="me">Mein Bereich</a></li>
-                        <li><span class="searchSymbol"><i class="fas fa-search"></i></span></li>
+                <nav class="header-nav">
+                    <ul class="header-nav-list">
+                        <li class="active"><a href="/">Home</a></li>
+                        <li><a href="/productPage.html">Produkte</a></li>
+                        <li><a href="/contact.html">Kontakt</a></li>
                     </ul>
-                </div> 
+                </nav>
+                <div class="header-burger">---</div>
             </div>
-        </aside>
-    </header>
-
-    <main>
-        
-        <!---
-        <div class = "image-container">
-            <h1 class = "greeting slide-out-left1s">Hallo hier steht ein langer Satz!</h1>
-            <img src="./images/cologne-2151540_1920.jpg" class = "slide-out-left5s" alt="Background5">
-            <img src="./images/mrcrabs.gif" class = "slide-out-left4s" alt="Background4">
-            <img src="./images/bracelet1.png" class = "slide-out-left3s" alt="Background1">
-            <img src="./images/ArmbandGold.jpg" class = "slide-out-left2s" alt="Background2">
-            <img src="./images/koelnerDom.jpg" class = "slide-out-left1s" alt="Background3">
-        </div>
-    -->
-        <section class="productOverview">
-            <div class = "welcomeBanner">
-                <img src="./images/kyle-doll-axEB7xHkyWA-unsplash.jpg" alt="Banner-Image">
-                <span>Domfacetten.<br>Schmuck mit Herz, designed in Köln.</span>
-            </div>
-            <div id="newIn">
-                <h1 class = "headline-one">New In</h1>
-            </div>
-            <h1 class = "headline-one">Alle Produkte</h1>
-            <!-- <div id="product-container"></div> -->
-             <div class="product-overview-grid">
-                <a href = "overview.html?type=barren" class="p-type">
-                    <div class="p-type-image-wrapper"><img src="./images/new-photos/barren/barren_1.jpeg" alt="Stoffarmbänder"></img></div>
-                    <h2 class="p-type-heading">Barren</h2>
-                </a>
-
-                <a href="overview.html?type=colonia" class="p-type">
-                    <div class="p-type-image-wrapper"><img src="./images/new-photos/colonia-kette/colonia_1.jpeg" alt="Stoffarmbänder"></img></div>
-                    <h2 class="p-type-heading">Colonia Kette</h2>
-                </a>
-
-                <a href="overview.html?type=herz-arm" class="p-type">
-                    <div class="p-type-image-wrapper"><img src="./images/new-photos/herz-armbändchen-köln/herz_1.jpeg" alt="Stoffarmbänder"></img></div>
-                    <h2 class="p-type-heading">Herz Armbändchen</h2>
-                </a>
-
-                <a href="overview.html?type=herz-mini" class="p-type">
-                    <div class="p-type-image-wrapper"><img src="./images/new-photos/herz-mini/mini_1.jpeg" alt="Stoffarmbänder"></img></div>
-                    <h2 class="p-type-heading">Herz Mini</h2>
-                </a>
-
-                <a href="overview.html?type=muenze-mini" class="p-type">
-                    <div class="p-type-image-wrapper"><img src="./images/new-photos/muenze-mini/geflecht_1.jpeg" alt="Stoffarmbänder"></img></div>
-                    <h2 class="p-type-heading">Münze Mini</h2>
-                </a>
-
-                <a href="overview.html?type=muenze-tau" class="p-type">
-                    <div class="p-type-image-wrapper"><img src="./images/new-photos/muenze-tau/tau_1.jpeg" alt="Stoffarmbänder"></img></div>
-                    <h2 class="p-type-heading">Münze Tau</h2>
-                </a>
-
-                <a href="overview.html?type=onyx" class="p-type">
-                    <div class="p-type-image-wrapper"><img src="./images/new-photos/onyx-herz/onyx_1.jpeg" alt="Stoffarmbänder"></img></div>
-                    <h2 class="p-type-heading">Onyx Herz</h2>
-                </a>
-
-                <a href="overview.html?type=ring" class="p-type">
-                    <div class="p-type-image-wrapper"><img src="./images/new-photos/ring/ring_1.jpeg" alt="Stoffarmbänder"></img></div>
-                    <h2 class="p-type-heading">Ring</h2>
-                </a>
-
-                <a href="overview.html?type=stoff" class="p-type">
-                    <div class="p-type-image-wrapper"><img src="./images/new-photos/stoff/stoff_hero.jpeg" alt="Stoffarmbänder"></img></div>
-                    <h2 class="p-type-heading">Stoffarmbänder</h2>
-                </a>
-             </div>
-        </section>
-    </main>
-
-    <footer>
-        <nav>
-            <ul class="footertext">
-                <li>
-                    <picture>
-                        <source media="(min-width:1080px)" srcset="./images/Firmenlogo.svg">
-                        <source media="(min-width:768px)" srcset="./images/FirmenlogoStrippedDown.svg">
-                        <img src="./images/FirmenlogoStrippedDown.svg" alt="Default" style="width:auto;">
-                    </picture>
-                </li>
-                <li><a href="about.html">Über uns</a></li>
-                <li><a href="/contact.html">Service</a></li>
-                <li><a href="rechtliches.html">Rechtliches</a></li>
-                <li><a href="mailto:domfacetten@gmail.com?subject=Kontaktaufnahme&body=Hallo%20Domfacetten-Team,">Schreiben Sie uns!</a></li>
-                <li><hr></li>
-                <li class = "socials">
-                    <a href="https://www.instagram.com/domfacetten/"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="mailto:domfacetten@web.de?subject=Kontaktaufnahme&body=Hallo%20Domfacetten-Team,"><i class="fa-regular fa-envelope"></i></a>
-                    <a href="https://github.com/Yasabi04/domfacetten"><i class="fa-brands fa-github"></i></a>
-                    <a href="https://fontawesome.com/"><i class="fa-brands fa-font-awesome"></i></a>
-                    <p>&copy; Domfacetten 2025</p>
-                </li>
-            </ul>
-        </nav>
-    </footer>
-    <script src = "./scripts/main.js"></script>
-    <script src = "./scripts/productPage.js"></script>
-    <script src = "./scripts/productService.js"></script>
-</body>
+        </header>
+        <main>
+            <section class="welcome-text">
+                <h1>Domfacetten.<br />Schmuck mit Herz, designed in Köln.</h1>
+            </section>
+        </main>
+        <script src="./scripts/main.js"></script>
+        <script src="./scripts/productPage.js"></script>
+        <script src="./scripts/productService.js"></script>
+    </body>
 </html>
