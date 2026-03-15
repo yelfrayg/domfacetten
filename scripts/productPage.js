@@ -1,62 +1,37 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const productConatiner = document.querySelector("#product-container");
-    const specialProductConatiner = document.querySelector("#newIn");
-    if (!productConatiner) {
-        console.log("Nicht erkannt");
-    }
+const filters = document.querySelectorAll("#checkmark")
+let filterobjects = []
+let allproducts = []
 
-    fetch("./scripts/products/products.json")
-        .then((response) => response.json())
-        .then((data) => {
-            const productsHTML = data.products
-                .map(
-                    (product) => `
-                    <section class="temp-product">
-                      <a href="singleProduct.html?artnr=${product.artnr}">
-                          <div class="temp-image-container">
-                              <img src="${product.images[0]}" alt="${product.name}">
-                          </div>
-                          <div class="temp-product-text">
-                              <h2>${product.name}</h2>
-                              <p class="temp-artnr">${product.artnr}</p>
-                          </div>
-                      </a>
-                      <span class="temp-star" role="button" tabindex="0"><i class="fa-regular fa-star"></i></span>
-                  </section>`
-                )
-                .join("");
-
-            if (data.specialProducts.length === 0) {
-                specialProductConatiner.style.display = "none";
-            } else {
-                const specialProductsHTML = data.specialProducts
-                    .map(
-                        (product) => `
-                  <section class="temp-product special">
-                      <a href="singleProduct.html?artnr=${product.artnr}">
-                          <div class="temp-image-container">
-                              <img src="${product.images[0]}" alt="${product.name}">
-                          </div>
-                          <div class="temp-product-text">
-                              <h2>${product.name}</h2>
-                              <p class="temp-colour">${product.artnr}</p>
-                              <p class="temp-price">${product.price}€</p>
-                          </div>
-                      </a>
-                      <span class="temp-star" role="button" tabindex="0"><i class="fa-solid fa-star"></i></span>
-                  </section>`
-                    )
-                    .join("");
-
-                specialProductConatiner.innerHTML = specialProductsHTML;
+document.addEventListener("DOMContentLoaded", _ => {
+    allProducts()
+    
+    filters.forEach(f => {
+        f.addEventListener('click', _ => {
+            const att = f.getAttribute('data-value')
+            if(!filterobjects.includes(att)) {
+                filterobjects.push(att)
+                console.log(filterobjects)
             }
-
-            productConatiner.innerHTML = productsHTML;
+            else {
+                filterobjects = filterobjects.filter(f => f !== att)
+                console.log(filterobjects)
+            }
+            // * Hier Funktion für das Anzeigen der Produkte mit den Filtern aufrufen
+            showProducts(filterobjects)
         })
-        .catch((error) => {
-            console.error("Fehler beim Laden der JSON-Datei:", error);
-        });
+    })
+})
 
-    productTypeHandler();
-});
+async function allProducts() {
+    try {
+        // * Hier die Logik für das Abrufen aller Produkte implementieren
+        const req = await fetch("./scripts/products/products.json")
+        const res = await req.json()
+        console.log(res)
+    } catch (error) {
+        console.log(error)
+    }
+}
 
+function showProducts(filterobjects) {
+}

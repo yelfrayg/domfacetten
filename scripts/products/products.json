@@ -1,13 +1,12 @@
 {
-    "specialProducts": [
-        
-    ],
+    "specialProducts": [],
     "products": [
         {
             "images": ["images/products/ABRotWeiß_2.jpg", "images/products/ABRotWeiß_2.jpg", "images/products/ABRotWeiß_3.jpg", "images/products/ABRotWeiß_4.jpg"],
             "artnr": "A034",
             "name": "Stoffarmband",
             "color": "rot-weiß",
+            "keywords":  ["red", "white", "armband", "bracelet", "stoffarmband"],
             "price": 6,
             "available": true
         },
@@ -16,6 +15,7 @@
             "artnr": "A002",
             "name": "Armband Barren",
             "color": "schwarz",
+            "keywords": ["black", "armband", "bracelet", "barren"],
             "price": 21,
             "available": true
         }
