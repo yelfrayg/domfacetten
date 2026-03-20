@@ -1,123 +1,36 @@
-footer{
-    border-top: 1px solid var(--beigegelb);
-    box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
-    background-color: white;
-    nav{
-        hr{
-            border: 1px solid var(--beigegelb);
-            width: 100%;
-        }
-    }
-}
+footer {
+    border-top: 1px solid #000000;
+    margin-top: var(--m);
 
-.footertext{
-    padding: var(--m);
-    list-style-type: none;
-    padding-top: var(--l);
-    padding-left: var(--xl); 
-    li{
-        padding: var(--s);
-        margin-left: var(--m);
-        a{
-            text-decoration: none;
-            color: black;
-            font-size: var(--m);
-        }
-        i{
-            color: black;
-            padding-right: var(--m);
-            font-size: var(--m);
-        }
-    }
-}
-
-.socials{
-    display: flex;
-    justify-content: center;
-    align-items: first baseline;
-    flex-direction: row;
-    color: black;
-}
-
-.socials a{
-    position: relative;
-}
-
-/* Folgende drei Strukturen könne zusammengefasst werden: */
-
-.fa-envelope:hover::after {
-    content: "Email: domfacetten@gmail.com";
-    position: absolute;
-    bottom: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    padding: 8px;
-    border-radius: var(--xs);
-    font-size: var(--s);
-    white-space: nowrap;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.fa-github:hover::after {
-    content: "Link zum Github-Repository";
-    position: absolute;
-    bottom: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    padding: 8px;
-    border-radius: var(--xs);
-    font-size: var(--s);
-    white-space: nowrap;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.fa-font-awesome:hover::after {
-    content: "Danke an die Entwickler von Font Awesome für die Icons!";
-    position: absolute;
-    bottom: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    padding: 8px;
-    border-radius: var(--xs);
-    font-size: var(--s);
-    white-space: nowrap;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-@media (max-width: 768px) {
-    footer{
-        padding: var(--s);
+    .footer-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        img{
-            width: 100%;
-            height: auto;
-        }
-        .footertext{
-            padding: var(--s);
-            li{
-                padding: var(--s);
-                margin-left: 0;
-                a, i{
-                    font-size: var(--m);
+        padding: 20px;
+        background-color: white;
+        gap: 10vh;
+
+        ul {
+            display: flex;
+            flex-direction: row;
+            gap: var(--3xl);
+            list-style-type: none;
+
+            li {
+                a{
+                    color: black;
+                    font-weight: 600;
+                    font-size: var(--l);
+                }
+
+                :hover {
+                    text-decoration: underline;
                 }
             }
+        }
+        p {
+            color: grey;
+            font-weight: 700;
         }
     }
 }

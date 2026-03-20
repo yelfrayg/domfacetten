@@ -1,37 +1,111 @@
-const filters = document.querySelectorAll("#checkmark")
-let filterobjects = []
-let allproducts = []
+const filters = document.querySelectorAll("#checkmark");
+const productContainer = document.querySelector(".products-container");
+let filterobjects = [];
+let allproductsArray = [];
 
-document.addEventListener("DOMContentLoaded", _ => {
-    allProducts()
-    
-    filters.forEach(f => {
-        f.addEventListener('click', _ => {
-            const att = f.getAttribute('data-value')
-            if(!filterobjects.includes(att)) {
-                filterobjects.push(att)
-                console.log(filterobjects)
-            }
-            else {
-                filterobjects = filterobjects.filter(f => f !== att)
-                console.log(filterobjects)
-            }
-            // * Hier Funktion für das Anzeigen der Produkte mit den Filtern aufrufen
-            showProducts(filterobjects)
-        })
-    })
-})
+document.addEventListener("DOMContentLoaded", async (_) => {
+    const savedFilters = localStorage.getItem("productFilters");
+    if (savedFilters) {
+        try {
+            filterobjects = JSON.parse(savedFilters) || [];
+        } catch (e) {
+            filterobjects = [];
+        }
+    }
 
-async function allProducts() {
+    filters.forEach((f) => {
+        const colorValue = f.getAttribute("data-value");
+
+        if (filterobjects.includes(colorValue)) {
+            f.checked = true;
+        }
+
+        f.addEventListener("click", (_) => {
+            if (!filterobjects.includes(colorValue)) {
+                filterobjects.push(colorValue);
+            } else {
+                filterobjects = filterobjects.filter((item) => item !== colorValue);
+            }
+
+            if (filterobjects.length > 0) {
+                localStorage.setItem("productFilters", JSON.stringify(filterobjects));
+            } else {
+                localStorage.removeItem("productFilters");
+            }
+
+            showProducts(filterobjects);
+        });
+    });
+
+    fetchProducts();
+});
+
+async function fetchProducts() {
     try {
-        // * Hier die Logik für das Abrufen aller Produkte implementieren
-        const req = await fetch("./scripts/products/products.json")
-        const res = await req.json()
-        console.log(res)
+        const req = await fetch("./scripts/products/products.json");
+        const res = await req.json();
+        allproductsArray = res.products || [];
+
+        // vorhandene (persistierte) Filter direkt anwenden
+        if (filterobjects.length > 0) {
+            showProducts(filterobjects);
+        } else {
+            loadAllProducts();
+        }
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
 
+function loadAllProducts() {
+    productContainer.innerHTML = "";
+
+    allproductsArray.forEach((p) => {
+        const productElement = document.createElement("a");
+        productElement.classList.add("product");
+        productElement.href = `./product.html?id=${p.artnr}`;
+        productElement.innerHTML = `
+            <div class="product-img-container">
+                <img src="${p.images[0]}" alt="Stoffarmband">
+                <span class="product-nr">${p.artnr}</span>
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">${p.name}</h3>
+                <p class="product-price">${p.price},00 €</p>
+            </div>
+        `;
+
+        productContainer.append(productElement);
+    });
+}
+
 function showProducts(filterobjects) {
+    if (filterobjects.length === 0) {
+        loadAllProducts();
+        return;
+    }
+
+    const filteredProducts = allproductsArray.filter((p) => {
+        return filterobjects.every((f) => p.keywords.includes(f));
+    });
+    loadFilteredProducts(filteredProducts);
+}
+
+function loadFilteredProducts(products) {
+    productContainer.innerHTML = "";
+
+    products.forEach((p) => {
+        productContainer.innerHTML += `
+            <a class="product" href="./product.html?id=${p.artnr}">
+                <div class="product-img-container">
+                    <img src="${p.images[0]}" alt="Stoffarmband">
+                    <span class="product-nr">${p.artnr}</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">${p.name}</h3>
+                    <p class="product-price">${p.price},00 €</p>
+                </div>
+            </a>
+        `;
+    });
 }
