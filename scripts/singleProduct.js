@@ -1,7 +1,10 @@
 const url = new URL(window.location.href);
 const artnr = url.searchParams.get("id");
 const productContainer = document.querySelector(".highlight-product-container");
-console.log("Produktnummer:", artnr);
+
+if(!artnr) {
+    window.location.href = "./index.html";
+}
 
 document.addEventListener("DOMContentLoaded", async (_) => {
     try {
@@ -32,8 +35,6 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             </div>
         `;
 
-        // In deiner singleProduct.js innerhalb des try-blocks,
-        // nachdem das innerHTML gesetzt wurde:
 
         const caroussel = document.querySelector(".img-caroussel");
         const arrowLeft = document.querySelector(".arrow-left");
