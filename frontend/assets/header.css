@@ -56,12 +56,12 @@
 
     .header-burger {
         display: none;
-        margin-left: auto;
     }
 }
 
 @media (max-width: 768px) {
     .header-container {
+        width: 100vw;
         padding-left: var(--s);
         padding-right: var(--s);
     }
@@ -71,8 +71,11 @@
     }
 
     .header-burger {
-        display: flex;
-        color: black;
+        display: block !important;
+        margin-left: auto;
         opacity: 1;
+        pointer-events: auto;
+        color: black;
+        font-size: var(--xl);
     }
 }

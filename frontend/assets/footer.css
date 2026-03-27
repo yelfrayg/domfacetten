@@ -17,7 +17,7 @@ footer {
             list-style-type: none;
 
             li {
-                a{
+                a {
                     color: black;
                     font-weight: 600;
                     font-size: var(--l);
@@ -31,6 +31,15 @@ footer {
         p {
             color: grey;
             font-weight: 700;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    footer {
+        padding-bottom: var(--m);
+        .footer-container {
+            gap: var(--3xl) !important;
         }
     }
 }

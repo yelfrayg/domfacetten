@@ -20,18 +20,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: calc(var(--3xl)*3) 0;
+    padding: calc(var(--3xl) * 3) 0;
     max-width: 80vw;
     margin: 0 auto;
 
     .grid {
         display: grid;
-        grid-template-columns: 1fr 1fr; 
+        grid-template-columns: 1fr 1fr;
         grid-auto-rows: auto;
         column-gap: var(--3xl);
         row-gap: var(--3xl);
         align-items: center;
-
     }
 
     .image1 {
@@ -67,7 +66,9 @@
         display: block;
     }
 
-    .text1, .text2, .text3 {
+    .text1,
+    .text2,
+    .text3 {
         h2 {
             font-size: var(--3xl);
             margin-bottom: var(--3xl);
@@ -93,6 +94,46 @@
                     text-decoration: none;
                     font-weight: 700;
                 }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-text {
+        width: 100vw;
+        height: 50vh;
+    }
+
+    .welcome-section {
+        padding-top: var(--xxl);
+        padding-bottom: 0;
+        .grid {
+            grid-template-columns: 1fr;
+            grid-template-areas:
+                "text1"
+                "image1"
+                "text2"
+                "image2"
+                "text3";
+
+            .text1 {
+                grid-area: text1;
+            }
+            .text2 {
+                grid-area: text2;
+            }
+            .text3 {
+                grid-area: text3;
+            }
+            .image1 {
+                grid-area: image1;
+            }
+            .image2 {
+                grid-area: image2;
+            }
+            .image3 {
+                grid-area: image3;
             }
         }
     }
