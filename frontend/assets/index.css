@@ -23,6 +23,7 @@
     padding: calc(var(--3xl) * 3) 0;
     max-width: 80vw;
     margin: 0 auto;
+    padding-top: var(--3xl);
 
     .grid {
         display: grid;
@@ -64,6 +65,7 @@
         aspect-ratio: 3/2;
         max-width: 100%;
         display: block;
+        object-fit: contain
     }
 
     .text1,
@@ -76,7 +78,7 @@
         p {
             font-size: var(--m);
             letter-spacing: 5%;
-            line-height: 1.5;
+            line-height: 2;
         }
         ul {
             display: flex;
@@ -87,7 +89,7 @@
             li {
                 font-size: var(--m);
                 letter-spacing: 5%;
-                line-height: 1.5;
+                line-height: 2;
 
                 a {
                     color: var(--primary);
