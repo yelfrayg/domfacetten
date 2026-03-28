@@ -12,7 +12,7 @@
         padding-bottom: var(--3xl);
         font-size: var(--l);
 
-        .burger-icon {
+        .filter-mobile {
             display: none;
         }
     }
@@ -136,6 +136,83 @@
                         text-decoration: underline;
                     }
                 }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .heading-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--s);
+
+        .filter-mobile {
+            display: flex !important;
+            font-size: var(--xl);
+            border: none;
+            background-color: transparent;
+        }
+
+        #filter-mobile-popup {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid black;
+            padding: var(--s);
+            width: 70%;
+
+            &::backdrop {
+                background-color: rgba(255, 255, 255, 0.299);
+            }
+
+            .filters {
+                padding-top: var(--s);
+                display: flex;
+                flex-direction: column;
+                gap: var(--xs);
+                
+                .filter-object-wrapper {
+
+                    .filter-object {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                }
+
+            }
+
+            .accept-changes {
+                margin-top: var(--m);
+                width: 100%;
+                height: var(--xxl);
+                color: black;
+                background-color: white;
+                border: 1px solid black;
+
+                &:hover {
+                    background-color: black;
+                    color: white;
+                }
+            }
+        }
+    }
+
+    .product-section {
+        .product-wrapper {
+            margin: 0 auto;
+
+            .filter {
+                display: none;
+            }
+        }
+
+        .products-container {
+            .product {
+                margin-bottom: 0 !important;
             }
         }
     }
