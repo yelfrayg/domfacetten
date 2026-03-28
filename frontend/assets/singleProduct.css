@@ -70,7 +70,7 @@
             }
 
             .button:hover {
-                transform: scale(1.05)
+                transform: scale(1.05);
             }
         }
     }
@@ -129,6 +129,55 @@
         .buyNow:hover,
         .addToCart:hover {
             transform: scale(1.05);
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .highlight-product-container {
+        padding-top: 15vh;
+        width: 100%;
+        flex-direction: column;
+        gap: var(--m);
+
+        .highlight-product-imgs,
+        .highlight-product-info {
+            width: 100%;
+        }
+
+        .highlight-product-imgs {
+            .img-caroussel {
+                aspect-ratio: 1;
+            }
+        }
+
+        .highlight-product-info {
+            gap: var(--m);
+
+            .product-name {
+                font-size: var(--xl);
+
+                .artnr {
+                    font-size: var(--l);
+                }
+            }
+
+            .product-description {
+                font-size: var(--m);
+                padding: 0;
+            }
+
+            .product-price {
+                font-size: var(--xl);
+            }
+
+            .text {
+                font-size: var(--s);
+            }
+
+            .product-description {
+                font-size: var(--l);
+            }
         }
     }
 }
