@@ -1,0 +1,36 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Figtree", sans-serif;
+    box-sizing: border-box;
+}
+
+header {
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+body {
+    background-image: url("/images/DomMuster.png");
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+}
+
+:root {
+    --2xs: 4px;
+    --xs: 8px;
+    --s: 12px;
+    --m: 16px;
+    --l: 20px;
+    --xl: 24px;
+    --xxl: 32px;
+    --3xl: 36px;
+
+    --beigegelb: #ffcf71;
+    --complBeigegelb: rgb(109, 83, 12);
+    --colognered: linear-gradient(90deg, #830000 0%, #ff5e00 100%);
+}

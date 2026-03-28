@@ -1,62 +1,111 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const productConatiner = document.querySelector("#product-container");
-    const specialProductConatiner = document.querySelector("#newIn");
-    if (!productConatiner) {
-        console.log("Nicht erkannt");
+const filters = document.querySelectorAll("#checkmark");
+const productContainer = document.querySelector(".products-container");
+let filterobjects = [];
+let allproductsArray = [];
+
+document.addEventListener("DOMContentLoaded", async (_) => {
+    const savedFilters = localStorage.getItem("productFilters");
+    if (savedFilters) {
+        try {
+            filterobjects = JSON.parse(savedFilters) || [];
+        } catch (e) {
+            filterobjects = [];
+        }
     }
 
-    fetch("./scripts/products/products.json")
-        .then((response) => response.json())
-        .then((data) => {
-            const productsHTML = data.products
-                .map(
-                    (product) => `
-                    <section class="temp-product">
-                      <a href="singleProduct.html?artnr=${product.artnr}">
-                          <div class="temp-image-container">
-                              <img src="${product.images[0]}" alt="${product.name}">
-                          </div>
-                          <div class="temp-product-text">
-                              <h2>${product.name}</h2>
-                              <p class="temp-artnr">${product.artnr}</p>
-                          </div>
-                      </a>
-                      <span class="temp-star" role="button" tabindex="0"><i class="fa-regular fa-star"></i></span>
-                  </section>`
-                )
-                .join("");
+    filters.forEach((f) => {
+        const colorValue = f.getAttribute("data-value");
 
-            if (data.specialProducts.length === 0) {
-                specialProductConatiner.style.display = "none";
+        if (filterobjects.includes(colorValue)) {
+            f.checked = true;
+        }
+
+        f.addEventListener("click", (_) => {
+            if (!filterobjects.includes(colorValue)) {
+                filterobjects.push(colorValue);
             } else {
-                const specialProductsHTML = data.specialProducts
-                    .map(
-                        (product) => `
-                  <section class="temp-product special">
-                      <a href="singleProduct.html?artnr=${product.artnr}">
-                          <div class="temp-image-container">
-                              <img src="${product.images[0]}" alt="${product.name}">
-                          </div>
-                          <div class="temp-product-text">
-                              <h2>${product.name}</h2>
-                              <p class="temp-colour">${product.artnr}</p>
-                              <p class="temp-price">${product.price}€</p>
-                          </div>
-                      </a>
-                      <span class="temp-star" role="button" tabindex="0"><i class="fa-solid fa-star"></i></span>
-                  </section>`
-                    )
-                    .join("");
-
-                specialProductConatiner.innerHTML = specialProductsHTML;
+                filterobjects = filterobjects.filter((item) => item !== colorValue);
             }
 
-            productConatiner.innerHTML = productsHTML;
-        })
-        .catch((error) => {
-            console.error("Fehler beim Laden der JSON-Datei:", error);
-        });
+            if (filterobjects.length > 0) {
+                localStorage.setItem("productFilters", JSON.stringify(filterobjects));
+            } else {
+                localStorage.removeItem("productFilters");
+            }
 
-    productTypeHandler();
+            showProducts(filterobjects);
+        });
+    });
+
+    fetchProducts();
 });
 
+async function fetchProducts() {
+    try {
+        const req = await fetch("./scripts/products/products.json");
+        const res = await req.json();
+        allproductsArray = res.products || [];
+
+        // vorhandene (persistierte) Filter direkt anwenden
+        if (filterobjects.length > 0) {
+            showProducts(filterobjects);
+        } else {
+            loadAllProducts();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function loadAllProducts() {
+    productContainer.innerHTML = "";
+
+    allproductsArray.forEach((p) => {
+        const productElement = document.createElement("a");
+        productElement.classList.add("product");
+        productElement.href = `./product.html?id=${p.artnr}`;
+        productElement.innerHTML = `
+            <div class="product-img-container">
+                <img src="${p.images[0]}" alt="Stoffarmband">
+                <span class="product-nr">${p.artnr}</span>
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">${p.name}</h3>
+                <p class="product-price">${p.price},00 €</p>
+            </div>
+        `;
+
+        productContainer.append(productElement);
+    });
+}
+
+function showProducts(filterobjects) {
+    if (filterobjects.length === 0) {
+        loadAllProducts();
+        return;
+    }
+
+    const filteredProducts = allproductsArray.filter((p) => {
+        return filterobjects.every((f) => p.keywords.includes(f));
+    });
+    loadFilteredProducts(filteredProducts);
+}
+
+function loadFilteredProducts(products) {
+    productContainer.innerHTML = "";
+
+    products.forEach((p) => {
+        productContainer.innerHTML += `
+            <a class="product" href="./product.html?id=${p.artnr}">
+                <div class="product-img-container">
+                    <img src="${p.images[0]}" alt="Stoffarmband">
+                    <span class="product-nr">${p.artnr}</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">${p.name}</h3>
+                    <p class="product-price">${p.price},00 €</p>
+                </div>
+            </a>
+        `;
+    });
+}

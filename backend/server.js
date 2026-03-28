@@ -1,30 +1,14 @@
 const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
-const fs = require('fs')
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-// Statische Dateien (HTML, CSS, JS) aus dem public-Ordner servieren
-app.use(express.static(path.join(__dirname, 'frontend')));
-app.use(bodyParser.json());
+const productRoutes = require('./src/routes/productRoutes');
+app.use('/api/products', productRoutes);
 
-let products;
-try {
-    const data = fs.readFileSync(path.join(__dirname, 'products-backend.json'), 'utf8');
-    products = JSON.parse(data);
-    console.log('Produkte erfolgreich geladen:', products);
-} catch (error) {
-    console.error('Fehler beim Laden der Produkte:', error);
-    products = { products: [], specialProducts: [] }; // Fallback
-}
+app.get('/', (req, res) => {
+  res.send('Willkommen zum Domfacetten Backend!');
+})
 
-// API-Endpunkt, um Produkte zu holen
-app.get('/api/products', (req, res) => {
-  res.json(products);
-});
-
-app.listen(PORT, () => {
-  console.log(`Server läuft auf http://localhost:${PORT}`);
+app.listen(3000, () => {
+  console.log('Server läuft auf Port 3000');
 });
