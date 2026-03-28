@@ -102,19 +102,24 @@
 @media (max-width: 768px) {
     .welcome-text {
         width: 100vw;
-        height: 50vh;
+        height: 30vh;
+        h1 {
+            font-size: var(--xl);
+        }
     }
 
     .welcome-section {
         padding-top: var(--xxl);
         padding-bottom: 0;
+        gap: 0;
         .grid {
             grid-template-columns: 1fr;
             grid-template-areas:
-                "text1"
                 "image1"
-                "text2"
+                "text1"
                 "image2"
+                "text2"
+                "image3"
                 "text3";
 
             .text1 {

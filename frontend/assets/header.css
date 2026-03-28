@@ -68,6 +68,9 @@
         width: 100vw;
         padding-left: var(--s);
         padding-right: var(--s);
+        .logo-container {
+            z-index: 1001;
+        }
     }
 
     .header-nav {
