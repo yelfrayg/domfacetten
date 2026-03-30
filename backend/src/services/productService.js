@@ -14,9 +14,22 @@ const getAllProducts = async () => {
     }
 };
 
-const createProduct = async (data) => {
+const createNewProduct = async (data) => {
     try {
-        return await prisma.product.create({ data });
+        return await prisma.product.create({
+            data: {
+                arttype: data.arttype,
+                artnr: data.artnr,
+                name: data.name,
+                description: data.description,
+                keywords: data.keywords,
+                price: data.price,
+                available: data.available,
+                heroImage: data.heroImage,
+                image2: data.secondImage,
+                image3: data.thirdImage,
+            },
+        });
     } catch (error) {
         return {
             code: 500,
@@ -25,15 +38,4 @@ const createProduct = async (data) => {
     }
 };
 
-const createImages = async (data) => {
-    try {
-        // TODO
-    } catch (error) {
-        return {
-            code: 500,
-            message: "Fehler beim Erstellen",
-        };
-    }
-};
-
-module.exports = { getAllProducts, createProduct, createImages };
+module.exports = { getAllProducts, createNewProduct };

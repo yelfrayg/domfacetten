@@ -120,6 +120,7 @@ async function testServerProducts() {
             return
         }
         console.log('Produkte werden geladen!')
+        console.log(res.products)
     } catch (error) {
         console.log(error)
     }
