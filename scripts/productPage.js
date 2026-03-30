@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     });
 
     fetchProducts();
+    testServerProducts();
 });
 
 async function fetchProducts() {
@@ -108,4 +109,18 @@ function loadFilteredProducts(products) {
             </a>
         `;
     });
+}
+
+async function testServerProducts() {
+    try {
+        const req = await fetch('http://localhost:3000/api/products')
+        const res = await req.json()
+        if(res.products.length == 0) {
+            console.log('Leer')
+            return
+        }
+        console.log('Produkte werden geladen!')
+    } catch (error) {
+        console.log(error)
+    }
 }

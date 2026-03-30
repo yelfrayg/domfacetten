@@ -5,7 +5,6 @@
     height: 12vh;
     padding-left: var(--3xl);
     padding-right: var(--3xl);
-    background-color: var(--primary-color);
     color: white;
     z-index: 1000;
     column-gap: var(--3xl);
@@ -102,7 +101,6 @@
         width: 60vw;
         height: 100vh;
         transform: translateX(100vw);
-        background-color: var(--primary-color);
         padding: var(--s);
         padding-top: 12vh;
         /* backdrop-filter: brightness(50%) blur(5px) saturate(1.5) !important; */

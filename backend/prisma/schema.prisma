@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,19 +7,13 @@ datasource db {
 }
 
 model Product {
-  artnr       Int     @id @default(autoincrement())
+  artnr       String     @id @default(uuid())
   name        String
   description String
   keywords    Json
-  price       Float
+  price       Decimal
   available   Boolean
-
-  images ProductImage[]
-}
-
-model ProductImage {
-  id        Int     @id @default(autoincrement())
-  urls      Json
-  productId Int
-  product   Product @relation(fields: [productId], references: [artnr])
+  heroImage   String
+  image2      String?
+  image3      String?
 }

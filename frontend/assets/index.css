@@ -71,6 +71,7 @@
     .text1,
     .text2,
     .text3 {
+        color: var(--primary-color);
         h2 {
             font-size: var(--3xl);
             margin-bottom: var(--3xl);
