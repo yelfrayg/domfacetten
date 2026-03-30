@@ -2,30 +2,48 @@ const url = new URL(window.location.href);
 const artnr = url.searchParams.get("id");
 const productContainer = document.querySelector(".highlight-product-container");
 
-if(!artnr) {
+if (!artnr) {
     window.location.href = "./index.html";
 }
 
 document.addEventListener("DOMContentLoaded", async (_) => {
     try {
-        const req = await fetch("./scripts/products/products.json");
+        if (!productContainer) return;
+
+        const artnrNum = parseInt(String(artnr), 10);
+        if (!Number.isFinite(artnrNum)) {
+            window.location.href = "./index.html";
+            return;
+        }
+
+        const req = await fetch("http://localhost:3000/api/products");
         const res = await req.json();
-        const product = res.products.find((p) => p.artnr === artnr);
+        console.log(res);
+        const product = (res.products || []).find((p) => Number(p.artnr) === artnrNum);
+        console.log(product);
+
+        if (!product) {
+            productContainer.innerHTML = `<p>Produkt nicht gefunden.</p>`;
+            return;
+        }
+
         productContainer.innerHTML = `
             <div class="highlight-product-imgs">
                 <ul class="img-caroussel">
-                ${product.images.map((img) => {
-                    return `<li class="img-container"><img src="${img}" alt=""></li>`;
-                }).join("")}
+                    <li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.heroImage)}" alt=""></li>
+                    ${product.image2 ? `<li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.image2)}" alt=""></li>` : ''}
+                    ${product.image3 ? `<li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.image3)}" alt=""></li>` : ''}
                 </ul>
                 <div class="arrow-container">
-                    <button class="arrow-left">〈</button>
-                    <button class="arrow-right">⟩</button>
+                    ${product.image2 ? `
+                        <button class="arrow-left">〈</button>
+                        <button class="arrow-right">⟩</button>
+                    ` : ''}
                 </div>
             </div>
 
             <div class="highlight-product-info">
-                <h2 class="product-name">${product.name} <span class ="artnr">(${product.artnr})</span></h2>
+                <h2 class="product-name">${product.name} <span class ="artnr">(${product.arttype}${product.artnr})</span></h2>
                 <p class="product-description">${product.description}</p>
                 <p class="product-price">${product.price},00 €</p>
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>

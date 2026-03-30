@@ -24,11 +24,16 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             if (!filterobjects.includes(colorValue)) {
                 filterobjects.push(colorValue);
             } else {
-                filterobjects = filterobjects.filter((item) => item !== colorValue);
+                filterobjects = filterobjects.filter(
+                    (item) => item !== colorValue,
+                );
             }
 
             if (filterobjects.length > 0) {
-                localStorage.setItem("productFilters", JSON.stringify(filterobjects));
+                localStorage.setItem(
+                    "productFilters",
+                    JSON.stringify(filterobjects),
+                );
             } else {
                 localStorage.removeItem("productFilters");
             }
@@ -43,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
 async function fetchProducts() {
     try {
-        const req = await fetch("./scripts/products/products.json");
+        const req = await fetch("http://localhost:3000/api/products");
         const res = await req.json();
         allproductsArray = res.products || [];
 
@@ -67,8 +72,10 @@ function loadAllProducts() {
         productElement.href = `./product.html?id=${p.artnr}`;
         productElement.innerHTML = `
             <div class="product-img-container">
-                <img src="${p.images[0]}" alt="Stoffarmband">
-                <span class="product-nr">${p.artnr}</span>
+                <img src="http://localhost:3000/uploads/products/${
+                    p.heroImage
+                }" alt="Stoffarmband">
+                <span class="product-nr">${p.arttype}${p.artnr}</span>
             </div>
             <div class="product-info">
                 <h3 class="product-name">${p.name}</h3>
@@ -99,8 +106,10 @@ function loadFilteredProducts(products) {
         productContainer.innerHTML += `
             <a class="product" href="./product.html?id=${p.artnr}">
                 <div class="product-img-container">
-                    <img src="${p.images[0]}" alt="Stoffarmband">
-                    <span class="product-nr">${p.artnr}</span>
+                    <img src="http://localhost:3000/uploads/products/${encodeURIComponent(
+                        p.heroImage,
+                    )}" alt="Stoffarmband">
+                    <span class="product-nr">${p.arttype}${p.artnr}</span>
                 </div>
                 <div class="product-info">
                     <h3 class="product-name">${p.name}</h3>
@@ -113,14 +122,14 @@ function loadFilteredProducts(products) {
 
 async function testServerProducts() {
     try {
-        const req = await fetch('http://localhost:3000/api/products')
-        const res = await req.json()
-        if(res.products.length == 0) {
-            console.log('Leer')
-            return
+        const req = await fetch("http://localhost:3000/api/products");
+        const res = await req.json();
+        if (res.products.length == 0) {
+            console.log("Leer");
+            return;
         }
-        console.log('Produkte werden geladen!')
+        console.log("Produkte werden geladen!");
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
