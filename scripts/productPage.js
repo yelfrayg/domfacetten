@@ -128,7 +128,8 @@ async function testServerProducts() {
             console.log("Leer");
             return;
         }
-        console.log("Produkte werden geladen!");
+        console.log('Produkte werden geladen!')
+        console.log(res.products)
     } catch (error) {
         console.log(error);
     }
