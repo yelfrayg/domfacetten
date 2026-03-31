@@ -1,6 +1,6 @@
 .header-container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     height: 12vh;
     padding-left: var(--3xl);
