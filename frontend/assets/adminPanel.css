@@ -1,0 +1,31 @@
+.existing-products-container {
+    margin: 0 auto;
+    width: 70%;
+    background-color: rgb(204, 214, 223);
+
+    .existing-products-list {
+        padding: 20px;
+        
+        .list-element {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            gap: 200px;
+            font-size: 36px;
+            border-bottom: 1px solid black;
+
+            div {
+                button {
+                    width: 100px;
+                    height: 100px;
+
+                    &:hover {
+                        background-color: brown;
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+}

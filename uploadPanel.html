@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Produkt erstellen</title>
+    </head>
+    <body>
+        <header></header>
+        <main>
+            <form method="POST">
+                <input
+                    type="text"
+                    id="arttype"
+                    placeholder="Artikel Typ"
+                />
+
+                <input type="text" id="artnr" placeholder="Artikelnummer" />
+                <input type="text" id="name" placeholder="Name" />
+                <input
+                    type="text"
+                    id="description"
+                    placeholder="Beschreibung"
+                />
+                <input type="text" id="keywords" placeholder="Stichwörter" />
+                <input
+                    type="number"
+                    name="price"
+                    id="price"
+                    placeholder="Preis in Euro"
+                />
+                <input
+                    type="checkbox"
+                    name="available"
+                    id="avaiable"
+                    placeholder="Verfügbarkeit"
+                />
+                <div class="image-container">
+                    <div class="hero-image-container">
+                        <h2>Foto 1 (Verpflichtend)</h2>
+                        <input type="file" name="heroImage" id="heroImage" />
+                    </div>
+                    <div class="second-image-container">
+                        <h2>Foto 2</h2>
+                        <input
+                            type="file"
+                            name="secondImage"
+                            id="secondImage"
+                        />
+                    </div>
+                    <div class="third-image-container">
+                        <h2>Foto 3</h2>
+                        <input type="file" name="thirdImage" id="thirdImage" />
+                    </div>
+                </div>
+                <button id="createProduct" type="submit">Erstellen!</button>
+            </form>
+
+            <div class="test-img-container"></div>
+        </main>
+        <footer></footer>
+        <script src="scripts/newProduct.js"></script>
+    </body>
+</html>
