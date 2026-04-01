@@ -17,6 +17,15 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname || '').toLowerCase();
 
+        const rawArttype = req.body?.arttype;
+        const arttypeSlug = String(rawArttype ?? '')
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .slice(0, 60);
+        const arttypePart = `t${arttypeSlug || 'unknown'}`;
+
         const rawArtNr = req.body?.artnr;
         const artnrDigits = String(rawArtNr ?? '').replace(/\D/g, '');
         const artnrPart = artnrDigits ? `a${artnrDigits}` : 'aunknown';
@@ -28,7 +37,7 @@ const storage = multer.diskStorage({
         };
         const imgType = typeMap[file.fieldname] || 'image';
 
-        const baseName = `${artnrPart}-${imgType}`;
+        const baseName = `${arttypePart}-${artnrPart}-${imgType}`;
         let candidate = `${baseName}${ext}`;
 
         // Avoid silently overwriting an existing file

@@ -1,27 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./frontend/assets/adminPanel.css">
-    <title>Produkt ändern oder löschen</title>
-</head>
-<body>
-    <main>
-        <div class="existing-products-container">
-            <ul class = "existing-products-list">
-                <li id="product1" class = "list-element">
-                    <p>1</p>
-                    <p>A989</p>
-                    <p class="price">40 &euro;</p>
-                    <div>
-                        <button type="button">C</button>
-                        <button type="button" id="deleteBtn">D</button>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </main>
-    <script src="./scripts/changeProduct.js"></script>
-</body>
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./frontend/assets/adminPanel.css" />
+        <link rel="stylesheet" href="./frontend/assets/base.css" />
+        <title>Produkt ändern oder löschen</title>
+    </head>
+    <body>
+        <main>
+            <div class="existing-products-container">
+                <ul class="existing-products-list">
+                    
+                </ul>
+                <div popover id="popup-delete">
+                    <p>Möchten Sie dieses Produkt wirklich löschen?</p>
+                    <button
+                        type="button"
+                        id="confirmDelete"
+                        popovertarget="popup-delete"
+                    >
+                        Ja
+                    </button>
+                    <button type="button" popovertarget="popup-delete">
+                        Nein
+                    </button>
+                </div>
+                <div popover id="popup-edit">
+                    <h3 class="change-product">Produkt bearbeiten</h3>
+                    <form id="editForm">
+                        <label for="editName">Name:</label>
+                        <input type="text" id="editName" name="name" />
+                        <label for="editDescription">Beschreibung:</label>
+                        <textarea
+                            id="editDescription"
+                            name="description"
+                        ></textarea>
+                        <label for="editPrice">Preis:</label>
+                        <input
+                            type="number"
+                            id="editPrice"
+                            name="price"
+                            step="1"
+                        />
+                        <label for="editAvailability" class = "check"
+                            >Verfügbarkeit:
+                            <input
+                                type="checkbox"
+                                id="editAvailability"
+                                name="availability"
+                        /></label>
+
+                        <button
+                            type="button"
+                            id="confirmEdit"
+                            popovertarget="popup-edit"
+                        >
+                            Speichern
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+        <script src="./scripts/changeProduct.js"></script>
+    </body>
 </html>

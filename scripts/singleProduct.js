@@ -23,7 +23,9 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         console.log(product);
 
         if (!product) {
-            productContainer.innerHTML = `<p>Produkt nicht gefunden.</p>`;
+            productContainer.innerHTML = `
+                <h2>Produkt nicht gefunden.</h2>
+            `;
             return;
         }
 

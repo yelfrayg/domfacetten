@@ -21,7 +21,7 @@ async function createProduct(req, res) {
             if (Array.isArray(value)) return value;
             const str = String(value).trim();
             if (!str) return [];
-            if (str.startsWith('[')) {
+            if (str.startsWith("[")) {
                 try {
                     const parsed = JSON.parse(str);
                     return Array.isArray(parsed) ? parsed : [];
@@ -30,7 +30,7 @@ async function createProduct(req, res) {
                 }
             }
             return str
-                .split(',')
+                .split(",")
                 .map((k) => k.trim())
                 .filter(Boolean);
         };
@@ -45,7 +45,9 @@ async function createProduct(req, res) {
         const thirdImage = thirdFile?.filename || body.thirdImage || null;
 
         if (!heroImage) {
-            return res.status(400).json({ message: 'Foto 1 (heroImage) ist verpflichtend' });
+            return res
+                .status(400)
+                .json({ message: "Foto 1 (heroImage) ist verpflichtend" });
         }
 
         const arttype = body.arttype;
@@ -56,10 +58,10 @@ async function createProduct(req, res) {
         const price = body.price; // Prisma Decimal ist oft am sichersten als String
         const available =
             body.available === true ||
-            body.available === 'true' ||
-            body.available === 'on' ||
+            body.available === "true" ||
+            body.available === "on" ||
             body.available === 1 ||
-            body.available === '1';
+            body.available === "1";
 
         const newDataSet = {
             arttype,
@@ -75,15 +77,16 @@ async function createProduct(req, res) {
         };
 
         const newProduct = await productService.createNewProduct(newDataSet);
-        if(newProduct.code && newProduct.code === 500) {
+        if (newProduct.code && newProduct.code === 500) {
             return res
                 .status(500)
                 .json({ message: "Fehler beim Erstellen des Produkts" });
         }
-        return res
-            .status(201)
-            .json({ code: 201, message: "Produkt erfolgreich erstellt", product: newProduct });
-
+        return res.status(201).json({
+            code: 201,
+            message: "Produkt erfolgreich erstellt",
+            product: newProduct,
+        });
     } catch (error) {
         return res
             .status(500)
@@ -91,4 +94,61 @@ async function createProduct(req, res) {
     }
 }
 
-module.exports = { fetchProducts, createProduct };
+async function deleteProduct(req, res) {
+    try {
+        const { arttype, artnr } = req.body;
+        const result = await productService.deleteExistingProductWithImages(
+            arttype,
+            artnr,
+        );
+        if (result && result.code && result.code !== 200) {
+            return res
+                .status(result.code)
+                .json({ message: "failure", info: result.message });
+        }
+        return res.status(200).json({
+            message: "success",
+            info: `Deleted Product with ID: ${arttype}${artnr}`,
+            deletedFiles: result?.deletedFiles || [],
+            fileDeleteErrors: result?.fileDeleteErrors || [],
+        });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({ message: "failure", info: "Produkt nicht gelöscht!" });
+    }
+}
+
+async function updateProduct(req, res) {
+    try {
+        const { data } = req.body || {};
+        if (!data || typeof data !== "object") {
+            return res.status(400).json({
+                message: "failure",
+                info: "Keine Update-Daten erhalten.",
+            });
+        }
+        let checkedData = {};
+        for (const key in data) {
+            if (
+                data[key] !== undefined &&
+                data[key] !== null &&
+                data[key] !== "" &&
+                data[key] !== NaN
+            ) {
+                checkedData[key] = data[key];
+            }
+        }
+        const product = await productService.updateExistingProduct(checkedData);
+        return res
+            .status(200)
+            .json({ message: "success", updatedProduct: product });
+    } catch (error) {
+        return res.status(500).json({
+            message: "failure",
+            info: "Aktualisierung fehlgeschagen.",
+        });
+    }
+}
+
+module.exports = { fetchProducts, createProduct, deleteProduct, updateProduct };

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
 const productImageUpload = require('../middleware/productImageUpload');
-
+const checkAuth = require('../middleware/checkAuth');
 router.get('/', productController.fetchProducts);
 
 router.post('/newProduct', productImageUpload.fields([
@@ -11,4 +11,7 @@ router.post('/newProduct', productImageUpload.fields([
     { name: 'thirdImage', maxCount: 1 }
 ]), productController.createProduct);
 
+router.delete('/deleteProduct', checkAuth, productController.deleteProduct);
+
+router.put('/updateProduct', productController.updateProduct);
 module.exports = router;

@@ -11,7 +11,7 @@
             flex-direction: row;
             justify-content: space-around;
             align-items: center;
-            gap: 200px;
+            gap: 20px;
             font-size: 36px;
             border-bottom: 1px solid black;
 
@@ -27,5 +27,76 @@
                 }
             }
         }
+    }
+
+    #popup-edit, #popup-delete {        
+        flex-direction: column;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        gap: 20px;
+        padding: var(--3xl);
+
+        .change-product {
+            font-size: var(--3xl);
+            text-align: center;
+        }
+
+        #editForm {
+            display: flex;
+            flex-direction: column;
+            gap: var(--l);
+
+            #editDescription {
+                resize: vertical;
+                max-height: 10vh;
+            }
+
+            input, textarea {
+                border: 1px solid black;
+                padding: var(--xs);
+            }
+
+            input {
+                height: var(--3xl);
+            }
+
+            .check {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                gap: var(--xs);
+            }
+
+            #confirmEdit {
+                height: var(--3xl);
+                color: black;
+                background-color: white;
+                border: 1px solid black;
+
+                &:hover {
+                    color: white;
+                    background-color: black;
+                }
+            }
+        }
+
+        button {
+            margin-top: var(--l);
+            width: 100px;
+            height: 100px;
+            color: black;
+            background-color: white;
+            border: 1px solid black;
+
+            &:hover {
+                color: white;
+                background-color: black;
+            }
+        }
+    }
+
+    #popup-edit:popover-open {
+        display: flex;
     }
 }
