@@ -104,6 +104,14 @@
 
         .text {
             font-size: var(--l);
+
+            input {
+                width: 5vw;
+                font-size: var(--l);
+                margin-left: var(--xs);
+                padding: var(--xs);
+                border: 1px solid black;
+            }
         }
 
         .addToCart {
@@ -129,6 +137,26 @@
         .buyNow:hover,
         .addToCart:hover {
             transform: scale(1.05);
+        }
+    }
+
+    #addToCartPopover:popover-open {
+        display: flex;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        flex-direction: column;
+        padding: var(--m);
+        color: black;
+        gap: var(--m);
+
+        &::backdrop {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        p {
+            font-size: var(--l);
+            line-height: 1.5;
         }
     }
 }

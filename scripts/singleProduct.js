@@ -18,9 +18,9 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
         const req = await fetch("http://localhost:3000/api/products");
         const res = await req.json();
-        console.log(res);
-        const product = (res.products || []).find((p) => Number(p.artnr) === artnrNum);
-        console.log(product);
+        const product = (res.products || []).find(
+            (p) => Number(p.artnr) === artnrNum,
+        );
 
         if (!product) {
             productContainer.innerHTML = `
@@ -33,28 +33,36 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             <div class="highlight-product-imgs">
                 <ul class="img-caroussel">
                     <li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.heroImage)}" alt=""></li>
-                    ${product.image2 ? `<li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.image2)}" alt=""></li>` : ''}
-                    ${product.image3 ? `<li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.image3)}" alt=""></li>` : ''}
+                    ${product.image2 ? `<li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.image2)}" alt=""></li>` : ""}
+                    ${product.image3 ? `<li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.image3)}" alt=""></li>` : ""}
                 </ul>
                 <div class="arrow-container">
-                    ${product.image2 ? `
+                    ${
+                        product.image2
+                            ? `
                         <button class="arrow-left">〈</button>
                         <button class="arrow-right">⟩</button>
-                    ` : ''}
+                    `
+                            : ""
+                    }
                 </div>
             </div>
 
             <div class="highlight-product-info">
                 <h2 class="product-name">${product.name} <span class ="artnr">(${product.arttype}${product.artnr})</span></h2>
-                <p class="product-description">${product.description}</p>
+                ${product.description ? `<p class="product-description">${product.description}</p>` : ""}
                 <p class="product-price">${product.price},00 €</p>
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
-                <p class ="text">Menge: 1 Stck.</p>
-                <button class="addToCart">In den Warenkorb legen</button>
+                <label class ="text">Menge: <input type="number" min="1" max = "5" value="1" step="1"></label>
+                <button class="addToCart" popovertarget="addToCartPopover">In den Warenkorb legen</button>
                 <button class ="buyNow">Jetzt bestellen!</button>
             </div>
-        `;
 
+            <div popover id="addToCartPopover">
+                <h2>Kurze Info</h2>
+                <p>Aktuell steht die Warenkorb-Funktion noch unter Bearbeitung. Sie wird aber in Kürze verfügbar sein :)</p>
+            </div>
+        `;
 
         const caroussel = document.querySelector(".img-caroussel");
         const arrowLeft = document.querySelector(".arrow-left");
