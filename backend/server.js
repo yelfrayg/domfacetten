@@ -11,6 +11,9 @@ app.use(cors())
 const productRoutes = require('./src/routes/productRoutes');
 app.use('/api/products', productRoutes);
 
+const purchaseRoutes = require('./src/routes/purchaseRoutes');
+app.use('/api/purchases', purchaseRoutes);
+
 app.use(
   '/uploads/products',
   express.static(path.resolve(__dirname, 'uploads', 'products')),

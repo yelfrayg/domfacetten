@@ -107,6 +107,7 @@
 
             input {
                 width: 5vw;
+                min-width: 100px;
                 font-size: var(--l);
                 margin-left: var(--xs);
                 padding: var(--xs);

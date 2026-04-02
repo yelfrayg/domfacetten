@@ -11,7 +11,7 @@ router.post('/newProduct', productImageUpload.fields([
     { name: 'thirdImage', maxCount: 1 }
 ]), productController.createProduct);
 
-router.delete('/deleteProduct', checkAuth, productController.deleteProduct);
+router.delete('/deleteProduct', productController.deleteProduct);
 
 router.put('/updateProduct', productController.updateProduct);
 module.exports = router;

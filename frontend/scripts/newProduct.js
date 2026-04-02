@@ -100,5 +100,7 @@ async function getTestImage() {
 
             imgContainer.appendChild(imgTag);
         });
-    } catch (error) {}
+    } catch (error) {
+        console.log(error)
+    }
 }

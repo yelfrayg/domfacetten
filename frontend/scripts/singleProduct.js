@@ -53,9 +53,9 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 ${product.description ? `<p class="product-description">${product.description}</p>` : ""}
                 <p class="product-price">${product.price},00 €</p>
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
-                <label class ="text">Menge: <input type="number" min="1" max = "5" value="1" step="1"></label>
+                <label class ="text">Menge: <input id="amount" type="number" min="1" max = "5" value="1" step="1"></label>
                 <button class="addToCart" popovertarget="addToCartPopover">In den Warenkorb legen</button>
-                <button class ="buyNow">Jetzt bestellen!</button>
+                <button class ="buyNow" id="buyNow">Jetzt bestellen!</button>
             </div>
 
             <div popover id="addToCartPopover">
@@ -64,11 +64,18 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             </div>
         `;
 
+        dispatchEvent(new CustomEvent('productLoaded', {
+            detail: {
+                arttype: product.arttype,
+                artnr: product.artnr
+            }
+        }))
+
         const caroussel = document.querySelector(".img-caroussel");
         const arrowLeft = document.querySelector(".arrow-left");
         const arrowRight = document.querySelector(".arrow-right");
 
-        arrowRight.addEventListener("click", () => {
+        arrowRight?.addEventListener("click", () => {
             // Wenn wir am Ende sind, scrollen wir zum Anfang (optionaler Loop)
             if (
                 caroussel.scrollLeft + caroussel.offsetWidth >=
@@ -83,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             }
         });
 
-        arrowLeft.addEventListener("click", () => {
+        arrowLeft?.addEventListener("click", () => {
             // Wenn wir am Anfang sind, scrollen wir zum Ende (optionaler Loop)
             if (caroussel.scrollLeft <= 0) {
                 caroussel.scrollTo({

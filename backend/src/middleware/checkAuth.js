@@ -11,4 +11,24 @@ async function checkDate(req, res, next) {
     }
 }
 
-module.exports = checkDate;
+const getPaypalAccessToken = async () => {
+    const auth = Buffer.from(
+        process.env.PAYPAL_CLIENT_ID + ':' + process.env.PAYPAL_CLIENT_SECRET
+    ).toString('base64')
+
+    const req = await fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
+        method: 'POST',
+        headers: {
+            Authorization: `Basic ${auth}`
+        },
+        body: 'grant_type=client_credentials'
+    })
+
+    const res = await req.json()
+    return res.access_token
+}
+
+module.exports = {
+    checkDate,
+    getPaypalAccessToken
+};

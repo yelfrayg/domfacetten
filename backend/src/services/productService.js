@@ -39,6 +39,23 @@ const getAllProducts = async () => {
     }
 };
 
+const getSingleProduct = async (arttype, artnr) => {
+    try {
+        const parsedArtnr = parseInt(artnr, 10);
+        if (Number.isNaN(parsedArtnr)) {
+            return null;
+        }
+        return await prisma.product.findFirst({
+            where: {
+                arttype,
+                artnr: parsedArtnr,
+            },
+        });
+    } catch (error) {
+        return null;
+    }
+};
+
 const createNewProduct = async (data) => {
     try {
         return await prisma.product.create({
@@ -205,6 +222,7 @@ const updateExistingProduct = async (data) => {
 
 module.exports = {
     getAllProducts,
+    getSingleProduct,
     createNewProduct,
     deleteExistingProduct,
     deleteExistingProductWithImages,
