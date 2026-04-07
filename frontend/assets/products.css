@@ -22,7 +22,7 @@
         align-items: flex-start;
         justify-content: center;
         gap: var(--3xl);
-        width: 80vw;
+        width: 90vw;
 
         .filter {
             position: sticky;

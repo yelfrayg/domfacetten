@@ -23,6 +23,6 @@ app.get('/', (req, res) => {
   res.send('Willkommen zum Domfacetten Backend!');
 })
 
-app.listen(3000, () => {
+app.listen(3000, '0.0.0.0', () => {
   console.log('Server läuft auf Port 3000');
 });

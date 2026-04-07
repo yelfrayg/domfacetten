@@ -9,39 +9,73 @@
         <header></header>
         <main>
             <form method="POST">
-                <input
-                    type="text"
-                    id="arttype"
-                    placeholder="Artikel Typ"
-                />
+                <label for="arttype">Artikeltyp</label><br />
+                <input type="text" id="arttype" placeholder="Artikeltyp" />
 
+                <label for="artnr">Artikelnummer</label><br />
                 <input type="text" id="artnr" placeholder="Artikelnummer" />
+
+                <label for="name">Name</label><br />
                 <input type="text" id="name" placeholder="Name" />
+
+                <label for="description">Beschreibung</label><br />
                 <input
                     type="text"
                     id="description"
                     placeholder="Beschreibung"
                 />
-                <input type="text" id="keywords" placeholder="Stichwörter" />
+                <fieldset>
+                    <legend>Stichwörter auswählen:</legend>
+
+                    <input type="checkbox" id="green" name="keyword" value="green" />
+                    <label for="green">Grün</label><br />
+
+                    <input type="checkbox" id="red" name="keyword" value="red" />
+                    <label for="red">Rot</label><br />
+
+                    <input type="checkbox" id="yellow" name="keyword" value="yellow" />
+                    <label for="yellow">Gelb</label><br />
+
+                    <input type="checkbox" id="blue" name="keyword" value="blue" />
+                    <label for="blue">Blau</label><br />
+
+                    <input type="checkbox" id="black" name="keyword" value="black" />
+                    <label for="black">Schwarz</label><br />
+
+                    <input type="checkbox" id="white" name="keyword" value="white" />
+                    <label for="white">Weiß</label><br />
+
+                    <input type="checkbox" id="armband" name="keyword" value="armband" />
+                    <label for="armband">Armband</label><br />
+
+                    <input type="checkbox" id="stoff" name="keyword" value="stoff" />
+                    <label for="stoff">Stoff</label>
+                </fieldset>
+
+                <label for="price">Preis in Euro</label><br />
                 <input
                     type="number"
                     name="price"
                     id="price"
                     placeholder="Preis in Euro"
                 />
+
+                <label for="available">Verfügbar</label><br />
                 <input
                     type="checkbox"
                     name="available"
-                    id="avaiable"
+                    id="available"
                     placeholder="Verfügbarkeit"
                 />
                 <div class="image-container">
                     <div class="hero-image-container">
                         <h2>Foto 1 (Verpflichtend)</h2>
+                        <label for="heroImage">Foto 1 hochladen</label><br />
                         <input type="file" name="heroImage" id="heroImage" />
                     </div>
                     <div class="second-image-container">
                         <h2>Foto 2</h2>
+                        <label for="secondImage">Foto 2 hochladen</label><br />
                         <input
                             type="file"
                             name="secondImage"
@@ -50,6 +84,7 @@
                     </div>
                     <div class="third-image-container">
                         <h2>Foto 3</h2>
+                        <label for="thirdImage">Foto 3 hochladen</label><br />
                         <input type="file" name="thirdImage" id="thirdImage" />
                     </div>
                 </div>

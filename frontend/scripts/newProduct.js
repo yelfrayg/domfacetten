@@ -75,32 +75,4 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Frontend Fehler beim erstellen:", error);
         }
     });
-
-    getTestImage();
 });
-
-async function getTestImage() {
-    try {
-        const req = await fetch("http://localhost:3000/api/products");
-        const res = await req.json();
-        const imgContainer = document.querySelector(".test-img-container");
-        if (!imgContainer) return;
-
-        imgContainer.innerHTML = "";
-
-        res.products.forEach((p) => {
-            if (!p?.heroImage) return;
-
-            const imgTag = document.createElement("img");
-            imgTag.src = `http://localhost:3000/uploads/products/${encodeURIComponent(
-                p.heroImage
-            )}`;
-            imgTag.alt = p?.name ? `Produktbild: ${p.name}` : "Produktbild";
-            imgTag.loading = "lazy";
-
-            imgContainer.appendChild(imgTag);
-        });
-    } catch (error) {
-        console.log(error)
-    }
-}

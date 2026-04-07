@@ -2,13 +2,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 90vw;
     height: 12vh;
-    padding-left: var(--3xl);
+    padding-left: var(--xl);
     padding-right: var(--3xl);
     color: white;
     z-index: 1000;
     column-gap: var(--3xl);
     position: relative;
+    background: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 4px 0 rgba(255, 255, 255, 0.1) inset;
+    backdrop-filter: blur(8px);
+    margin: 0 auto;
+    margin-top: var(--l);
+    border-radius: 100px;
 
     .logo-container {
         height: 100%;
@@ -17,7 +24,7 @@
         align-items: center;
 
         img {
-            height: 50%;
+            height: 90%;
         }
     }
 
@@ -30,29 +37,33 @@
             padding: 0;
 
             li {
-                padding: var(--xl);
                 border-radius: 50px;
-                background-color: #0000002e;
                 transition: 0.2s;
+
                 a {
                     color: white;
                     text-decoration: none;
-                    font-size: var(--l);
+                    font-size: var(--xl);
+                    font-weight: 600;
                     transition: color 0.2s;
-                }
-
-                &:hover {
-                    background-color: #00000050;
-                    transition: 0.2s;
-                }
-
-                &.active {
-                    background-color: #00000061;
                 }
             }
 
-            li.active {
-                background-color: #00000061;
+            li.active::after {
+                width: 100%;
+            }
+
+            li::after {
+                content: "";
+                display: block;
+                width: 0;
+                height: 3px;
+                background-color: white;
+                transition: width 0.3s ease-in-out;
+            }
+
+            li:hover::after {
+                width: 100%;
             }
         }
     }
@@ -143,6 +154,6 @@
 
     .mobile-menu.active {
         transform: translateX(0);
-        filter: drop-shadow(-200px 0px #0000006d)
+        filter: drop-shadow(-200px 0px #0000006d);
     }
 }

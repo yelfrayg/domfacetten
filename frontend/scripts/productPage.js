@@ -75,7 +75,7 @@ function loadAllProducts() {
                 <img src="http://localhost:3000/uploads/products/${
                     p.heroImage
                 }" alt="Stoffarmband">
-                <span class="product-nr">${p.arttype}${p.artnr}</span>
+                <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
             </div>
             <div class="product-info">
                 <h3 class="product-name">${p.name}</h3>
@@ -109,7 +109,7 @@ function loadFilteredProducts(products) {
                     <img src="http://localhost:3000/uploads/products/${encodeURIComponent(
                         p.heroImage,
                     )}" alt="Stoffarmband">
-                    <span class="product-nr">${p.arttype}${p.artnr}</span>
+                    <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
                 </div>
                 <div class="product-info">
                     <h3 class="product-name">${p.name}</h3>

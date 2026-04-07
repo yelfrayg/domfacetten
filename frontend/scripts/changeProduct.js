@@ -61,7 +61,7 @@ async function loadAllProducts() {
                 createListElement.classList.add("list-element");
                 createListElement.innerHTML = `
                     <p>${a}</p>
-                    <p>${p.arttype}${p.artnr}</p>
+                    <p>${p.arttype}${String(p.artnr).padStart(3, '0')}</p>
                     <p>${p.name}</p>
                     <p class="price">${p.price},00 &euro;</p>
                     <div>
