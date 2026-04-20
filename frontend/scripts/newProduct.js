@@ -28,13 +28,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
+            
+
+            getKeywords()
             const formData = new FormData();
             formData.append("arttype", arttype?.value || "");
             formData.append("artnr", artnr?.value || "");
             formData.append("name", name?.value || "");
             formData.append("description", description?.value || "");
             formData.append("price", price?.value || "");
-            formData.append("keywords", keywords?.value || "");
+            formData.append("keywords", getKeywords().join(", "));
             formData.append("available", available?.checked ? "true" : "false");
 
             formData.append("heroImage", heroImageInput.files[0]);
@@ -76,3 +79,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+
+function getKeywords() {
+    const keywordCheckboxes = document.querySelectorAll('input[name="keyword"]:checked');
+    const keywords = Array.from(keywordCheckboxes).map(checkbox => checkbox.value);
+    return keywords;
+}

@@ -201,7 +201,7 @@
             }
 
             .text {
-                font-size: var(--s);
+                font-size: var(--m);
             }
 
             .product-description {

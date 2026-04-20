@@ -5,7 +5,7 @@ const fs = require("fs/promises");
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
-    log: ["query", "info", "warn", "error"],
+    log: ["info", "warn", "error"],
 });
 
 const uploadDir = path.resolve(__dirname, "..", "..", "uploads", "products");

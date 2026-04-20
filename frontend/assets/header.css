@@ -80,8 +80,10 @@
 @media (max-width: 768px) {
     .header-container {
         width: 100vw;
-        padding-left: var(--s);
-        padding-right: var(--s);
+        margin-top: 0;
+        background-color: white;
+        padding: var(--s);
+        border-radius: 0;;
         .logo-container {
             z-index: 1001;
         }
@@ -154,6 +156,6 @@
 
     .mobile-menu.active {
         transform: translateX(0);
-        filter: drop-shadow(-200px 0px #0000006d);
+        filter: drop-shadow(-200px 0px #ffffffa3);
     }
 }

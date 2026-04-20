@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "devStart": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "multer": "^2.1.1",
+    "nodemon": "^3.1.14",
     "paypal-rest-sdk": "^1.8.1",
     "pg": "^8.20.0"
   },

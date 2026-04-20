@@ -227,10 +227,11 @@
             }
         }
     }
-
+    
     .product-section {
         .product-wrapper {
-            margin: 0 auto;
+            width: 100%;
+            margin: 0 auto !important;
 
             .filter {
                 display: none;
