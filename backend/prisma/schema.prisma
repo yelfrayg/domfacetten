@@ -18,3 +18,10 @@ model Product {
   image2      String?
   image3      String?
 }
+
+model Orders {
+  orderId         String   @id @db.Text
+  customerDetails Json
+  products        Json
+  timestamp       DateTime
+}

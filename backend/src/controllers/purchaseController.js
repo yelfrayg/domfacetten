@@ -40,7 +40,10 @@ async function createPurchase(req, res) {
                 .json({ error: "Failed to create PayPal Order" });
         }
 
-        const total = serverOrder.purchase_units[0].amount.totalValue.toString();
+        const serverAmount = serverOrder.purchase_units[0].amount;
+        const total = serverAmount.totalValue;
+        const itemTotal = serverAmount.itemTotalValue;
+        const shipping = serverAmount.shippingValue;
 
         const request = new paypal.orders.OrdersCreateRequest();
 
@@ -55,7 +58,11 @@ async function createPurchase(req, res) {
                         breakdown: {
                             item_total: {
                                 currency_code: "EUR",
-                                value: total,
+                                value: itemTotal,
+                            },
+                            shipping: {
+                                currency_code: "EUR",
+                                value: shipping,
                             },
                         },
                     },
@@ -64,7 +71,7 @@ async function createPurchase(req, res) {
                             name: product.name,
                             unit_amount: {
                                 currency_code: "EUR",
-                                value: product.price.toFixed(2),
+                                value: serverAmount.singleValue,
                             },
                             quantity: data.amount.toString(),
                         },
@@ -84,4 +91,24 @@ async function createPurchase(req, res) {
     }
 }
 
-module.exports = { createPurchase };
+async function savePurchase(req, res) {
+    try {
+        const { orderId, customerDetails, products } = req.body
+        let data = {
+            orderId,
+            customerDetails,
+            products
+        }
+        const result = await purchaseService.saveOrder(data)
+
+        if(result.code === 500) {
+            return res.status(500).json({ error: result.error || result.message })
+        }
+        
+        res.status(201).json({ message: "Bestellung erfolgreich gespeichert", orderId: result.orderId })
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+module.exports = { createPurchase, savePurchase };

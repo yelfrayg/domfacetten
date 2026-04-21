@@ -50,9 +50,29 @@ window.addEventListener("productLoaded", (e) => {
                     });
             },
             onApprove: function (data, actions) {
-                return actions.order.capture().then(function (details) {
-                    
-                    window.location.href = "/index.html";
+                return actions.order.capture().then(async function (details) {
+                    let orderDetails = {
+                        orderId: details.id,
+                        customerDetails: details.payer,
+                        products: {}
+                    }
+                    try {
+                        const req = await fetch('http://localhost:3000/api/purchases/savePurchase', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(orderDetails)
+                        })
+                        const res = await req.json()
+                        if(res.ok) {
+                            alert('Alles hat geklappt!')
+                            return
+                        }
+                        window.location = '/product.html?id=' + artnr
+                    } catch (error) {
+                        console.log('Es gab einen Fehler beim Speichern der Bestellung')
+                    }
                 });
             },
         })
