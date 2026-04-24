@@ -1,7 +1,7 @@
 window.addEventListener("productLoaded", (e) => {
     const buyNowBtn = document.querySelector(".buyNow");
     let { arttype, artnr } = e.detail;
-    let amount = 1
+    let amount = 1;
 
     paypal
         .Buttons({
@@ -45,33 +45,54 @@ window.addEventListener("productLoaded", (e) => {
                             error,
                         );
                         alert(
-                            "Es gab ein Problem bei der Bestellung. Bitte versuchen Sie es später erneut.",
+                            "Hmm. Anscheinend ist der Server gerade am Schlafen. Bitte versuchen Sie es später erneut :)",
                         );
                     });
             },
             onApprove: function (data, actions) {
                 return actions.order.capture().then(async function (details) {
+                    let orderedProducts = [];
+                    details.purchase_units.forEach((unit) => {
+                        unit.items.forEach((item) => {
+                            orderedProducts.push({
+                                name: item.name,
+                                quantity: item.quantity,
+                                price: item.unit_amount.value,
+                            });
+                        });
+                    });
+
+                    let customerDetails = details.payer
+                    customerDetails.address = details.purchase_units[0].shipping.address;
+                    
                     let orderDetails = {
                         orderId: details.id,
-                        customerDetails: details.payer,
-                        products: {}
-                    }
+                        customerDetails: customerDetails,
+                        products: { orderedProducts },
+                    };
+                    console.log(details);
+
                     try {
-                        const req = await fetch('http://localhost:3000/api/purchases/savePurchase', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
+                        const req = await fetch(
+                            "http://localhost:3000/api/purchases/savePurchase",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(orderDetails),
                             },
-                            body: JSON.stringify(orderDetails)
-                        })
-                        const res = await req.json()
-                        if(res.ok) {
-                            alert('Alles hat geklappt!')
-                            return
+                        );
+                        const res = await req.json();
+                        if (res.ok) {
+                            alert("Alles hat geklappt!");
+                            return;
                         }
-                        window.location = '/product.html?id=' + artnr
+                        // window.location = '/product.html?id=' + artnr
                     } catch (error) {
-                        console.log('Es gab einen Fehler beim Speichern der Bestellung')
+                        console.log(
+                            "Es gab einen Fehler beim Speichern der Bestellung",
+                        );
                     }
                 });
             },

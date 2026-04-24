@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             </div>
 
             <div class="highlight-product-info">
-                <h2 class="product-name">${product.name} <span class ="artnr">(${product.arttype}${String(product.artnr).padStart(3, '0')})</span></h2>
+                <h2 class="product-name">${product.name} <span class ="artnr">(${product.arttype}${String(product.artnr).padStart(3, "0")})</span></h2>
                 ${product.description ? `<p class="product-description">${product.description}</p>` : ""}
                 <p class="product-price">${product.price},00 €</p>
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
@@ -64,12 +64,14 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             </div>
         `;
 
-        dispatchEvent(new CustomEvent('productLoaded', {
-            detail: {
-                arttype: product.arttype,
-                artnr: product.artnr
-            }
-        }))
+        dispatchEvent(
+            new CustomEvent("productLoaded", {
+                detail: {
+                    arttype: product.arttype,
+                    artnr: product.artnr,
+                },
+            }),
+        );
 
         const caroussel = document.querySelector(".img-caroussel");
         const arrowLeft = document.querySelector(".arrow-left");

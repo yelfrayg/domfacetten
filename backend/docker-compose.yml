@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: DF-SERVER-CONTAINER
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:${DB_PW}@database:5432/${DB_NAME}
+      - DB_PW=${DB_PW}
+      - DB_NAME=${DB_NAME}
+      - PAYPA_CLIENT_ID=${PAYPAL_CLIENT_ID}
+      - PAYPAL_SECRET_KEY=${PAYPAL_SECRET_KEY}
+      - NODE_ENV=${NODE_ENV}
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASS=${MAIL_PASS}
+      - URL=${URL}
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      database:
+        condition: service_healthy
+  database:
+    image: postgres:16
+    container_name: DF-DATABASE-CONTAINER
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PW}
+      - POSTGRES_DB=${DB_NAME}
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

@@ -3,70 +3,124 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./frontend/assets/adminPanel.css" />
         <title>Produkt erstellen</title>
     </head>
     <body>
         <header></header>
         <main>
             <form method="POST">
-                <label for="arttype">Artikeltyp</label><br />
-                <input type="text" id="arttype" placeholder="Artikeltyp" />
+                <div class="form-group">
+                    <label for="arttype">Artikeltyp</label>
+                    <input type="text" id="arttype" placeholder="Artikeltyp" />
+                </div>
 
-                <label for="artnr">Artikelnummer</label><br />
-                <input type="text" id="artnr" placeholder="Artikelnummer" />
+                <div class="form-group">
+                    <label for="artnr">Artikelnummer</label>
+                    <input type="text" id="artnr" placeholder="Artikelnummer" />
+                </div>
 
-                <label for="name">Name</label><br />
-                <input type="text" id="name" placeholder="Name" />
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" placeholder="Name" />
+                </div>
 
-                <label for="description">Beschreibung</label><br />
-                <input
-                    type="text"
-                    id="description"
-                    placeholder="Beschreibung"
-                />
-                <fieldset id = "keywords">
+                <div class="form-group">
+                    <label for="description">Beschreibung</label>
+                    <input
+                        type="text"
+                        id="description"
+                        placeholder="Beschreibung"
+                    />
+                </div>
+
+                <fieldset id="keywords">
                     <legend>Stichwörter auswählen:</legend>
 
-                    <input type="checkbox" id="green" name="keyword" value="green" />
+                    <input
+                        type="checkbox"
+                        id="green"
+                        name="keyword"
+                        value="green"
+                    />
                     <label for="green">Grün</label><br />
 
-                    <input type="checkbox" id="red" name="keyword" value="red" />
+                    <input
+                        type="checkbox"
+                        id="red"
+                        name="keyword"
+                        value="red"
+                    />
                     <label for="red">Rot</label><br />
 
-                    <input type="checkbox" id="yellow" name="keyword" value="yellow" />
+                    <input
+                        type="checkbox"
+                        id="yellow"
+                        name="keyword"
+                        value="yellow"
+                    />
                     <label for="yellow">Gelb</label><br />
 
-                    <input type="checkbox" id="blue" name="keyword" value="blue" />
+                    <input
+                        type="checkbox"
+                        id="blue"
+                        name="keyword"
+                        value="blue"
+                    />
                     <label for="blue">Blau</label><br />
 
-                    <input type="checkbox" id="black" name="keyword" value="black" />
+                    <input
+                        type="checkbox"
+                        id="black"
+                        name="keyword"
+                        value="black"
+                    />
                     <label for="black">Schwarz</label><br />
 
-                    <input type="checkbox" id="white" name="keyword" value="white" />
+                    <input
+                        type="checkbox"
+                        id="white"
+                        name="keyword"
+                        value="white"
+                    />
                     <label for="white">Weiß</label><br />
 
-                    <input type="checkbox" id="armband" name="keyword" value="wristband" />
+                    <input
+                        type="checkbox"
+                        id="armband"
+                        name="keyword"
+                        value="wristband"
+                    />
                     <label for="armband">Armband</label><br />
 
-                    <input type="checkbox" id="stoff" name="keyword" value="stoff" />
+                    <input
+                        type="checkbox"
+                        id="stoff"
+                        name="keyword"
+                        value="stoff"
+                    />
                     <label for="stoff">Stoff</label>
                 </fieldset>
 
-                <label for="price">Preis in Euro</label><br />
-                <input
-                    type="number"
-                    name="price"
-                    id="price"
-                    placeholder="Preis in Euro"
-                />
+                <div class="form-group">
+                    <label for="price">Preis in Euro</label>
+                    <input
+                        type="number"
+                        name="price"
+                        id="price"
+                        placeholder="Preis in Euro"
+                    />
+                </div>
 
-                <label for="available">Verfügbar</label><br />
-                <input
-                    type="checkbox"
-                    name="available"
-                    id="available"
-                    placeholder="Verfügbarkeit"
-                />
+                <div class="form-group check">
+                    <input
+                        type="checkbox"
+                        name="available"
+                        id="available"
+                        placeholder="Verfügbarkeit"
+                    />
+                    <label for="available">Verfügbar</label>
+                </div>
                 <div class="image-container">
                     <div class="hero-image-container">
                         <h2>Foto 1 (Verpflichtend)</h2>
@@ -91,9 +145,28 @@
                 <button id="createProduct" type="submit">Erstellen!</button>
             </form>
 
-            <div class="test-img-container"></div>
+            <hr />
+
+            <form>
+                <div class = "form-group">
+                    <label for="codeId">Codename</label><br />
+                    <input type="text" id="codeId" placeholder="SOMMER20" />
+                </div>
+                <div class="form-group">
+                    <label for="codeValue">Code Wert</label><br />
+                    <input
+                        type="number"
+                        min="5"
+                        max="50"
+                        id="codeValue"
+                        placeholder="Wert in Prozent z.B. 20 für 20%"
+                    />
+                </div>
+                <button id="createCode" type="submit">Erstellen!</button>
+            </form>
         </main>
         <footer></footer>
         <script src="./frontend/scripts/newProduct.js"></script>
+        <script src="./frontend/scripts/code.js"></script>
     </body>
 </html>

@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            
-
             getKeywords()
             const formData = new FormData();
             formData.append("arttype", arttype?.value || "");
@@ -80,9 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-
 function getKeywords() {
     const keywordCheckboxes = document.querySelectorAll('input[name="keyword"]:checked');
     const keywords = Array.from(keywordCheckboxes).map(checkbox => checkbox.value);
     return keywords;
 }
+

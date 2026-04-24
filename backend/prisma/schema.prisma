@@ -25,3 +25,9 @@ model Orders {
   products        Json
   timestamp       DateTime
 }
+ 
+model Codes {
+  codeId    String   @id @db.Text
+  codeValue Float
+  expired   Boolean @default(true)
+}
