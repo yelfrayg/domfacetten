@@ -3,16 +3,6 @@
     animation-timeline: view();
 }
 
-/* @keyframes slideInRight {
-  0% {
-    transform: translateY(100%);
-  }
-
-  100% {
-    transform: translateY(0);
-  }
-} */
-
 @keyframes autoFadeIn {
   0% {
     opacity: 0.3;
@@ -59,3 +49,13 @@
     transform: translateX(0);
   }
 }
+
+.loader {
+  width: 3vh;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid;
+  border-color: #000 #0000;
+  animation: l1 1s infinite;
+}
+@keyframes l1 {to{transform: rotate(.5turn)}}

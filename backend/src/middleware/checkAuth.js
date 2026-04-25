@@ -1,34 +1,23 @@
 require('dotenv').config();
 
 const express = require('express')
+const { PrismaClient } = require("@prisma/client");
+const { PrismaPg } = require("@prisma/adapter-pg");
 
-async function checkDate(req, res, next) {
-    const deleteKey = req.headers['delete-key'];
-    if (deleteKey && deleteKey === process.env.DELETE_KEY) {
-        next()
-    } else {
-        return res.status(401).json({ message: 'Unauthorized: Invalid delete key' });
+const prisma = new PrismaClient({
+    adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+    log: ["info", "warn", "error"],
+});
+
+async function checkUserExists(req, res, next) {
+    try {
+        const { email, password } = req.body
+        const check = prisma
+    } catch (error) {
+        res.status(500).json({ message: 'Unerlaubter Zugriff' })
     }
 }
 
-const getPaypalAccessToken = async () => {
-    const auth = Buffer.from(
-        process.env.PAYPAL_CLIENT_ID + ':' + process.env.PAYPAL_CLIENT_SECRET
-    ).toString('base64')
-
-    const req = await fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
-        method: 'POST',
-        headers: {
-            Authorization: `Basic ${auth}`
-        },
-        body: 'grant_type=client_credentials'
-    })
-
-    const res = await req.json()
-    return res.access_token
-}
-
-module.exports = {
-    checkDate,
-    getPaypalAccessToken
-};
+// module.exports = {
+//     checkDate,
+// };

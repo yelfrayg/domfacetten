@@ -24,10 +24,22 @@ model Orders {
   customerDetails Json
   products        Json
   timestamp       DateTime
+  customerId      String
+  user            Users?   @relation(fields: [customerId], references: [userId])
 }
- 
+
 model Codes {
-  codeId    String   @id @db.Text
+  codeId    String  @id @db.Text
   codeValue Float
   expired   Boolean @default(true)
+}
+
+model Users {
+  userId     String   @id @default(cuid())
+  email      String   @unique
+  first_name String   @default("")
+  last_name  String   @default("")
+  password   String
+  address    Json     @default(dbgenerated("'{}'"))
+  orders     Orders[]
 }
