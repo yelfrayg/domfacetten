@@ -1,0 +1,172 @@
+main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    min-height: calc(100vh - 300px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Back Button */
+.back-button {
+    margin-bottom: 30px;
+}
+
+.btn-back {
+    display: inline-block;
+    background-color: #d3d3d3;
+    color: #333;
+    text-decoration: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #c0c0c0;
+}
+
+/* Form Container */
+.form-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    flex: 1;
+}
+
+/* Register Form (Links) */
+.register-form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.register-form-container form {
+    background-color: #e8e8e8;
+    border-radius: 15px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.register-form-container h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Login Form (Rechts) */
+.login-form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-form-container form {
+    background-color: #e8e8e8;
+    border-radius: 15px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.login-form-container h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Form Inputs */
+.register-form-container input,
+.login-form-container input {
+    background-color: #d3d3d3;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #555;
+    font-family: inherit;
+}
+
+.register-form-container input::placeholder,
+.login-form-container input::placeholder {
+    color: #888;
+}
+
+.register-form-container input:focus,
+.login-form-container input:focus {
+    outline: none;
+    background-color: #c8c8c8;
+}
+
+/* Buttons */
+.register-form-container button,
+.login-form-container button {
+    background-color: #d3d3d3;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+
+    div {
+        display: inline-block;
+        margin-left: 8px;
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.register-form-container button:hover,
+.login-form-container button:hover {
+    background-color: #c8c8c8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .register-form-container form,
+    .login-form-container form {
+        padding: 30px;
+    }
+
+    main {
+        padding: 20px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-form-container form,
+    .login-form-container form {
+        padding: 20px;
+    }
+
+    .register-form-container h2,
+    .login-form-container h2 {
+        font-size: 16px;
+    }
+
+    .register-form-container input,
+    .login-form-container input,
+    .register-form-container button,
+    .login-form-container button {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+}

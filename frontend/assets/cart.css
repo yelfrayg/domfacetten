@@ -1,0 +1,133 @@
+main {
+    padding-top: 10vh;
+    width: 70vw;
+    margin: 0 auto;
+}
+
+.back-button {
+    margin-bottom: 30px;
+}
+
+.btn-back {
+    display: inline-block;
+    background-color: #d3d3d3;
+    color: #333;
+    text-decoration: none;
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #c0c0c0;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+}
+
+.cart-container {
+    background-color: #e8e8e8;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #e8e8e8;
+}
+
+.cart-table thead {
+    background-color: #e8e8e8;
+}
+
+.cart-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.cart-table td {
+    padding: 15px;
+    border-bottom: 1px solid #d0d0d0;
+    background-color: #e8e8e8;
+    font-size: 16px;
+    color: #333;
+}
+
+.cart-table tbody tr:hover {
+    background-color: #ddd;
+}
+
+.delete-btn {
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #ff5252;
+}
+
+.cart-summary {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #d0d0d0;
+    text-align: right;
+}
+
+.total {
+    display: flex;
+    justify-content: flex-end;
+    gap: 100px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #666;
+}
+
+.total span:last-child {
+    color: #333;
+    min-width: 80px;
+    text-align: right;
+}
+
+.checkout-section {
+    display: flex;
+    justify-content: center;
+}
+
+.checkout-box {
+    width: 100%;
+    height: 80px;
+    background-color: #e8e8e8;
+    border-radius: 15px;
+}
+
+.delivery-summary {
+    margin-left: var(--s);
+    ul {
+        list-style-type: none;
+        padding-bottom: var(--m);
+
+        li {
+            margin: var(--m) 0 0 0;
+        }
+    }
+}

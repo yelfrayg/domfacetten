@@ -1,0 +1,176 @@
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0 auto;
+    width: 100%;
+    margin-bottom: 40px;
+    color: #333;
+    font-weight: 500;
+}
+
+.user-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.personal-info {
+    background-color: #e8e8e8;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.personal-info h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.personal-info form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.personal-info input {
+    background-color: #d3d3d3;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #555;
+    font-family: inherit;
+}
+
+.personal-info input::placeholder {
+    color: #888;
+    font-weight: 500;
+}
+
+.personal-info input:focus {
+    outline: none;
+    background-color: #c8c8c8;
+}
+
+.personal-info button {
+    background-color: #d3d3d3;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.personal-info button:hover {
+    background-color: #c8c8c8;
+}
+
+/* Account Info Section */
+.account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.account-info h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    background-color: #e8e8e8;
+    padding: 30px 30px 15px;
+    border-radius: 15px 15px 0 0;
+    margin-bottom: -20px;
+}
+
+.user-orders {
+    background-color: #e8e8e8;
+    border-radius: 0 0 15px 15px;
+    padding: 20px 30px 30px;
+    list-style: none;
+    margin: 0;
+}
+
+.user-order {
+    margin-bottom: 12px;
+}
+
+.user-order summary {
+    background-color: #d3d3d3;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.user-order summary:hover {
+    background-color: #c8c8c8;
+}
+
+.user-order details[open] summary {
+    background-color: #c8c8c8;
+}
+
+.user-order p {
+    padding: 12px 15px 0;
+    font-size: 13px;
+    color: #555;
+    margin: 0;
+}
+
+.account-info button {
+    background-color: #e8e8e8;
+    border: none;
+    padding: 20px 30px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+.account-info button:hover {
+    background-color: #d3d3d3;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .user-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 20px 15px;
+    }
+
+    .personal-info,
+    .user-orders {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .personal-info h2,
+    .account-info h2 {
+        font-size: 16px;
+    }
+}
