@@ -20,7 +20,7 @@ async function addToCart(req, res) {
             return res.status(400).json({ code: 400, message: "Ungültige Anfrage. Bitte stellen Sie sicher, dass userId, productId und quantity im Body enthalten sind." });
         }
         const result = await cartService.addToCart(req.body);
-        res.status(200).json({ message: result.message });
+        res.status(200).json({ code: result.code, message: result.message });
     } catch (error) {
         res.status(500).json({ code: 500, message: error.message });
     }
@@ -35,8 +35,18 @@ async function removeItem(req, res) {
     }
 }
 
+async function findItemInCart(req, res) {
+    try {
+        const item = await cartService.findCartItem(req.body)
+        res.status(200).json({ found: item.found, message: 'Funktion zum Suchen wurde ausgeführt.' })
+    } catch (error) {
+        res.status(500).json({ found: false, message: error.message })
+    }
+}
+
 module.exports = {
     getCartItems,
     addToCart,
-    removeItem
+    removeItem,
+    findItemInCart
 };

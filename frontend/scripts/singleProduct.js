@@ -1,6 +1,9 @@
 const url = new URL(window.location.href);
 const artnr = url.searchParams.get("id");
 const productContainer = document.querySelector(".highlight-product-container");
+const userId = localStorage.getItem("userId")
+
+
 
 if (!artnr) {
     window.location.href = "./index.html";
@@ -67,6 +70,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             }),
         );
 
+        await findItem(userId, artnr)
+
         const caroussel = document.querySelector(".img-caroussel");
         const arrowLeft = document.querySelector(".arrow-left");
         const arrowRight = document.querySelector(".arrow-right");
@@ -101,9 +106,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             }
         });
 
-        const cartButton = document.getElementById("cart-button");
+        let cartButton = document.getElementById("cart-button");
         console.log("Cart button:", cartButton);
-
 
         cartButton?.addEventListener("click", async (e) => {
             if (!localStorage.getItem("userId")) {
@@ -117,7 +121,15 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 quantity: Number(document.getElementById("amount").value) || 1,
             };
 
-            await addItem(data)
+            if (cartButton.dataset.isInCart === "true") {
+                await removeItem(data);
+                cartButton.textContent = 'In den Warenkorb legen';
+                cartButton.dataset.isInCart = "false";
+            } else {
+                await addItem(data);
+                cartButton.textContent = 'Artikel aus Warenkorb entfernen';
+                cartButton.dataset.isInCart = "true";
+            }
         });
     } catch (error) {
         console.log(error);
@@ -128,14 +140,23 @@ async function addItem(data) {
     const bag = document.querySelector(".bag");
     console.log("Adding to cart:", bag);
     if (bag) {
+        // Remove the wiggle class if it exists
         bag.classList.remove("wiggle");
+        
+        // Force a reflow to reset the animation
         void bag.offsetWidth;
-        bag.classList.add("wiggle");
+        
+        // Add a small delay to ensure the animation plays
+        setTimeout(() => {
+            bag.classList.add("wiggle");
+            console.log("Animation gestartet!");
+        }, 10);
 
         bag.addEventListener(
             "animationend",
             () => {
                 console.log("Animation beendet!");
+                bag.classList.remove("wiggle");
             },
             { once: true },
         );
@@ -156,7 +177,6 @@ async function addItem(data) {
             },
         );
         const res = await req.json();
-        if(res.message === 'Artikel bereits vorhanden.') await removeItem(data)
         console.log(res);
     } catch (error) {
         console.error("Error adding to cart:", error);
@@ -164,6 +184,32 @@ async function addItem(data) {
 }
 
 async function removeItem(data) {
+    let bag = document.querySelector(".bag");
+    console.log("Adding to cart:", bag);
+    if (bag) {
+        // Remove the throw class if it exists
+        bag.classList.remove("throw");
+        
+        // Force a reflow to reset the animation
+        void bag.offsetWidth;
+        
+        // Add a small delay to ensure the animation plays
+        setTimeout(() => {
+            bag.classList.add("throw");
+            console.log("Animation gestartet!");
+        }, 10);
+
+        bag.addEventListener(
+            "animationend",
+            () => {
+                console.log("Animation beendet!");
+                bag.classList.remove("throw");
+            },
+            { once: true },
+        );
+    } else {
+        console.error("Bag element not found!");
+    }
     try {
         const req = await fetch('http://localhost:3000/api/cartManagement/removeItem', {
             method: 'POST',
@@ -171,11 +217,58 @@ async function removeItem(data) {
                 "Content-Type": "application/json",
                 "Authorization": localStorage.getItem("userToken") || ""
             },
-            body: JSON.stringify({ data })
+            body: JSON.stringify(data)
         })
         const res = await req.json()
         console.log(res)
     } catch (error) {
         console.log(error)
+    }
+}
+
+async function findItem(userId, artnr) {
+    // Nur wenn User eingeloggt ist
+    if (!userId || !artnr) {
+        console.log('User nicht eingeloggt oder Produkt-ID fehlt.');
+        return;
+    }
+
+    try {
+        const data = {
+            userId: userId,
+            productId: parseInt(artnr)
+        }
+
+        const req = await fetch(
+            "http://localhost:3000/api/cartManagement/findItem",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": localStorage.getItem("userToken") || ""
+                },
+                body: JSON.stringify(data),
+            },
+        );
+
+        if (!req.ok) {
+            console.error("findItem request fehlgeschlagen:", req.status, req.statusText);
+            return;
+        }
+
+        const res = await req.json();
+        console.log("findItem response:", res);
+        console.log("Produkt gefunden im Warenkorb:", res.found);
+
+        let cartButton = document.getElementById("cart-button");
+        if (res.found === true) {
+            cartButton.textContent = 'Artikel aus Warenkorb entfernen';
+            cartButton.dataset.isInCart = "true";
+        } else {
+            cartButton.textContent = 'In den Warenkorb legen';
+            cartButton.dataset.isInCart = "false";
+        }
+    } catch (error) {
+        console.error('findItem Error:', error);
     }
 }

@@ -67,20 +67,48 @@
 }
 
 .wiggle {
-  animation: wiggle 1s;
+  display: inline-block;
+  animation: wiggle 0.5s ease-in-out;
+}
+
+.throw {
+  display: inline-block;
+  transform-origin: center;
+  animation: throw 1.5s ease-in-out;
 }
 
 @keyframes wiggle {
   0% {
     transform: translateY(0);
   }
-  25% {
-    transform: translateY(10px);
-  }
-  75% {
-    transform: translateY(-2px);
+  50% {
+    transform: translateY(5px);
   }
   100% {
     transform: translateY(0);
+  }
+}
+
+@keyframes throw {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  20% {
+    transform: translateY(0) rotate(180deg);
+  }
+  35% {
+    transform: translateY(-10px) rotate(180deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(180deg);
+  }
+  65% {
+    transform: translateY(-10px) rotate(180deg);
+  }
+  80% {
+    transform: translateY(0) rotate(180deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
   }
 }

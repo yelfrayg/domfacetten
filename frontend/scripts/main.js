@@ -1,5 +1,4 @@
 const firstName = localStorage.getItem('user-letter') || ''
-console.log(firstName + '   ' + firstName[0])
 
 document.addEventListener('DOMContentLoaded', _ => {
     if (firstName !== '') {

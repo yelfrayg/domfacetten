@@ -83,8 +83,40 @@ async function removeFromCart(data) {
     }
 }
 
+async function findCartItem(data) {
+    try {
+        const { userId, productId } = data
+        const count = await prisma.cart.count({
+            where: {
+                userId: userId,
+                productId: productId
+            }
+        })
+
+        let found 
+        if(count > 0) {
+            found = true
+        }
+        else {
+            found = false
+        }
+
+        return {
+            code: 200,
+            found: found
+        }
+    } catch (error) {
+        return {
+            code: 500,
+            found: false,
+            message: error.message
+        }
+    }
+}
+
 module.exports = {
     getCartItems,
     addToCart,
-    removeFromCart
+    removeFromCart,
+    findCartItem
 };
