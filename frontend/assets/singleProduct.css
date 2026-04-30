@@ -135,26 +135,6 @@
             font-size: var(--m);
         }
     }
-
-    #addToCartPopover:popover-open {
-        display: flex;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        flex-direction: column;
-        padding: var(--m);
-        color: black;
-        gap: var(--m);
-
-        &::backdrop {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        p {
-            font-size: var(--l);
-            line-height: 1.5;
-        }
-    }
 }
 
 @media (max-width: 768px) {

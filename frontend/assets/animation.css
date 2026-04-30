@@ -51,6 +51,7 @@
 }
 
 .loader {
+  display: inline-block;
   width: 3vh;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -59,3 +60,27 @@
   animation: l1 1s infinite;
 }
 @keyframes l1 {to{transform: rotate(.5turn)}}
+
+.invisible {
+  display: none !important;
+  animation: none !important;
+}
+
+.wiggle {
+  animation: wiggle 1s;
+}
+
+@keyframes wiggle {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(10px);
+  }
+  75% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

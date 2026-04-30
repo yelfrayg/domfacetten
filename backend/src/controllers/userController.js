@@ -8,7 +8,7 @@ async function createNewUser(req, res) {
         }
         return res
             .status(200)
-            .json({ message: newUser.message, userId: newUser.userId });
+            .json({ message: newUser.message, userId: newUser.userId, token: newUser.userToken });
     } catch (error) {
         console.error("Fehler beim Erstellen eines neuen Nutzers:", error);
         return res
@@ -54,7 +54,17 @@ async function loginUser(req, res) {
     try {
         const userData = req.body
         const findUser = await userService.login(userData)
-        res.status(findUser.code).json({ userId: findUser.userId })
+        res.status(findUser.code).json({ userId: findUser.userId, userToken: findUser.userToken })
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+async function fetchOrders(req, res) {
+    try {
+        const userId = req.params.id
+        const result = await userService.getOrders(userId)
+        res.status(result.code).json(result)
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
@@ -65,5 +75,6 @@ module.exports = {
     updateUserInfo,
     getUserData,
     deleteUser,
-    loginUser
+    loginUser,
+    fetchOrders
 };

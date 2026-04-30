@@ -2,6 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
 const path = require("path");
 const fs = require("fs/promises");
+const argon = require('argon2')
+const { generateToken } = require("../middleware/checkAuth.js");
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -11,17 +13,18 @@ const prisma = new PrismaClient({
 async function createUser(data) {
     try {
         const { email, password } = data;
+        const hashedPw = await argon.hash(password)
         const user = await prisma.users.create({
             data: {
                 email: email,
-                password: password,
+                password: hashedPw,
             },
         });
 
         return {
             code: 200,
             message: "Nutzer erfolgreich erstellt.",
-            userId: user.userId,
+            userId: user.userId
         };
     } catch (error) {
         console.log("Fehler beim Erstellen eines neuen Nutzers:", error.code);
@@ -41,6 +44,7 @@ async function createUser(data) {
 
 async function updateUser(data) {
     try {
+        data.password = await argon.hash(data.password)
         await prisma.users.update({
             where: {
                 userId: data.userId,
@@ -80,6 +84,21 @@ async function getUserData(userId) {
 
 async function deleteAccount(userId) {
     try {
+        // Zuerst Cart-Einträge löschen
+        await prisma.cart.deleteMany({
+            where: {
+                userId: userId
+            }
+        })
+
+        // Dann Orders löschen
+        await prisma.orders.deleteMany({
+            where: {
+                customerId: userId
+            }
+        })
+
+        // Zuletzt den User löschen
         await prisma.users.delete({
             where: {
                 userId: userId
@@ -100,16 +119,54 @@ async function deleteAccount(userId) {
 
 async function login(data) {
     try {
-        const findUserId = await prisma.users.findFirst({
+        const { email, password } = data;
+        
+        // Nutzer nach Email suchen
+        const findUser = await prisma.users.findFirst({
             where: {
-                email: data.email,
-                password: data.password
+                email: email
             }
         })
         
+        if (!findUser) {
+            return {
+                code: 401,
+                message: 'E-Mail oder Passwort falsch'
+            }
+        }
+        
+        const passwordMatch = await argon.verify(findUser.password, password)
+        
+        if (!passwordMatch) {
+            return {
+                code: 401,
+                message: 'E-Mail oder Passwort falsch'
+            }
+        }
+        
         return {
             code: 200,
-            userId: findUserId.userId
+            userId: findUser.userId,
+            userToken: generateToken(findUser.userId, findUser.email)
+        }
+    } catch (error) {
+        return {
+            code: 500,
+            message: error.message,
+        }
+    }
+}
+
+async function getOrders(userId) {
+    try {
+        const fetchOrders = await prisma.orders.findMany({
+            where: {
+                customerId: userId
+            }
+        })
+        return {
+            code: 200,
+            orders: fetchOrders
         }
     } catch (error) {
         return {
@@ -119,4 +176,4 @@ async function login(data) {
     }
 }
 
-module.exports = { createUser, updateUser, getUserData, deleteAccount, login };
+module.exports = { createUser, updateUser, getUserData, deleteAccount, login, getOrders };

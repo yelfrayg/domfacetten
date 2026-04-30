@@ -17,6 +17,9 @@ app.use('/api/purchases', purchaseRoutes);
 const userRoutes = require('./src/routes/userRoutes')
 app.use('/api/userManagement', userRoutes)
 
+const cartRoutes = require('./src/routes/cartRoutes')
+app.use('/api/cartManagement', cartRoutes)
+
 app.use(
   '/uploads/products',
   express.static(path.resolve(__dirname, 'uploads', 'products')),

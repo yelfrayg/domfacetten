@@ -1,23 +1,25 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express')
-const { PrismaClient } = require("@prisma/client");
-const { PrismaPg } = require("@prisma/adapter-pg");
+const jwt = require("jsonwebtoken");
 
-const prisma = new PrismaClient({
-    adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
-    log: ["info", "warn", "error"],
-});
+function generateToken(userId, email) {
+    return jwt.sign({ userId, email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+}
 
-async function checkUserExists(req, res, next) {
+function verifyToken(req, res, next) {
+    const token = req.header("Authorization");
+    if (!token) return res.status(401).json({ error: "Bitte anmelden, um auf diese Seite zuzugreifen." });
     try {
-        const { email, password } = req.body
-        const check = prisma
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.exp * 1000 < Date.now()) {
+            return res.status(401).json({ expired: true, message: 'Sitzung abgelaufen.' })
+        }
+        req.userId = decoded.userId;
+        next();
     } catch (error) {
-        res.status(500).json({ message: 'Unerlaubter Zugriff' })
+        // Allgemeiner Fehler
+        res.status(401).json({ error: "Invalid token", message: 'Erst anmelden.' });
     }
 }
 
-// module.exports = {
-//     checkDate,
-// };
+module.exports = { generateToken, verifyToken };

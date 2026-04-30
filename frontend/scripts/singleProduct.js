@@ -37,14 +37,13 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                     ${product.image3 ? `<li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.image3)}" alt=""></li>` : ""}
                 </ul>
                 <div class="arrow-container">
-                    ${
-                        product.image2
-                            ? `
+                    ${product.image2
+                ? `
                         <button class="arrow-left">〈</button>
                         <button class="arrow-right">⟩</button>
                     `
-                            : ""
-                    }
+                : ""
+            }
                 </div>
             </div>
 
@@ -54,13 +53,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 <p class="product-price">${product.price},00 €</p>
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
                 <label class ="text">Menge: <input id="amount" type="number" min="1" max = "5" value="1" step="1"></label>
-                <button class="addToCart" popovertarget="addToCartPopover">In den Warenkorb legen</button>
+                <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}">In den Warenkorb legen</button>
                 <button class ="buyNow" id="buyNow"><div id="paypal"></div></button>
-            </div>
-
-            <div popover id="addToCartPopover">
-                <h2>Kurze Info</h2>
-                <p>Aktuell ist die Warenkorb-Funktion noch in Bearbeitung. Sie wird aber in Kürze verfügbar sein :)</p>
             </div>
         `;
 
@@ -106,7 +100,82 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 });
             }
         });
+
+        const cartButton = document.getElementById("cart-button");
+        console.log("Cart button:", cartButton);
+
+
+        cartButton?.addEventListener("click", async (e) => {
+            if (!localStorage.getItem("userId")) {
+                return;
+            }
+            const userId = localStorage.getItem("userId");
+
+            let data = {
+                productId: parseInt(artnr),
+                userId: userId,
+                quantity: Number(document.getElementById("amount").value) || 1,
+            };
+
+            await addItem(data)
+        });
     } catch (error) {
         console.log(error);
     }
 });
+
+async function addItem(data) {
+    const bag = document.querySelector(".bag");
+    console.log("Adding to cart:", bag);
+    if (bag) {
+        bag.classList.remove("wiggle");
+        void bag.offsetWidth;
+        bag.classList.add("wiggle");
+
+        bag.addEventListener(
+            "animationend",
+            () => {
+                console.log("Animation beendet!");
+            },
+            { once: true },
+        );
+    } else {
+        console.error("Bag element not found!");
+    }
+
+    try {
+        const req = await fetch(
+            "http://localhost:3000/api/cartManagement/addCartItems",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": localStorage.getItem("userToken") || ""
+                },
+                body: JSON.stringify(data),
+            },
+        );
+        const res = await req.json();
+        if(res.message === 'Artikel bereits vorhanden.') await removeItem(data)
+        console.log(res);
+    } catch (error) {
+        console.error("Error adding to cart:", error);
+    }
+}
+
+async function removeItem(data) {
+    try {
+        const req = await fetch('http://localhost:3000/api/cartManagement/removeItem', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("userToken") || ""
+            },
+            body: JSON.stringify({ data })
+        })
+        const res = await req.json()
+        console.log(res)
+    } catch (error) {
+        console.log(error)
+    }
+}

@@ -5,6 +5,7 @@ main {
 }
 
 h1 {
+    padding-top: 12vh;
     font-size: 24px;
     margin: 0 auto;
     width: 100%;
@@ -46,6 +47,7 @@ h1 {
     font-size: 14px;
     color: #555;
     font-family: inherit;
+    min-width: 100%;
 }
 
 .personal-info input::placeholder {
@@ -146,6 +148,43 @@ h1 {
 
 .account-info button:hover {
     background-color: #d3d3d3;
+}
+
+.password {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.password input {
+    width: 100%;
+    padding-right: 45px;
+}
+
+#show-password {
+    position: absolute;
+    right: 12px;
+    top: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+#show-password svg {
+    width: 24px;
+    height: 24px;
+}
+
+#show-password:hover {
+    opacity: 0.5;
 }
 
 /* Responsive Design */

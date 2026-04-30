@@ -1,35 +1,8 @@
-main {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 30px 20px;
-    min-height: calc(100vh - 300px);
-    display: flex;
-    flex-direction: column;
-}
-
-/* Back Button */
-.back-button {
-    margin-bottom: 30px;
-}
-
-.btn-back {
-    display: inline-block;
-    background-color: #d3d3d3;
-    color: #333;
-    text-decoration: none;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-}
-
-.btn-back:hover {
-    background-color: #c0c0c0;
-}
-
 /* Form Container */
 .form-container {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 15vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;

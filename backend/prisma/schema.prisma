@@ -17,15 +17,15 @@ model Product {
   heroImage   String
   image2      String?
   image3      String?
+  cart        Cart[]
 }
 
 model Orders {
-  orderId         String   @id @db.Text
-  customerDetails Json
-  products        Json
-  timestamp       DateTime
-  customerId      String
-  user            Users?   @relation(fields: [customerId], references: [userId])
+  orderId    String   @id @db.Text
+  products   Json
+  timestamp  DateTime
+  customerId String
+  user       Users?   @relation(fields: [customerId], references: [userId], onDelete: Cascade)
 }
 
 model Codes {
@@ -41,5 +41,17 @@ model Users {
   last_name  String   @default("")
   password   String
   address    Json     @default(dbgenerated("'{}'"))
-  orders     Orders[]
+  orders     Orders[] // [] = 1:n relation
+  cart       Cart[]
+}
+
+model Cart {
+  cartId    String  @id @default(cuid())
+  userId    String
+  user      Users   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  productId Int
+  product   Product @relation(fields: [productId], references: [artnr])
+  quantity  Int     @default(1)
+
+  @@unique([userId, productId])
 }
