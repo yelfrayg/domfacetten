@@ -126,4 +126,37 @@ async function sendMessage(req, res) {
     }
 }
 
-module.exports = { createPurchase, savePurchase, sendMessage };
+async function createCartPurchase(req, res) {
+    try {
+        const { data } = req.body;
+        const userId = data ? data.userId : req.body.userId;
+        const paypalOrderObject = await purchaseService.createCartOrder(userId);
+        
+        if (!paypalOrderObject) {
+            return res.status(500).json({ error: "Konnte PayPal Order nicht berechnen" });
+        }
+
+        const request = new paypal.orders.OrdersCreateRequest();
+        request.prefer("return=representation");
+        request.requestBody(paypalOrderObject);
+        
+        const order = await paypalClient.execute(request);
+        res.status(200).json({ id: order.result.id });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Es gab einen Fehler beim Erstellen des Kaufs.' })
+    }
+}
+
+async function completeCartPurchase(req, res) {
+    try {
+        const { userId, paypalOrderId } = req.body
+        const orderDB = await purchaseService.completeCartOrder(userId, paypalOrderId)
+        return res.status(200).json({ message: 'Purchase erfolgreich abgeschlossen', orderDB: orderDB })
+    } catch (error) {
+        console.error("Fehler in completeCartPurchase:", error);
+        res.status(500).json({ message: 'Es gab einen Fehler beim Abschließen des Kaufs.' })
+    }
+}
+
+module.exports = { createPurchase, savePurchase, sendMessage, createCartPurchase, completeCartPurchase };

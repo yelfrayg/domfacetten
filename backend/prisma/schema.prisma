@@ -21,9 +21,9 @@ model Product {
 }
 
 model Orders {
-  orderId    String   @id @db.Text
+  orderId    String   @id @default(cuid())
   products   Json
-  timestamp  DateTime
+  timestamp  DateTime @default(now())
   customerId String
   user       Users?   @relation(fields: [customerId], references: [userId], onDelete: Cascade)
 }

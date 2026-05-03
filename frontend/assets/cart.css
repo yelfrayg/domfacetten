@@ -96,7 +96,8 @@ h1 {
 .total {
     display: flex;
     justify-content: flex-end;
-    gap: 100px;
+    gap: 80px;
+    padding-right: 80px;
     font-size: 18px;
     font-weight: 600;
     color: #666;
