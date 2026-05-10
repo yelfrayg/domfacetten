@@ -22,8 +22,13 @@ document.addEventListener('DOMContentLoaded', async _ => {
             return
         }
         console.log(resCartItems.cartItems)
+        if(resCartItems.cartItems.length == 0) {
+            cartItemsContainer.innerHTML = ''
+            paypalContainer.style.display = 'none'
+        }
+
         let price = 0
-        totalPrice.textContent = price + ',00 $'
+        totalPrice.textContent = price + ',00 €'
         resCartItems.cartItems.forEach(element => {
 
             const cartEntry = document.createElement('tr')
@@ -37,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
             `
             cartItemsContainer.appendChild(cartEntry)
             price += parseInt(element.product.price)
-            totalPrice.textContent = price + ',00 $'
+            totalPrice.textContent = price + ',00 €'
         });
 
 

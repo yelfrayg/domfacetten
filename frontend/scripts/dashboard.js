@@ -11,6 +11,8 @@ let cityInput = document.getElementById("stadt-plz");
 let passwordInput = document.getElementById("new-password");
 let updateForm = document.getElementById("updateUser");
 const deleteBtn = document.getElementById("deleteAccount");
+const logoutBtn = document.getElementById("logout");
+const updateButton = document.getElementById("updateButton");
 
 // Selektiere Bestelllistetabelle
 const ordersTableBody = document.querySelector(".user-orders");
@@ -67,6 +69,13 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         localStorage.removeItem("userId");
         window.location = "/userAuth.html"
     });
+
+    logoutBtn.addEventListener("click", async (_) => {
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("user-letter");
+        window.location = "/userAuth.html";
+    })
 });
 
 async function getUserInfo(userId) {
@@ -112,6 +121,14 @@ async function updateUserInfo() {
         const res = await req.json();
         if (req.status === 200) {
             console.log(res);
+            updateButton.textContent = "Daten aktualisiert!";
+            updateButton.disabled = true;
+            updateButton.classList.add("success");
+            setTimeout(() => {
+                updateButton.textContent = "Daten aktualisieren";
+                updateButton.disabled = false;
+                updateButton.classList.remove("success");
+            }, 2000);
         }
     } catch (error) {
         console.log(error);
@@ -150,11 +167,12 @@ async function getOrders(userId) {
             const listItem = document.createElement("li");
             listItem.classList.add("user-order");
             listItem.innerHTML = `
-                            <details>
+                            <details class = "order-details">
                                 <summary>${new Date(order.timestamp).toLocaleDateString()}</summary>
                                 <strong>Bestellnummer: ${order.orderId}</strong>
-                                ${order.products.map((p) => `<p>${p.name}</p>`).join("")}
-                                <p>Preis: ${order.products.map((p) => p.price * p.quantity)}€</p>
+                                ${order.products.map((p) => `<p>${p.product.name}</p>`).join("")}
+                                <p>Preis: ${order.products.map((p) => p.product.price * p.quantity)}€</p>
+                                <button>Rechnung herunterladen</button>
                             </details>
             `;
             ordersTableBody.appendChild(listItem);

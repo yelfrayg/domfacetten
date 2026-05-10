@@ -3,6 +3,8 @@ const { PrismaPg } = require("@prisma/adapter-pg");
 const path = require("path");
 const fs = require("fs/promises");
 const argon = require('argon2')
+const bcrypt = require('bcrypt')
+const SALT_ROUNDS = 10
 const { generateToken } = require("../middleware/checkAuth.js");
 
 const prisma = new PrismaClient({
@@ -13,11 +15,11 @@ const prisma = new PrismaClient({
 async function createUser(data) {
     try {
         const { email, password } = data;
-        const hashedPw = await argon.hash(password)
+        const securedPw = await bcrypt.hash(password, SALT_ROUNDS)
         const user = await prisma.users.create({
             data: {
                 email: email,
-                password: hashedPw,
+                password: securedPw,
             },
         });
 
@@ -44,7 +46,11 @@ async function createUser(data) {
 
 async function updateUser(data) {
     try {
-        data.password = await argon.hash(data.password)
+        if(data.password && data.password.trim().length > 0) {
+            data.password = await bcrypt.hash(data.password, SALT_ROUNDS)
+        } else {
+            delete data.password;
+        }
         await prisma.users.update({
             where: {
                 userId: data.userId,
@@ -70,6 +76,11 @@ async function getUserData(userId) {
                 userId: userId,
             },
         });
+        
+        if (data) {
+            delete data.password;
+        }
+
         return {
             code: 200,
             userInfo: data,
@@ -135,7 +146,7 @@ async function login(data) {
             }
         }
         
-        const passwordMatch = await argon.verify(findUser.password, password)
+        const passwordMatch = await bcrypt.compare(password, findUser.password)
         
         if (!passwordMatch) {
             return {

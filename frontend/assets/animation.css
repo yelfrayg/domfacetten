@@ -112,3 +112,10 @@
     transform: translateY(0) rotate(0deg);
   }
 }
+
+.success {
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border: none !important;
+    cursor: default !important;
+}
