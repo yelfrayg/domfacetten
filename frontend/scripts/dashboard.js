@@ -169,10 +169,21 @@ async function getOrders(userId) {
             listItem.innerHTML = `
                             <details class = "order-details">
                                 <summary>${new Date(order.timestamp).toLocaleDateString()}</summary>
-                                <strong>Bestellnummer: ${order.orderId}</strong>
-                                ${order.products.map((p) => `<p>${p.product.name}</p>`).join("")}
-                                <p>Preis: ${order.products.map((p) => p.product.price * p.quantity)}€</p>
-                                <button>Rechnung herunterladen</button>
+                                <strong class = "order-id">Best.-Nr.: ${order.orderId}</strong>
+                                <table class="tg">
+                                    <thead>
+                                        <tr>
+                                            <th class="table-head-img">Vorschaubild</th>
+                                            <th class="table-head-artnr">Artnr.</th>
+                                            <th class="table-head-quantity">Menge</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${order.products.map((p) => `<tr><td class="table-img-container"><img src="http://localhost:3000/uploads/products/${p.product.heroImage}" alt="${p.product.name}"/></td><td class="tg-0lax">A${p.product.artnr}</td><td class="tg-0lax">${p.quantity}</td></tr>`).join("")}
+                                    </tbody>
+                                </table>
+                                <p class ="order-total">Gesamtpreis: <span class="order-total-price">${order.products.map((p) => p.product.price * p.quantity).reduce((a, b) => a + b, 0)}€</span></p>
+                                <button id="bill-button" data-order-id="${order.orderId}">Rechnung herunterladen</button>
                             </details>
             `;
             ordersTableBody.appendChild(listItem);
