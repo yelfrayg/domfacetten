@@ -11,20 +11,20 @@ window.addEventListener("productLoaded", (e) => {
                     alert("Bitte geben Sie eine Menge zwischen 1 und 5 ein.");
                     return;
                 }
+                let data = {
+                    arttype: arttype,
+                    artnr: artnr,
+                    amount: amount,
+                };
                 return fetch(
-                    "http://localhost:3000/api/purchases/newPurchase",
+                    "http://localhost:3000/api/purchases/createSinglePurchase",
                     {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
+                            "Authorization": `${localStorage.getItem("userToken")}`
                         },
-                        body: JSON.stringify({
-                            data: {
-                                arttype: arttype,
-                                artnr: artnr,
-                                amount: amount,
-                            },
-                        }),
+                        body: JSON.stringify({ data }),
                     },
                 )
                     .then(function (res) {
@@ -44,9 +44,14 @@ window.addEventListener("productLoaded", (e) => {
                             "Fehler beim Erstellen der Bestellung:",
                             error,
                         );
-                        alert(
-                            "Hmm. Anscheinend ist der Server gerade am Schlafen. Bitte versuchen Sie es später erneut :)",
-                        );
+                        if (error.error == "Invalid token" || error.error == "Bitte anmelden, um auf diese Seite zuzugreifen.") {
+                            Promise.reject(error);
+                            window.location.href = "/userAuth.html?reason=unauthorizedATB";
+                        } else {
+                            alert(
+                                "Hmm. Anscheinend ist der Server gerade am Schlafen. Bitte versuchen Sie es später erneut :)",
+                            );
+                        }
                     });
             },
             onApprove: function (data, actions) {
@@ -64,21 +69,25 @@ window.addEventListener("productLoaded", (e) => {
 
                     let customerDetails = details.payer
                     customerDetails.address = details.purchase_units[0].shipping.address;
-                    
+
                     let orderDetails = {
-                        orderId: details.id,
+                        paypalOrderId: details.id,
                         customerDetails: customerDetails,
                         products: { orderedProducts },
+                        arttype: arttype,
+                        artnr: artnr,
+                        amount: amount
                     };
                     console.log(details);
 
                     try {
                         const req = await fetch(
-                            "http://localhost:3000/api/purchases/savePurchase",
+                            "http://localhost:3000/api/purchases/completeSinglePurchase",
                             {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
+                                    "Authorization": `${localStorage.getItem('userToken')}`
                                 },
                                 body: JSON.stringify(orderDetails),
                             },

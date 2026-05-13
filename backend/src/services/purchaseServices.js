@@ -6,54 +6,90 @@ const prisma = new PrismaClient({
     log: ["info", "warn", "error"],
 });
 
-const createOrder = async (productObject, amount) => {
+const createSingleOrder = async (data) => {
     try {
-        const itemTotal = productObject.price * amount;
-        let shippingStr = "0.00";
-        let totalAmount = itemTotal;
-        if (totalAmount < 39) {
-            totalAmount += 1.55; // Ab 39€ ist Versandkostenfrei, darunter 1.55€ Versandkosten
-            shippingStr = "1.55";
+        const { userId, product, amount } = data
+        
+        if (!userId || !product || !amount) {
+            console.log('Ein wichtiges Detail fehlt!');
+            return null;
         }
-        console.log('Creating PayPal order with Product: ' + productObject.name + ' and Amount: ' + totalAmount);
-        return {
-            intent: 'SERVER_ORDER',
+
+        let itemTotal = product.price * amount
+        let shippingFee = 0
+        let totalPrice = itemTotal
+
+        if (totalPrice < 39) {
+            shippingFee += 1.55
+            totalPrice += 1.55
+        }
+
+        // PAYPAL INTENT
+        const paypalOrder = {
+            intent: 'CAPTURE',
             purchase_units: [{
-                reference_id: productObject.arttype + productObject.artnr,
+                reference_id: `CART-${userId}-${Date.now()}`,
                 amount: {
                     currency_code: "EUR",
-                    amount: amount,
-                    singleValue: productObject.price.toFixed(2),
+                    value: totalPrice.toFixed(2),
+                    totalValue: totalPrice.toFixed(2),
                     itemTotalValue: itemTotal.toFixed(2),
-                    shippingValue: shippingStr,
-                    totalValue: totalAmount.toFixed(2)
+                    shippingValue: shippingFee.toFixed(2),
+                    singleValue: product.price.toFixed(2),
+                    breakdown: {
+                        item_total: {
+                            currency_code: "EUR",
+                            value: itemTotal.toFixed(2)
+                        },
+                        shipping: {
+                            currency_code: "EUR",
+                            value: shippingFee.toFixed(2)
+                        }
+                    }
                 }
             }]
         }
+
+        return paypalOrder
     } catch (error) {
-        console.log('Paypal Fehler:', error);
+        console.error('Fehler beim Erstellen der Cart Order:', error);
+        return null;
     }
 };
 
-const saveOrder = async (data) => {
+const saveSingleOrder = async (userId, productObj, paypalOrderId) => {
     try {
-        const { orderId, customerId, products } = data
-        const now = new Date()
-        return await prisma.orders.create({
-            data: {
-                orderId: orderId,
-                customerId: customerId,
-                products: products,
-                timestamp: now
+        return await prisma.$transaction(async tx => {
+            const { arttype, artnr, amount } = productObj
+
+            const product = await tx.product.findFirst({
+                where: {
+                    arttype: arttype,
+                    artnr: artnr
+                }
+            })
+
+            let productDataForOrders = {
+                userId: userId,
+                product: product,
+                quantity: amount
             }
+
+            const orderDB = await tx.orders.create({
+                data: {
+                    orderId: paypalOrderId, 
+                    products: productDataForOrders, 
+                    customerId: userId
+                }
+            })
+
+            return orderDB
         })
     } catch (error) {
-        console.error('Fehler beim Speichern der Bestellung:', error.message);
-        console.error('Details:', error);
+        console.error('Transaktionsfehler beim Abschließen der Bestellung:', error);
         return {
             code: 500,
-            message: 'Fehler beim Speichern der Bestellung.',
-            error: error.message
+            message: 'Bestellung konnte nicht abgeschlossen werden.'
         }
     }
 }
@@ -159,8 +195,8 @@ const completeCartOrder = async (userId, paypalOrderId) => {
 }
 
 module.exports = {
-    createOrder,
-    saveOrder,
+    createSingleOrder,
+    saveSingleOrder,
     createCartOrder,
     completeCartOrder
 };

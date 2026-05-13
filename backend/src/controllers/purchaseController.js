@@ -18,22 +18,25 @@ const paypalEnvironment =
 
 const paypalClient = new paypal.core.PayPalHttpClient(paypalEnvironment);
 
-async function createPurchase(req, res) {
+async function createSinglePurchase(req, res) {
     try {
-        const { data } = req.body;
+        const data = req.body.data || req.body;
         console.log("Empfangene Bestelldaten:", data);
-        const product = await productService.getSingleProduct(
-            data.arttype,
-            data.artnr,
-        );
+        const product = await productService.getSingleProduct(data.arttype, data.artnr);
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
         }
+        if(!req.userId) {
+            return res.status(403).json({ error: "Nutzer muss erst angemeldet sein." })
+        }
 
-        const serverOrder = await purchaseService.createOrder(
-            product,
-            data.amount,
-        );
+        let orderData = {
+            userId: req.userId,
+            product: product,
+            amount: data.amount
+        }
+
+        const serverOrder = await purchaseService.createSingleOrder(orderData);
 
         if (!serverOrder) {
             return res
@@ -92,6 +95,25 @@ async function createPurchase(req, res) {
     }
 }
 
+async function completeSinglePurchase(req, res) {
+    try {
+        const { arttype, artnr, amount, paypalOrderId } = req.body
+        const userId = req.userId
+
+        let productObject = {
+            arttype: arttype,
+            artnr: artnr,
+            amount: amount
+        }
+
+        const orderDB = await purchaseService.saveSingleOrder(userId, productObject, paypalOrderId)
+        return res.status(200).json({ message: 'Einzelkauf erfolgreich abgeschlossen', orderDB: orderDB })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Einzelkauf fehlgeschlagen.', error: error.message })
+    }
+}
+
 async function savePurchase(req, res) {
     try {
         const { orderId, customerDetails, products } = req.body
@@ -100,7 +122,7 @@ async function savePurchase(req, res) {
             customerDetails,
             products
         }
-        const result = await purchaseService.saveOrder(data)
+        const result = await purchaseService.saveSingleOrder(data)
 
         if(result.code === 500) {
             return res.status(500).json({ error: result.error || result.message })
@@ -159,4 +181,4 @@ async function completeCartPurchase(req, res) {
     }
 }
 
-module.exports = { createPurchase, savePurchase, sendMessage, createCartPurchase, completeCartPurchase };
+module.exports = { createSinglePurchase, completeSinglePurchase, savePurchase, sendMessage, createCartPurchase, completeCartPurchase };

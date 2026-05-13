@@ -1,12 +1,12 @@
 {
-  "name": "testejs",
+  "name": "domfacetten",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "devStart": "nodemon server.js"
   },
-  "author": "",
+  "author": "Yassin El Fraygui",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
