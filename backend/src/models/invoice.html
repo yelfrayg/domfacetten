@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rechnung</title>
+</head>
+<body>
+    <h1>Rechnung</h1>
+    <p>Rechnungsnummer: {{ order_id }}</p>
+    <p>Datum: {{ datum }}</p>
+    <p>Kunde: {{ customer_name }}</p>
+    <p>Adresse: {{ customer_adress }}</p>
+
+    <h2>Positionen</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Artnr</th>
+                <th>Menge</th>
+                <th>Einzelpreis</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ item_id }}</td>
+                <td>{{ quantity }}</td>
+                <td>{{ item_price }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Gesamtbetrag: {{ grand_total }}, 00€</h3>
+</body>
+</html>
