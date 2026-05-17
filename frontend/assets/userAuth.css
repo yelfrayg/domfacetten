@@ -9,13 +9,13 @@ main {
 .form-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     background-color: white;
     border: 1px solid black;
 
     .register-form-container,
     .login-form-container {
-        align-items: center;
+        align-items: flex-start;
         background-color: #fff;
         padding: var(--3xl);
 

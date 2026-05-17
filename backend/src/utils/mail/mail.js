@@ -1,10 +1,18 @@
 const nodemailer = require("nodemailer");
 const path = require("path");
+const userService = require('../../services/userService')
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
-async function sendMail(data) {
+const { PrismaClient } = require("@prisma/client");
+const { PrismaPg } = require("@prisma/adapter-pg");
+
+const prisma = new PrismaClient({
+    adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+    log: ["info", "warn", "error"],
+});
+
+async function sendMail(userId, orderId) {
     try {
-        const { customerFirstname, customerMail } = data;
         console.log(process.env.MAIL_PASS);
         console.log(process.env.MAIL_USER);
         const transporter = nodemailer.createTransport({
@@ -17,21 +25,41 @@ async function sendMail(data) {
             },
         });
 
+        const user = await prisma.users.findFirst({
+            where: {
+                userId: userId
+            }
+        })
+
+        const userMail = await user.email
+
         const info = await transporter.sendMail({
             from: '"Domfacetten-Team" <domfacetten@web.de>',
-            to: "yassin-4@outlook.de", // list of recipients
-            subject: "Rechnung", // subject line
-            // text: "Hello world?", // plain text body
+            to: `${userMail}`,
+            subject: "Rechnung", 
+            attachments: [
+                {   
+                    filename: `domfacetten-${orderId}.pdf`,
+                    path: `./uploads/invoices/domfacetten-${orderId}.pdf`
+                }
+            ],
             html: `
                 <h2>Vielen Dank für Ihren Einkauf bei Domfacetten!</h2>
-                <p>Anbei senden wir Ihnen eine Rechnung über Ihren Einkauf.</p>
-                <strong>Gekauft hat ${customerFirstname} mit E-Mail ${customerMail}</strong>
+                <strong>Hallo ${user.first_name},</strong>
+                <p>Anbei senden wir Dir eine Rechnung über deinen Einkauf.</p>
             `,
         });
 
-        console.log("E-Mail gesendet: ", info.messageId);
+        return {
+            code: 200,
+            message: 'Mail erfolgreich gesendet.'
+        }
     } catch (error) {
-        console.error(error.message);
+        
+        return {
+            code: 500,
+            message: error.message
+        }
     }
 }
 

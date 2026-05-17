@@ -9,6 +9,8 @@ router.post('/completeSinglePurchase', verifyToken, purchaseController.completeS
 router.post('/createCartPurchase', verifyToken, purchaseController.createCartPurchase);
 router.post('/completeCartPurchase', verifyToken, purchaseController.completeCartPurchase);
 
+router.get('/getInvoice/:orderId', purchaseController.getInvoice)
+
 
 
 module.exports = router;

@@ -214,7 +214,7 @@ async function removeItem(data) {
     }
     try {
         const req = await fetch('http://localhost:3000/api/cartManagement/removeItem', {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": localStorage.getItem("userToken") || ""

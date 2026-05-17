@@ -164,30 +164,68 @@ async function getOrders(userId) {
         console.log("Bestellungen gefunden: ", res.orders);
 
         res.orders.forEach((order) => {
+            const orderProducts = Array.isArray(order.products) ? order.products : [order.products];
             const listItem = document.createElement("li");
             listItem.classList.add("user-order");
             listItem.innerHTML = `
-                            <details class = "order-details">
-                                <summary>${new Date(order.timestamp).toLocaleDateString()}</summary>
-                                <strong class = "order-id">Best.-Nr.: ${order.orderId}</strong>
-                                <table class="tg">
-                                    <thead>
-                                        <tr>
-                                            <th class="table-head-img">Vorschaubild</th>
-                                            <th class="table-head-artnr">Artnr.</th>
-                                            <th class="table-head-quantity">Menge</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${order.products.map((p) => `<tr><td class="table-img-container"><img src="http://localhost:3000/uploads/products/${p.product.heroImage}" alt="${p.product.name}"/></td><td class="tg-0lax">A${p.product.artnr}</td><td class="tg-0lax">${p.quantity}</td></tr>`).join("")}
-                                    </tbody>
-                                </table>
-                                <p class ="order-total">Gesamtpreis: <span class="order-total-price">${order.products.map((p) => p.product.price * p.quantity).reduce((a, b) => a + b, 0)}€</span></p>
-                                <button id="bill-button" data-order-id="${order.orderId}">Rechnung herunterladen</button>
-                            </details>
-            `;
+                        <details class = "order-details">
+                            <summary>${new Date(order.timestamp).toLocaleDateString()}</summary>
+                            <strong class = "order-id">Best.-Nr.: ${order.orderId}</strong>
+                            <table class="tg">
+                                <thead>
+                                    <tr>
+                                        <th class="table-head-img">Vorschaubild</th>
+                                        <th class="table-head-artnr">Artnr.</th>
+                                        <th class="table-head-quantity">Menge</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${orderProducts.map((p) => `<tr><td class="table-img-container"><img src="http://localhost:3000/uploads/products/${p.product.heroImage}" alt="${p.product.name}"/></td><td class="tg-0lax">A${p.product.artnr}</td><td class="tg-0lax">${p.quantity}</td></tr>`).join("")}
+                                </tbody>
+                            </table>
+                            <p class ="order-total">Gesamtpreis: <span class="order-total-price">${orderProducts.map((p) => p.product.price * p.quantity).reduce((a, b) => a + b, 0)}€</span></p>
+                            <button id="bill-button" data-order-id="${order.orderId}">Rechnung herunterladen</button>
+                        </details>
+        `;
             ordersTableBody.appendChild(listItem);
         });
+
+        try {
+            const billButtons = document.querySelectorAll("#bill-button");
+            billButtons.forEach((button) => {
+                button.addEventListener("click", async (e) => {
+                    const orderId = e.target.getAttribute("data-order-id");
+
+                    const req = await fetch(`http://localhost:3000/api/purchases/getInvoice/${orderId}`)
+                    
+                    // Da der Server eine Binärdatei (.pdf) zurückgibt, dürfen wir nicht req.json() aufrufen
+                    if (!req.ok) {
+                        const errorMsg = await req.json();
+                        alert("Fehler beim Herunterladen der Rechnung: " + errorMsg.message);
+                        return;
+                    }
+
+                    // Die Antwort als Blob (Binärdaten) verarbeiten
+                    const blob = await req.blob();
+                    
+                    // Einen temporären Download-Link erstellen
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = `domfacetten-${orderId}.pdf`; // Dateiname
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // Aufräumen
+                    a.remove();
+                    window.URL.revokeObjectURL(downloadUrl);
+                })
+            })
+
+        }
+        catch (error) {
+            console.log(error)
+        }
     } catch (error) {
         console.log(error);
     }

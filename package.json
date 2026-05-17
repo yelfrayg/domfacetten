@@ -1,7 +1,7 @@
 {
   "name": "domfacetten",
   "version": "1.0.0",
-  "description": "",
+  "description": "Front- und Backend für die Domfacetten-Website",
   "main": "index.js",
   "scripts": {
     "devStart": "nodemon server.js"

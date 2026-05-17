@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
+const path = require('path')
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -69,11 +70,11 @@ const saveSingleOrder = async (userId, productObj, paypalOrderId) => {
                 }
             })
 
-            let productDataForOrders = {
+            let productDataForOrders = [{
                 userId: userId,
                 product: product,
                 quantity: amount
-            }
+            }]
 
             const orderDB = await tx.orders.create({
                 data: {
@@ -182,6 +183,7 @@ const completeCartOrder = async (userId, paypalOrderId) => {
                     userId: userId
                 }
             })
+
 
             return orderDB
         })
