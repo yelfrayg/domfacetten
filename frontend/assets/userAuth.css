@@ -34,7 +34,14 @@ main {
             input {
                 padding: var(--s) 0 var(--s) var(--s);
                 width: 30vw;
-                border: 1px solid #ccc;
+                border: 1px solid #696969;
+                margin-bottom: var(--m);
+            }
+
+            #error-message-login,
+            #error-message-register {
+                display: none;
+                color: red;
                 margin-bottom: var(--m);
             }
 

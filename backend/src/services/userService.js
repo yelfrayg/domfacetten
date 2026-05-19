@@ -32,7 +32,7 @@ async function createUser(data) {
         console.log("Fehler beim Erstellen eines neuen Nutzers:", error.code);
         if (error.code === "P2002" /* Unique constraint violation */) {
             return {
-                code: 400,
+                code: 2002,
                 message:
                     "Ein Nutzer mit dieser E-Mail-Adresse existiert bereits.",
             };

@@ -1,3 +1,17 @@
+const errorMessageLogin = document.getElementById('error-message-login')
+const errorMessageRegister = document.getElementById('error-message-register')
+
+function errorMessage(message, type) {
+    if (type == 'login') {
+        errorMessageLogin.textContent = message
+        errorMessageLogin.style.display = 'flex'
+    }
+    if (type == 'register') {
+        errorMessageRegister.textContent = message
+        errorMessageRegister.style.display = 'flex'
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async (_) => {
     await redirect()
     const register = document.querySelector("form.form1");
@@ -14,11 +28,11 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
         try {
             if (pw1 !== pw2) {
-                alert("Passwörter stimmen nicht überein.");
+                errorMessage("Passwörter stimmen nicht überein.", 'register');
                 return;
             }
             if (mail === "") {
-                alert("E-Mail nicht eingegeben.");
+                errorMessage("E-Mail nicht eingegeben.", 'register');
                 return;
             }
 
@@ -44,12 +58,14 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             );
 
             const res = await req.json();
-            console.log(res);
+            if (res.code == 2002) {
+                errorMessage("E-Mail bereits vergeben.", 'register');
+                loader.classList.add("invisible");
+                return
+            }
+
             if (!res.userId) {
-                alert(
-                    "Registrierung nicht erfolgreich: " +
-                        (res.message || "Unbekannter Fehler"),
-                );
+                errorMessage("Unbekannter Serverfehler", 'register');
                 loader.classList.add("invisible");
                 return;
             }
@@ -57,8 +73,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             register.reset();
             localStorage.setItem("userId", res.userId);
         } catch (error) {
-            console.error("Registrierungsfehler:", error);
-            alert("Registrierungsfehler: " + error.message);
+            errorMessage("Serverfehler", 'register');
             loader.classList.add("invisible");
         }
     });
@@ -71,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
         try {
             if (mail === "" || password === "") {
-                alert("Bitte Eingaben vervollständigen!");
+                errorMessage("Bitte Eingaben vervollständigen!", 'login');
                 return;
             }
 
@@ -101,10 +116,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 window.location = `/dashboard.html?userId=${res.userId}`;
                 return;
             }
-            alert("Login nicht erfolgreich, weil falsche Credentials!");
+            errorMessage("Falsche E-Mail/Password Kombination!", 'login');
         } catch (error) {
             console.error("Login Fehler:", error);
-            alert("Login Fehler: " + error.message);
+            errorMessage("Interner Fehler", 'login');
         }
     });
 });
@@ -132,8 +147,8 @@ async function redirect() {
     try {
         const userId = localStorage.getItem("userId")
         const token = localStorage.getItem("userToken")
-        
-        if(userId && token && userId.length !== 0 && token.length !== 0) {
+
+        if (userId && token && userId.length !== 0 && token.length !== 0) {
             // Token prüfen - wenn NICHT abgelaufen, zum Dashboard
             if (!isTokenExpired(token)) {
                 window.location = `/dashboard.html?userId=${userId}`
@@ -159,10 +174,10 @@ function isTokenExpired(token) {
                 .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
                 .join('')
         );
-        
+
         const decoded = JSON.parse(jsonPayload);
         const expirationTime = decoded.exp * 1000; // in Millisekunden
-        
+
         return Date.now() >= expirationTime;
     } catch (error) {
         console.error('Fehler beim Dekodieren des Tokens:', error);

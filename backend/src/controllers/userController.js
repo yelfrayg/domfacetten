@@ -4,7 +4,7 @@ async function createNewUser(req, res) {
     try {
         const newUser = await userService.createUser(req.body);
         if (newUser.code !== 200) {
-            return res.status(newUser.code).json({ message: newUser.message });
+            return res.status(401).json({ code: newUser.code, message: newUser.message });
         }
         return res
             .status(200)
