@@ -108,19 +108,24 @@ async function completeSinglePurchase(req, res) {
         }
 
         const orderDB = await purchaseService.saveSingleOrder(userId, productObject, paypalOrderId)
-        if (orderDB) {
-            // 1. Download der Rechnung als PDF
-            const newInvoicePdf = await invoiceService.newInvoice(orderDB.orderId)
-            console.log('Neue Rechnung wurde erstellt!')
-            // 2. Versenden einer E-Mail mit Rechnung im Anhang
-            const sendMail = await mailUtility.sendMail(userId, orderDB.orderId)
-            console.log(sendMail)
-            if (sendMail.code === 200) {
-                console.log('Mail wurde versendet!')
-
-                return res.status(200).json({ message: 'Purchase erfolgreich abgeschlossen', orderDB: orderDB })
-            }
+        
+        if (!orderDB) {
+            return res.status(500).json({ message: 'Bestellung konnte nicht abgeschlossen werden.' })
         }
+        
+        // 1. Download der Rechnung als PDF
+        const newInvoicePdf = await invoiceService.newInvoice(orderDB.orderId)
+        console.log('Neue Rechnung wurde erstellt!')
+        
+        // 2. Versenden einer E-Mail mit Rechnung im Anhang
+        const sendMail = await mailUtility.sendMail(userId, orderDB.orderId)
+        console.log(sendMail)
+        
+        if (sendMail.code === 200) {
+            console.log('Mail wurde versendet!')
+            return res.status(200).json({ message: 'Purchase erfolgreich abgeschlossen', orderDB: orderDB })
+        }
+        
         return res.status(200).json({ message: 'Einzelkauf erfolgreich abgeschlossen', orderDB: orderDB })
     } catch (error) {
         console.log(error)
@@ -128,45 +133,11 @@ async function completeSinglePurchase(req, res) {
     }
 }
 
-// async function savePurchase(req, res) {
-//     try {
-//         const { orderId, customerDetails, products } = req.body
-//         let data = {
-//             orderId,
-//             customerDetails,
-//             products
-//         }
-//         const result = await purchaseService.saveSingleOrder(data)
-
-//         if(result.code === 500) {
-//             return res.status(500).json({ error: result.error || result.message })
-//         }
-
-//         let mailData = {
-//             customerFirstname: customerDetails.name.given_name,
-//             customerMail: customerDetails.email_address
-//         }
-//         const sendMail = mailUtility.sendMail(mailData)
-
-//         res.status(201).json({ message: "Bestellung erfolgreich gespeichert", orderId: result.orderId })
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// }
-
-// async function sendMessage(req, res) {
-//     try {
-//         const { orderId, message } = req.body;
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// }
-
 async function createCartPurchase(req, res) {
     try {
-        const { data } = req.body;
-        const userId = data ? data.userId : req.body.userId;
-        const paypalOrderObject = await purchaseService.createCartOrder(userId);
+        const data = req.body.data || req.body;
+        const { userId, code } = data;
+        const paypalOrderObject = await purchaseService.createCartOrder(userId, code);
 
         if (!paypalOrderObject) {
             return res.status(500).json({ error: "Konnte PayPal Order nicht berechnen" });
@@ -188,24 +159,28 @@ async function completeCartPurchase(req, res) {
     try {
         const { userId, paypalOrderId } = req.body
         const orderDB = await purchaseService.completeCartOrder(userId, paypalOrderId)
-        console.log(orderDB)
-        if (orderDB) {
-            // 1. Download der Rechnung als PDF
-            const newInvoicePdf = await invoiceService.newInvoice(orderDB.orderId)
-            console.log('Neue Rechnung wurde erstellt!')
-            // 2. Versenden einer E-Mail mit Rechnung im Anhang
-            const sendMail = await mailUtility.sendMail(userId, orderDB.orderId)
-
-            if (sendMail.code === 200) {
-                console.log('Mail wurde versendet!')
-
-                return res.status(200).json({ message: 'Purchase erfolgreich abgeschlossen', orderDB: orderDB })
-            }
+        console.log('OrderDB:', orderDB)
+        
+        if (!orderDB) {
+            return res.status(500).json({ message: 'Bestellung konnte nicht abgeschlossen werden.' })
         }
-        return res.status(500).json({ message: 'Purchase erfolgreich abgeschlossen, aber keine Mail gesendet.', orderDB: orderDB })
+        
+        // 1. Download der Rechnung als PDF
+        const newInvoicePdf = await invoiceService.newInvoice(orderDB.orderId)
+        console.log('Neue Rechnung wurde erstellt!')
+        
+        // 2. Versenden einer E-Mail mit Rechnung im Anhang
+        const sendMail = await mailUtility.sendMail(userId, orderDB.orderId)
+
+        if (sendMail.code === 200) {
+            console.log('Mail wurde versendet!')
+            return res.status(200).json({ message: 'Purchase erfolgreich abgeschlossen', orderDB: orderDB })
+        }
+        
+        return res.status(200).json({ message: 'Purchase erfolgreich abgeschlossen, aber keine Mail gesendet.', orderDB: orderDB })
     } catch (error) {
         console.error("Fehler in completeCartPurchase:", error);
-        res.status(500).json({ message: 'Es gab einen Fehler beim Abschließen des Kaufs.' })
+        res.status(500).json({ message: 'Es gab einen Fehler beim Abschließen des Kaufs.', error: error.message })
     }
 }
 
@@ -229,4 +204,4 @@ async function getInvoice(req, res) {
     }
 }
 
-module.exports = { createSinglePurchase, completeSinglePurchase, /* savePurchase, sendMessage, */ createCartPurchase, completeCartPurchase, getInvoice };
+module.exports = { createSinglePurchase, completeSinglePurchase, createCartPurchase, completeCartPurchase, getInvoice };

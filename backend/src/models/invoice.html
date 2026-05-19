@@ -1,35 +1,243 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rechnung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            padding: 40px;
+            background-color: #f5f5f5;
+        }
+
+        /* Header Section */
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .header-left h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .header-right .label {
+            font-weight: bold;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .header-right .value {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Invoice Title */
+        h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* Company Info */
+        .company-info {
+            font-size: 12px;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        /* Customer Info */
+        .customer-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            font-size: 12px;
+        }
+
+        .customer-info, .invoice-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .customer-info h4, .invoice-info h4 {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .customer-info p, .invoice-info p {
+            margin-bottom: 4px;
+        }
+
+        /* Section Heading */
+        h2 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            margin-top: 30px;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: white;
+        }
+
+        table thead {
+            background-color: #f0f0f0;
+            border-top: 1px solid #ddd;
+            border-bottom: 2px solid #333;
+        }
+
+        table thead th {
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 12px;
+            border: 1px solid #ddd;
+        }
+
+        table tbody td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            font-size: 12px;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        table tfoot {
+            background-color: #f5f5f5;
+            border-top: 2px solid #333;
+        }
+
+        table tfoot td {
+            padding: 12px;
+            font-weight: bold;
+            font-size: 12px;
+            border: 1px solid #ddd;
+        }
+
+        /* Total Section */
+        h3 {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+        }
+
+        /* Right-align numeric columns */
+        td:nth-child(3),
+        td:nth-child(4),
+        td:nth-child(5),
+        th:nth-child(3),
+        th:nth-child(4),
+        th:nth-child(5) {
+            text-align: right;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            
+            * {
+                box-shadow: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Rechnung</h1>
-    <p>Rechnungsnummer: {{ order_id }}</p>
-    <p>Datum: {{ datum }}</p>
-    <p>Kunde: {{ customer_name }}</p>
-    <p>Adresse: {{ customer_adress }}</p>
+    <div class="invoice-header">
+        <div class="header-left">
+            <h3>Domfacetten</h3>
+            <p>Norbertstraße 2-4, D-50670 Köln</p>
+            <p>Essendi Germany GmbH Hotel Mondial</p>
+        </div>
+        <div class="header-right">
+            <div style="margin-bottom: 10px;">
+                <span class="label">RECHNUNG</span>
+            </div>
+            <div style="margin-bottom: 5px;">
+                <span class="label">RE:</span> <span class="value">{{ order_id }}</span>
+            </div>
+            <div>
+                <span class="label">Datum:</span> <span class="value">{{ datum }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="customer-section">
+        <div class="customer-info">
+            <h4>Rechnungsadresse:</h4>
+            <p><strong>{{ customer_name }}</strong></p>
+            <p>{{ customer_adress }}</p>
+        </div>
+    </div>
 
     <h2>Positionen</h2>
     <table>
         <thead>
             <tr>
-                <th>Artnr</th>
+                <th>Art.-Nr.</th>
+                <th>Beschreibung</th>
+                <th>Preis</th>
                 <th>Menge</th>
-                <th>Einzelpreis</th>
+                <th>Gesamt</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>{{ item_id }}</td>
-                <td>{{ quantity }}</td>
-                <td>{{ item_price }}</td>
-            </tr>
+            <!-- ITEMS_PLACEHOLDER -->
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">RABATTCODE: {{ discount_name }}</td>
+                <td colspan="2"></td>
+                <td>-{{ discount_value }}%</td>
+            </tr>
+        </tfoot>
     </table>
 
-    <h3>Gesamtbetrag: {{ grand_total }}, 00€</h3>
+    <h3>Gesamtbetrag: {{ grand_total }} €</h3>
 </body>
 </html>

@@ -88,14 +88,11 @@ const saveSingleOrder = async (userId, productObj, paypalOrderId) => {
         })
     } catch (error) {
         console.error('Transaktionsfehler beim Abschließen der Bestellung:', error);
-        return {
-            code: 500,
-            message: 'Bestellung konnte nicht abgeschlossen werden.'
-        }
+        return null
     }
 }
 
-const createCartOrder = async (userId) => {
+const createCartOrder = async (userId, code) => {
     try {
         const allProductsInCart = await prisma.cart.findMany({
             where: {
@@ -105,6 +102,23 @@ const createCartOrder = async (userId) => {
                 product: true
             }
         })
+
+        const codeValue = await prisma.codes.findFirst({
+            where: {
+                codeId: code.toUpperCase()
+            }
+        })
+
+        console.log(`Query Ergebnis:`, codeValue)
+
+        let discountValue = 0
+        if(codeValue && codeValue.expired == true) {
+            console.log(`Code ${code} ist abgelaufen!`)
+            discountValue = 0
+        }
+        else {
+            discountValue = codeValue ? codeValue.codeValue : 0
+        }
 
         if (!allProductsInCart || allProductsInCart.length === 0) {
             console.log('Warenkorb ist leer');
@@ -116,7 +130,8 @@ const createCartOrder = async (userId) => {
         }, 0)
 
         let shippingFee = 0
-        let totalPrice = itemTotal
+        let discountedItemTotal = parseFloat(itemTotal * (1 - discountValue))
+        let totalPrice = discountedItemTotal
 
         if (totalPrice < 39) { // kleiner als 39€ kostet Versand
             shippingFee += 1.55
@@ -134,7 +149,7 @@ const createCartOrder = async (userId) => {
                     breakdown: {
                         item_total: {
                             currency_code: "EUR",
-                            value: itemTotal.toFixed(2)
+                            value: discountedItemTotal.toFixed(2)
                         },
                         shipping: {
                             currency_code: "EUR",
@@ -189,10 +204,7 @@ const completeCartOrder = async (userId, paypalOrderId) => {
         })
     } catch (error) {
         console.error('Transaktionsfehler beim Abschließen der Bestellung:', error);
-        return {
-            code: 500,
-            message: 'Bestellung konnte nicht abgeschlossen werden.'
-        }
+        return null
     }
 }
 

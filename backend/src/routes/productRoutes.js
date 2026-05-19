@@ -3,6 +3,7 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const productImageUpload = require('../middleware/productImageUpload');
 const checkAuth = require('../middleware/checkAuth');
+
 router.get('/', productController.fetchProducts);
 
 router.post('/newProduct', productImageUpload.fields([

@@ -6,6 +6,23 @@ const totalPrice = document.getElementById('total-price')
 const paypalContainer = document.getElementById('paypal')
 const itemCounter = document.querySelector('.product-count')
 const itemCounterPrice = document.querySelector('.product-price')
+const discountCodeInput = document.getElementById('code-input')
+const iconCheck = document.querySelector('.code-verification-wrapper')
+const pencil = document.querySelector('.pencil-wrapper')
+
+pencil.addEventListener('click', _ => {
+    window.location = `/dashboard.html?userId=${localStorage.getItem('userId')}`
+})
+
+const icons = {
+    valid: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#75FB4C"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>',
+    waiting: '<span class="loaderCode"></span>',
+    invalid: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ff0000"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>'
+}
+
+let price = 0
+let originalPrice = 0
+
 
 document.addEventListener('DOMContentLoaded', async _ => {
     try {
@@ -23,16 +40,15 @@ document.addEventListener('DOMContentLoaded', async _ => {
             // window.location = "/productPage.html"
             return
         }
-        console.log(resCartItems.cartItems)
+
         if (resCartItems.cartItems.length == 0) {
-            cartItemsContainer.innerHTML = ''
+            cartItemsContainer.innerHTML = '<h2>Dein Warenkorb ist leer!</h2>'
             paypalContainer.style.display = 'none'
         }
 
-        let price = 0
         totalPrice.textContent = price + ',00 €'
-        resCartItems.cartItems.forEach(element => {
 
+        resCartItems.cartItems.forEach(element => {
             const cartEntry = document.createElement('tr')
             cartEntry.classList.add('single-cart-item')
             cartEntry.innerHTML = `
@@ -52,9 +68,11 @@ document.addEventListener('DOMContentLoaded', async _ => {
             totalPrice.textContent = price + ',00 €'
         });
 
+        originalPrice = price
+
         await deleteFromCart()
 
-        //??????????????????????????????????????????????????
+        //??????????????????????????????????????????????????        
 
         const reqUser = await fetch(`http://localhost:3000/api/userManagement/getUserInfo/${userId}`, {
             method: 'GET',
@@ -64,14 +82,42 @@ document.addEventListener('DOMContentLoaded', async _ => {
             }
         })
         const resUser = await reqUser.json()
-        console.log(resUser.userInfo)
+        // console.log(resUser.userInfo)
+
+        if (
+            resUser.userInfo.first_name == '' || 
+            resUser.userInfo.last_name == '' || 
+            resUser.userInfo.address.street == '' ||
+            resUser.userInfo.address.city == ''
+        ) {
+            paypalContainer.style.display = 'none'
+            cartItemsContainer.innerHTML = '<h2>Bitte hinterlege zuerst deine Lieferadresse im Dashboard, um fortzufahren!</h2>'
+            totalPrice.innerHTML = '-,-- €'
+            deliverName.textContent = resUser.userInfo.first_name + ' ' + resUser.userInfo.last_name
+            deliverStreet.textContent = resUser.userInfo.address.street === '' ? '---' : resUser.userInfo.address.street
+            deliverCity.textContent = resUser.userInfo.address.city === '' ? '---' : resUser.userInfo.address.city
+            itemCounter.textContent = resCartItems.cartItems.length === 1 ? '1 Produkt' : resCartItems.cartItems.length + ' Produkte'
+            return
+        }
         deliverName.textContent = resUser.userInfo.first_name + ' ' + resUser.userInfo.last_name
-        deliverStreet.textContent = resUser.userInfo.address.street
-        deliverCity.textContent = resUser.userInfo.address.city
+        deliverStreet.textContent = resUser.userInfo.address.street === '' ? '---' : resUser.userInfo.address.street
+        deliverCity.textContent = resUser.userInfo.address.city === '' ? '---' : resUser.userInfo.address.city
         itemCounter.textContent = resCartItems.cartItems.length === 1 ? '1 Produkt' : resCartItems.cartItems.length + ' Produkte'
         itemCounterPrice.textContent = price + ",00 €"
 
         await ppCart()
+
+        const debouncedCodeChecker = debounce(codeChecker, 1000)
+        discountCodeInput.addEventListener('input', _ => {
+            const code = discountCodeInput.value.toUpperCase()
+            if (code) {
+                if (iconCheck) iconCheck.innerHTML = icons.waiting
+                debouncedCodeChecker()
+            } else {
+                if (iconCheck) iconCheck.innerHTML = ''
+            }
+        })
+
     } catch (error) {
         console.log(error)
     }
@@ -80,7 +126,10 @@ document.addEventListener('DOMContentLoaded', async _ => {
 async function ppCart() {
     paypal
         .Buttons({
-            createOrder: function () {
+            createOrder: () => {
+                // Code erst hier auslesen, wenn Button geklickt wird
+                const codeInput = document.getElementById('code-input')
+                const code = codeInput ? codeInput.value.toUpperCase() : ''
                 return fetch(
                     "http://localhost:3000/api/purchases/createCartPurchase",
                     {
@@ -92,6 +141,7 @@ async function ppCart() {
                         body: JSON.stringify({
                             data: {
                                 userId: localStorage.getItem('userId'),
+                                code: code
                             },
                         }),
                     },
@@ -119,6 +169,8 @@ async function ppCart() {
                     });
             },
             onApprove: function (data, actions) {
+                const codeInput = document.getElementById('code-input')
+                const code = codeInput ? codeInput.value.toUpperCase() : ''
                 return actions.order.capture().then(async function (details) {
                     const completeOrder = await fetch('http://localhost:3000/api/purchases/completeCartPurchase', {
                         method: 'POST',
@@ -128,7 +180,8 @@ async function ppCart() {
                         },
                         body: JSON.stringify({
                             userId: localStorage.getItem('userId'),
-                            paypalOrderId: data.orderID
+                            paypalOrderId: data.orderID,
+                            code: code
                         })
                     })
                     const resOrder = await completeOrder.json()
@@ -171,4 +224,53 @@ async function deleteFromCart() {
             }
         })
     })
+}
+
+async function codeChecker() {
+    try {
+        console.log('Code Checker aufgerufen!')
+        const code = discountCodeInput.value.toUpperCase()
+
+        if (code === '') {
+            // Wenn Code leer ist, Originalpreis wiederherstellen
+            if (iconCheck) iconCheck.innerHTML = ``
+            price = originalPrice
+            totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
+            itemCounterPrice.textContent = price.toFixed(2).replace('.', ',') + " €"
+            return
+        }
+
+        // Icon sofort zeigen während Fetch läuft
+        if (iconCheck) iconCheck.innerHTML = icons.waiting
+
+        console.log('Starte fetch')
+        const req = await fetch(`http://localhost:3000/api/discountManagement/getDiscount/${code}`)
+        const res = await req.json()
+        console.log(res)
+        if (res.code == 200) {
+            if (iconCheck) iconCheck.innerHTML = icons.valid
+            const discount = res.discountObj.codeValue
+            const discountedPrice = parseFloat(originalPrice * (1 - discount))
+            // console.log(`Code gültig! Du erhältst ${discount}% Rabatt auf deine Bestellung!`)
+            price = discountedPrice
+            totalPrice.textContent = discountedPrice.toFixed(2).replace('.', ',') + ' €'
+            return
+        }
+        console.log('Code ungültig!')
+        if (iconCheck) iconCheck.innerHTML = icons.invalid
+        price = originalPrice
+        totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
+        itemCounterPrice.textContent = price.toFixed(2).replace('.', ',') + " €"
+        return
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer)
+        timer = setTimeout(() => func(...args), delay)
+    }
 }

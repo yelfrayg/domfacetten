@@ -20,6 +20,9 @@ app.use('/api/userManagement', userRoutes)
 const cartRoutes = require('./src/routes/cartRoutes')
 app.use('/api/cartManagement', cartRoutes)
 
+const discountRoutes = require('./src/routes/discountRoutes')
+app.use('/api/discountManagement', discountRoutes)
+
 app.use(
   '/uploads/products',
   express.static(path.resolve(__dirname, 'uploads', 'products')),
@@ -31,4 +34,13 @@ app.get('/', (req, res) => {
 
 app.listen(3000, '0.0.0.0', () => {
   console.log('Server läuft auf Port 3000');
+});
+
+// Fehlerbehandlung für unerwartete Fehler
+process.on('uncaughtException', (error) => {
+  console.error('Unerwarteter Fehler:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unbehandelte Promise Rejection:', reason);
 });

@@ -1,121 +1,144 @@
-.slideInRight{
+.slideInRight {
     animation: slideInRight 0.5s forwards;
     animation-timeline: view();
 }
 
 @keyframes autoFadeIn {
-  0% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 1;
-  }
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
 }
 
-
-@keyframes glowing{
-  0%{
-    box-shadow: 0 0 50px 0 rgba(255, 200, 0, 0.5)
-  }
-  25%{
-    box-shadow: 0 0 50px 0 rgba(255, 0, 0, 0.5);
-  }
-  50%{
-    box-shadow: 0 0 50px 0 rgba(163, 47, 4, 0.5);
-  }
-  75%{
-    box-shadow: 0 0 50px 0 rgba(166, 0, 255, 0.5)
-  }
-  100%{
-    box-shadow: 0 0 50px 0 rgba(255, 166, 0, 0.5)
-  }
+@keyframes glowing {
+    0% {
+        box-shadow: 0 0 50px 0 rgba(255, 200, 0, 0.5);
+    }
+    25% {
+        box-shadow: 0 0 50px 0 rgba(255, 0, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 50px 0 rgba(163, 47, 4, 0.5);
+    }
+    75% {
+        box-shadow: 0 0 50px 0 rgba(166, 0, 255, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 50px 0 rgba(255, 166, 0, 0.5);
+    }
 }
 
-
-@keyframes slideRight{
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-121px);
-  }
+@keyframes slideRight {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-121px);
+    }
 }
 
-@keyframes slideLeft{
-  from {
-    transform: translateX(-121px);
-  }
-  to {
-    transform: translateX(0);
-  }
+@keyframes slideLeft {
+    from {
+        transform: translateX(-121px);
+    }
+    to {
+        transform: translateX(0);
+    }
 }
 
 .loader {
-  display: inline-block;
-  width: 3vh;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  border: 2px solid;
-  border-color: #000 #0000;
-  animation: l1 1s infinite;
+    display: inline-block;
+    width: 3vh;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid;
+    border-color: #000 #0000;
+    animation: l1 1s infinite;
 }
-@keyframes l1 {to{transform: rotate(.5turn)}}
+
+@keyframes l1 {
+    to {
+        transform: rotate(0.5turn);
+    }
+}
 
 .invisible {
-  display: none !important;
-  animation: none !important;
+    display: none !important;
+    animation: none !important;
 }
 
 .wiggle {
-  display: inline-block;
-  animation: wiggle 0.5s ease-in-out;
+    display: inline-block;
+    animation: wiggle 0.5s ease-in-out;
 }
 
 .throw {
-  display: inline-block;
-  transform-origin: center;
-  animation: throw 1.5s ease-in-out;
+    display: inline-block;
+    transform-origin: center;
+    animation: throw 1.5s ease-in-out;
 }
 
 @keyframes wiggle {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
-  100% {
-    transform: translateY(0);
-  }
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(5px);
+    }
+    100% {
+        transform: translateY(0);
+    }
 }
 
 @keyframes throw {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-  20% {
-    transform: translateY(0) rotate(180deg);
-  }
-  35% {
-    transform: translateY(-10px) rotate(180deg);
-  }
-  50% {
-    transform: translateY(10px) rotate(180deg);
-  }
-  65% {
-    transform: translateY(-10px) rotate(180deg);
-  }
-  80% {
-    transform: translateY(0) rotate(180deg);
-  }
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    20% {
+        transform: translateY(0) rotate(180deg);
+    }
+    35% {
+        transform: translateY(-10px) rotate(180deg);
+    }
+    50% {
+        transform: translateY(10px) rotate(180deg);
+    }
+    65% {
+        transform: translateY(-10px) rotate(180deg);
+    }
+    80% {
+        transform: translateY(0) rotate(180deg);
+    }
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
 }
 
 .success {
-    background-color: #4CAF50 !important;
+    background-color: #4caf50 !important;
     color: white !important;
     border: none !important;
     cursor: default !important;
+}
+
+.loaderCode {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #fff;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
