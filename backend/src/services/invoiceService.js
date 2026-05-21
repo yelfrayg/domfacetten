@@ -28,7 +28,6 @@ const newInvoice = async (orderId, code) => {
         const templatePath = path.resolve(__dirname, '../models/invoice.html');
         let htmlContent = fs.readFileSync(templatePath, 'utf8');
 
-        // Es soll der Nutzer mit der die Order mit der orderId gemacht hat gefunden werden
         const userData = await prisma.orders.findUnique({
             where: {
                 orderId: orderId

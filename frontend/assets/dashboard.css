@@ -206,7 +206,6 @@ h1 {
                         border: none;
                         margin: var(--s) auto 0 auto;
 
-
                         &:hover {
                             background-color: #393939;
                         }
@@ -230,6 +229,70 @@ h1 {
             border: none;
             &:hover {
                 background-color: #393939;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        text-align: center;
+        padding: var(--xl) var(--m) var(--xxl) var(--m);
+        font-size: var(--xl);
+    }
+
+    .user-container {
+        flex-direction: column;
+        gap: var(--m);
+        width: 95vw;
+
+        .personal-info,
+        .account-info {
+            width: 100%;
+
+            h2 {
+                font-size: var(--l);
+            }
+        }
+
+        .personal-info {
+            padding: var(--m);
+
+            #updateUser {
+
+                input {
+                    padding: var(--xs) 0 var(--xs) var(--xs);
+                    margin-bottom: var(--s);
+                    font-size: 0.9rem;
+                }
+
+                #updateButton {
+                    padding: var(--s);
+                    font-size: 0.85rem;
+                }
+            }
+        }
+
+        .account-info {
+
+            h2 {
+                margin-bottom: var(--m);
+            }
+
+            .order-container {
+                padding: var(--m);
+                background-color: white;
+                border: 1px solid black;
+                margin-bottom: var(--l);
+            }
+
+            .button-actions {
+                gap: var(--s);
+
+                button {
+                    padding: var(--s);
+                    font-size: 0.8rem;
+                }
             }
         }
     }

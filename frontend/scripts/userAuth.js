@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             register.reset();
             localStorage.setItem("userId", res.userId);
         } catch (error) {
-            errorMessage("Serverfehler", 'register');
+            errorMessage("Serverfehler.", 'register');
             loader.classList.add("invisible");
         }
     });
@@ -116,10 +116,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 window.location = `/dashboard.html?userId=${res.userId}`;
                 return;
             }
-            errorMessage("Falsche E-Mail/Password Kombination!", 'login');
+            errorMessage("Falsche E-Mail/Passwort Kombination.", 'login');
         } catch (error) {
             console.error("Login Fehler:", error);
-            errorMessage("Interner Fehler", 'login');
+            errorMessage("Serverfehler", 'login');
         }
     });
 });

@@ -71,6 +71,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     });
 
     logoutBtn.addEventListener("click", async (_) => {
+        const userLetterIcon =document.querySelector(".user-logged-in");
+        userLetterIcon.className.remove(".user-logged-in");       
         localStorage.removeItem("userId");
         localStorage.removeItem("userToken");
         localStorage.removeItem("user-letter");

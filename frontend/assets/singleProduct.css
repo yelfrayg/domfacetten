@@ -117,8 +117,8 @@
 
         .addToCart {
             background-color: white;
-            color: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 0, 0, 0.3);
+            color: black;
+            border: 1px solid black;
             padding: var(--s) var(--m);
         }
 
