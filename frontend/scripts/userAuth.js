@@ -1,5 +1,10 @@
 const errorMessageLogin = document.getElementById('error-message-login')
 const errorMessageRegister = document.getElementById('error-message-register')
+const msgFromUrl = new URLSearchParams(window.location.search).get('msg')
+
+if (msgFromUrl === '403') {
+    errorMessage("Bitte logge dich ein, um Artikel in den Warenkorb zu legen.", 'login')
+}
 
 function errorMessage(message, type) {
     if (type == 'login') {

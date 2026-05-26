@@ -111,8 +111,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
         cartButton?.addEventListener("click", async (e) => {
             if (!localStorage.getItem("userId")) {
-                alert("Bitte logge dich ein, um Artikel in den Warenkorb zu legen.");
-                window.location.href = "/userAuth.html";
+                // alert("Bitte logge dich ein, um Artikel in den Warenkorb zu legen.");
+                window.location.href = "/userAuth.html?msg=403";
                 return;
             }
             const userId = localStorage.getItem("userId");

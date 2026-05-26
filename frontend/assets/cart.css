@@ -180,7 +180,62 @@ main {
                 margin-bottom: var(--3xl);
 
                 .total-keyword {
-                    font-size: var(--xl);
+                    display: flex;
+                    align-items: center;
+                    gap: var(--xs);
+                    position: relative;
+
+                    .svg-wrapper {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: var(--l);
+                        height: var(--l);
+                        background: transparent;
+                        border: none;
+                        cursor: pointer;
+                        padding: 0;
+                        anchor-name: --info-button;
+
+                        svg {
+                            width: 100%;
+                            height: 100%;
+                            fill: white;
+                        }
+
+                        &:hover {
+                            svg {
+                                fill: #696969;
+                            }
+                        }
+                    }
+
+                    #shipping-info {
+                        background-color: #353535;
+                        color: white;
+                        padding: var(--m);
+                        width: 200px;
+                        border: 1px solid #696969;
+                        z-index: 100000;
+                        position-anchor: --info-button;
+                        top: anchor(bottom);
+                        left: anchor(left);
+                        margin-top: 8px;
+
+                        p {
+                            font-size: var(--s);
+                            line-height: 1.4;
+                        }
+
+                        &:popover-open {
+                            animation: fadeIn 0.2s ease-in;
+                        }
+                    }
+
+                    .total-keyword-text {
+                        font-size: var(--xl);
+                        font-weight: 500;
+                    }
                 }
 
                 #total-price {
@@ -250,6 +305,104 @@ main {
                 text-align: center;
                 cursor: pointer;
             }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    main {
+        padding-top: 12vh;
+    }
+
+    .cart-container {
+        flex-direction: column;
+        border-top: none;
+        width: 100vw;
+
+        .table-container {
+            padding: var(--m);
+            margin-bottom: var(--3xl);
+            min-height: 50vh;
+
+            .cart-table {
+                width: 100%;
+                padding: 0;
+                .single-cart-item {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    height: 10vh;
+                    border: 1px solid black;
+
+                    td {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .image-container {
+                        height: 100%;
+                        width: auto;
+                        aspect-ratio: 1;
+                        flex-shrink: 0;
+                        border-right: 1px solid black;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+                    }
+
+                    .art-info-text {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        justify-content: center;
+                        flex: 1;
+                        padding-left: var(--m);
+
+                        .artnr {
+                            color: #696969;
+                            font-size: var(--s);
+                            font-weight: 500;
+                        }
+
+                        .artname {
+                            font-weight: 600;
+                            font-size: var(--l);
+                        }
+                    }
+
+                    .quantity,
+                    .item-price {
+                        width: 5vw;
+                        justify-content: center;
+                        font-size: var(--m);
+                        font-weight: 500;
+                    }
+
+                    td:last-child {
+                        width: 70px;
+                        justify-content: center;
+                    }
+
+                    .delete-btn {
+                        background: transparent;
+                        border: none;
+                        font-size: var(--m);
+                        color: #696969;
+
+                        &:hover {
+                            color: red;
+                        }
+                    }
+                }
+            }
+        }
+
+        .summary {
+            width: 100%;
         }
     }
 }

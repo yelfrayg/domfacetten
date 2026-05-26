@@ -85,8 +85,8 @@
                 transition: width 0.3s ease-in-out;
             }
 
-            li:not(:has(.user-logged-in))::after:hover {
-                width: 60%;
+            li:not(:has(.user-logged-in)):hover::after {
+                width: 100%;
             }
         }
     }
