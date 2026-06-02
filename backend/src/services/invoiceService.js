@@ -97,10 +97,11 @@ const newInvoice = async (orderId, code) => {
         htmlContent = htmlContent.replace('<!-- ITEMS_PLACEHOLDER -->', itemsHtml);
 
         // 3. Von HTML zu PDF konvertieren (Kostenlos via Puppeteer Chromium)
+        // 3. Von HTML zu PDF konvertieren (Kostenlos via Puppeteer Chromium)
         const browser = await puppeteer.launch({ 
-            // headless: 'new' sorgt dafür, dass kein sichtbares Fenster aufploppt
             headless: "new", 
-            args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+            executablePath: '/usr/bin/chromium',
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] 
         });
         const page = await browser.newPage();
         

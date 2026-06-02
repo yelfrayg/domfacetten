@@ -109,7 +109,7 @@ const createCartOrder = async (userId, code) => {
             }
         })
 
-        console.log(`Query Ergebnis:`, codeValue)
+        console.log(`Query Ergebnis:`, codeValue || 'Kein Code gefunden')
 
         let discountValue = 0
         if(codeValue && codeValue.expired == true) {

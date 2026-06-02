@@ -13,8 +13,8 @@ const prisma = new PrismaClient({
 
 async function sendMail(userId, orderId) {
     try {
-        console.log(process.env.MAIL_PASS);
-        console.log(process.env.MAIL_USER);
+        // console.log(process.env.MAIL_PASS);
+        // console.log(process.env.MAIL_USER);
         const transporter = nodemailer.createTransport({
             host: "smtp.web.de",
             port: 587,

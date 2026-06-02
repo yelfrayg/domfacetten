@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   app:
@@ -10,7 +10,7 @@ services:
       - DATABASE_URL=postgresql://postgres:${DB_PW}@database:5432/${DB_NAME}
       - DB_PW=${DB_PW}
       - DB_NAME=${DB_NAME}
-      - PAYPA_CLIENT_ID=${PAYPAL_CLIENT_ID}
+      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
       - PAYPAL_SECRET_KEY=${PAYPAL_SECRET_KEY}
       - NODE_ENV=${NODE_ENV}
       - MAIL_USER=${MAIL_USER}

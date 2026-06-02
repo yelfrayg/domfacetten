@@ -214,7 +214,7 @@ main {
                         background-color: #353535;
                         color: white;
                         padding: var(--m);
-                        width: 200px;
+                        width: 30vh;
                         border: 1px solid #696969;
                         z-index: 100000;
                         position-anchor: --info-button;
@@ -223,8 +223,8 @@ main {
                         margin-top: 8px;
 
                         p {
-                            font-size: var(--s);
-                            line-height: 1.4;
+                            font-size: var(--m);
+                            line-height: var(--xl);
                         }
 
                         &:popover-open {

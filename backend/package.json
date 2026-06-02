@@ -13,7 +13,7 @@
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@paypal/paypal-server-sdk": "^2.2.0",
     "@prisma/adapter-pg": "^7.6.0",
-    "@prisma/client": "^7.5.0",
+    "@prisma/client": "^7.8.0",
     "argon2": "^0.44.0",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
@@ -32,6 +32,6 @@
     "puppeteer": "^24.43.1"
   },
   "devDependencies": {
-    "prisma": "^7.5.0"
+    "prisma": "^7.8.0"
   }
 }

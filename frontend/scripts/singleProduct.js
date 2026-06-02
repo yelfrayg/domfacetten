@@ -57,9 +57,11 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
                 <label class ="text">Menge: <input id="amount" type="number" min="1" max = "5" value="1" step="1"></label>
                 <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}">In den Warenkorb legen</button>
-                <button class ="buyNow" id="buyNow"><div id="paypal"></div></button>
+                <button class ="buyNow" id="buyNow"><a href="./cart.html">Jetzt kaufen</a></button>
             </div>
         `;
+
+        // <div id="paypal"></div> in Zeile 60
 
         dispatchEvent(
             new CustomEvent("productLoaded", {

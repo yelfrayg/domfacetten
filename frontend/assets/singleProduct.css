@@ -127,6 +127,12 @@
             color: white;
             border: 1px solid black;
             padding: var(--s) var(--m);
+
+            a {
+                color: white;
+                text-decoration: none;
+                font-size: var(--m);
+            }
         }
 
         .buyNow,
