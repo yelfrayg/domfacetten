@@ -212,6 +212,10 @@ h1 {
                     }
                 }
             }
+
+            p {
+                margin-top: var(--s);
+            }
         }
     }
 
@@ -236,7 +240,7 @@ h1 {
 
 @media (max-width: 768px) {
     h1 {
-        text-align: center;
+        text-align: flex-start;
         padding: var(--xl) var(--m) var(--xxl) var(--m);
         font-size: var(--xl);
     }

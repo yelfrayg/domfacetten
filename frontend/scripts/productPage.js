@@ -79,7 +79,7 @@ function loadAllProducts() {
             </div>
             <div class="product-info">
                 <h3 class="product-name">${p.name}</h3>
-                <p class="product-price">${p.price},00 €</p>
+                <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
             </div>
         `;
 
@@ -118,19 +118,4 @@ function loadFilteredProducts(products) {
             </a>
         `;
     });
-}
-
-async function testServerProducts() {
-    try {
-        const req = await fetch("http://localhost:3000/api/products");
-        const res = await req.json();
-        if (res.products.length == 0) {
-            console.log("Leer");
-            return;
-        }
-        console.log('Produkte werden geladen!')
-        console.log(res.products)
-    } catch (error) {
-        console.log(error);
-    }
 }

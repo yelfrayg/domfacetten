@@ -40,6 +40,9 @@ footer {
         padding-bottom: var(--m);
         .footer-container {
             gap: var(--3xl) !important;
+            img {
+                width: 70%;
+            }
         }
     }
 }

@@ -151,15 +151,21 @@ main {
 
 @media (max-width: 768px) {
     .welcome-text {
-        width: 100vw;
+        padding: 0vh 0 0 5vw;
         height: 30vh;
+
         h1 {
-            font-size: var(--xl);
+            font-size: var(--l);
+            width: 80vw;
+        }
+
+        a {
+            font-size: var(--m);
+            padding: 0.5em 1em;
         }
     }
 
     .welcome-section {
-        padding-top: var(--xxl);
         padding-bottom: 0;
         gap: 0;
         .grid {

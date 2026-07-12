@@ -13,6 +13,9 @@ const getDiscountByCode = async (code) => {
                 codeId: code.toUpperCase()
             }
         })
+
+        console.log('Gesucht nach:' + code.toUpperCase())
+        console.log('Gefunden:' + findCode)
         if(findCode.expired == true) {
             return {
                 code: 401,

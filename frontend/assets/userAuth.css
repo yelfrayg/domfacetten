@@ -63,7 +63,7 @@ main {
 
 @media (max-width: 768px) {
     .form-container {
-        /* margin-top: var(--3xl); */
+        margin-top: 15vh;
         flex-direction: column;
         width: 100vw;
 

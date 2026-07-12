@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
             paypalContainer.style.display = 'none'
         }
 
-        totalPrice.textContent = price + ',00 €'
+        // totalPrice.textContent = String(price).replace('.', ',') + '0 €'
 
         resCartItems.cartItems.forEach(element => {
             const cartEntry = document.createElement('tr')
@@ -56,19 +56,21 @@ document.addEventListener('DOMContentLoaded', async _ => {
                     <img src="http://localhost:3000/uploads/products/${element.product.heroImage}" alt="Image" />
                 </td>
                 <td class="art-info-text">
-                    <span class="artnr">${element.product.arttype || 'A'}${String(element.product.artnr).padStart(3, '0')}</span>
-                    <span class="artname">${element.product.name}</span>
+                    <div class="product-info">
+                        <span class="artname">${element.product.name}</span>
+                        <span class="quantity">Menge: ${element.quantity}</span>
+                        <span class="item-price">${element.product.price.replace('.', ',')}0 €</span>
+                    </div>
+                    <button class="delete-btn" data-artnr="${element.product.artnr}">X</button>
                 </td>
-                <td class="quantity">Menge: ${element.quantity}</td>
-                <td class="item-price">${element.product.price},00 €</td>
-                <td><button class="delete-btn" data-artnr="${element.product.artnr}">X</button></td>
             `
             cartItemsContainer.appendChild(cartEntry)
-            price += parseInt(element.product.price) * element.quantity
-            totalPrice.textContent = price + ',00 €'
+            price += element.product.price * element.quantity
+            totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
         });
 
         originalPrice = price
+        console.log(originalPrice)
 
         await deleteFromCart()
 
@@ -85,8 +87,8 @@ document.addEventListener('DOMContentLoaded', async _ => {
         // console.log(resUser.userInfo)
 
         if (
-            resUser.userInfo.first_name == '' || 
-            resUser.userInfo.last_name == '' || 
+            resUser.userInfo.first_name == '' ||
+            resUser.userInfo.last_name == '' ||
             resUser.userInfo.address.street == '' ||
             resUser.userInfo.address.city == ''
         ) {
@@ -99,11 +101,12 @@ document.addEventListener('DOMContentLoaded', async _ => {
             itemCounter.textContent = resCartItems.cartItems.length === 1 ? '1 Produkt' : resCartItems.cartItems.length + ' Produkte'
             return
         }
+
         deliverName.textContent = resUser.userInfo.first_name + ' ' + resUser.userInfo.last_name
         deliverStreet.textContent = resUser.userInfo.address.street === '' ? '---' : resUser.userInfo.address.street
         deliverCity.textContent = resUser.userInfo.address.city === '' ? '---' : resUser.userInfo.address.city
         itemCounter.textContent = resCartItems.cartItems.length === 1 ? '1 Produkt' : resCartItems.cartItems.length + ' Produkte'
-        itemCounterPrice.textContent = price + ",00 €"
+        itemCounterPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
 
         await ppCart()
 

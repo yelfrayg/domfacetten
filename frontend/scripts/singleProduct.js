@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             <div class="highlight-product-info">
                 <h2 class="product-name">${product.name} <span class ="artnr">(${product.arttype}${String(product.artnr).padStart(3, "0")})</span></h2>
                 ${product.description ? `<p class="product-description">${product.description}</p>` : ""}
-                <p class="product-price">${product.price},00 €</p>
+                <p class="product-price">${parseFloat(product.price).toFixed(2).replace('.', ',')} €</p>
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
                 <label class ="text">Menge: <input id="amount" type="number" min="1" max = "5" value="1" step="1"></label>
                 <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}">In den Warenkorb legen</button>

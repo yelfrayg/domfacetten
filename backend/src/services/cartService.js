@@ -36,7 +36,7 @@ async function addToCart(data) {
             data: {
                 userId: userId,
                 productId: productId,
-                quantity: quantity,
+                quantity: quantity > 6 ? 5 : quantity, // Maximal 5 Artikel pro Produkt
             }
         });
         return {
