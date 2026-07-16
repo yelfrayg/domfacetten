@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
                     <div class="product-info">
                         <span class="artname">${element.product.name}</span>
                         <span class="quantity">Menge: ${element.quantity}</span>
-                        <span class="item-price">${element.product.price.replace('.', ',')}0 €</span>
+                        <span class="item-price">${parseFloat(element.product.price).toFixed(2).replace('.', ',')} €</span>
                     </div>
                     <button class="delete-btn" data-artnr="${element.product.artnr}">X</button>
                 </td>
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
         });
 
         originalPrice = price
-        console.log(originalPrice)
+        // console.log(originalPrice)
 
         await deleteFromCart()
 
@@ -231,7 +231,7 @@ async function deleteFromCart() {
 
 async function codeChecker() {
     try {
-        console.log('Code Checker aufgerufen!')
+        // console.log('Code Checker aufgerufen!')
         const code = discountCodeInput.value.toUpperCase()
 
         if (code === '') {
@@ -243,13 +243,11 @@ async function codeChecker() {
             return
         }
 
-        // Icon sofort zeigen während Fetch läuft
         if (iconCheck) iconCheck.innerHTML = icons.waiting
 
-        console.log('Starte fetch')
         const req = await fetch(`http://localhost:3000/api/discountManagement/getDiscount/${code}`)
         const res = await req.json()
-        console.log(res)
+        // console.log(res)
         if (res.code == 200) {
             if (iconCheck) iconCheck.innerHTML = icons.valid
             const discount = res.discountObj.codeValue

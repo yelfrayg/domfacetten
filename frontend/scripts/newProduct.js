@@ -8,9 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const description = document.getElementById("description");
     const keywords = document.getElementById("keywords");
     const price = document.getElementById("price");
-    const available =
-        document.getElementById("available") ||
-        document.getElementById("avaiable");
+    const inStock = document.getElementById("inStock");
     const heroImageInput = document.getElementById("heroImage");
     const secondImage = document.getElementById("secondImage");
     const thirdImage = document.getElementById("thirdImage");
@@ -36,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append("description", description?.value || "");
             formData.append("price", price?.value || "");
             formData.append("keywords", getKeywords().join(", "));
-            formData.append("available", available?.checked ? "true" : "false");
+            formData.append("inStock", inStock?.value || 0);
 
             formData.append("heroImage", heroImageInput.files[0]);
             if (secondImage?.files?.[0]) {

@@ -43,7 +43,6 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     });
 
     fetchProducts();
-    testServerProducts();
 });
 
 async function fetchProducts() {
@@ -69,12 +68,16 @@ function loadAllProducts() {
     allproductsArray.forEach((p) => {
         const productElement = document.createElement("a");
         productElement.classList.add("product");
-        productElement.href = `./product.html?id=${p.artnr}`;
+        if (p.inStock <= 0) {
+            productElement.classList.add("out-of-stock");
+        }
+        else {
+            productElement.href = `./product.html?id=${p.artnr}`;
+        }
         productElement.innerHTML = `
             <div class="product-img-container">
-                <img src="http://localhost:3000/uploads/products/${
-                    p.heroImage
-                }" alt="Stoffarmband">
+                <img src="http://localhost:3000/uploads/products/${p.heroImage
+            }" alt="Stoffarmband">
                 <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
             </div>
             <div class="product-info">
@@ -107,13 +110,13 @@ function loadFilteredProducts(products) {
             <a class="product" href="./product.html?id=${p.artnr}">
                 <div class="product-img-container">
                     <img src="http://localhost:3000/uploads/products/${encodeURIComponent(
-                        p.heroImage,
-                    )}" alt="Stoffarmband">
+            p.heroImage,
+        )}" alt="Stoffarmband">
                     <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
                 </div>
                 <div class="product-info">
                     <h3 class="product-name">${p.name}</h3>
-                    <p class="product-price">${p.price},00 €</p>
+                    <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
                 </div>
             </a>
         `;

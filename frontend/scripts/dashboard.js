@@ -33,6 +33,9 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
     if (!userId) {
         alert("UserID nicht gefunden. Bitte neu anmelden.");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("user-letter");
         window.location = "/userAuth.html";
         return;
     }
@@ -183,10 +186,10 @@ async function getOrders(userId) {
                                     ${orderProducts.map((p) => `<tr><td class="table-img-container"><img src="http://localhost:3000/uploads/products/${p.product.heroImage}" alt="${p.product.name}"/></td><td class="tg-0lax">A${p.product.artnr}</td><td class="tg-0lax">${p.quantity}</td></tr>`).join("")}
                                 </tbody>
                             </table>
-                            <p class ="order-total">Gesamtpreis: <span class="order-total-price">${orderProducts.map((p) => p.product.price * p.quantity).reduce((a, b) => a + b, 0)}€</span></p>
+                            <p class ="order-total">Gesamtpreis: <span class="order-total-price">${orderProducts.map((p) => p.product.price * p.quantity).reduce((a, b) => (a + b), 0).toFixed(2).replace('.', ',')} €</span></p>
                             <button id="bill-button" data-order-id="${order.orderId}">Rechnung herunterladen</button>
                         </details>
-        `;
+            `;
             ordersTableBody.appendChild(listItem);
         });
 

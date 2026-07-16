@@ -31,6 +31,12 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             `;
             return;
         }
+        if(product.inStock <= 0) {
+            productContainer.innerHTML = `
+                <h2>Produkt aktuell nicht verfügbar.</h2>
+            `;
+            return;
+        }
 
         productContainer.innerHTML = `
             <div class="highlight-product-imgs">
@@ -55,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 ${product.description ? `<p class="product-description">${product.description}</p>` : ""}
                 <p class="product-price">${parseFloat(product.price).toFixed(2).replace('.', ',')} €</p>
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
-                <label class ="text">Menge: <input id="amount" type="number" min="1" max = "5" value="1" step="1"></label>
+                <label class ="text">Menge : <input id="amount" type="number" min="1" max = ${product.inStock - 2 <= 0 ? 1 : product.inStock - 2} value="1" step="1"></label>
                 <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}">In den Warenkorb legen</button>
                 <button class ="buyNow" id="buyNow"><a href="./cart.html">Jetzt kaufen</a></button>
             </div>
@@ -119,12 +125,17 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             }
             const userId = localStorage.getItem("userId");
 
+            if(document.getElementById("amount").value > product.inStock - 2) {
+                alert(`Die maximale Menge, die Sie bestellen können, beträgt ${product.inStock - 2}.`);
+                return;
+            }
+
             let data = {
                 productId: parseInt(artnr),
                 userId: userId,
                 quantity: Number(document.getElementById("amount").value) || 1,
             };
-
+            console.log('----', cartButton.dataset)
             if (cartButton.dataset.isInCart === "true") {
                 await removeItem(data);
                 cartButton.textContent = 'In den Warenkorb legen';
@@ -256,17 +267,19 @@ async function findItem(userId, artnr) {
         );
 
         if (!req.ok) {
-            console.error("findItem request fehlgeschlagen:", req.status, req.statusText);
+            // console.error("findItem request fehlgeschlagen:", req.status, req.statusText);
             return;
         }
 
         const res = await req.json();
         console.log("findItem response:", res);
-        console.log("Produkt gefunden im Warenkorb:", res.found);
+        // console.log("Produkt gefunden im Warenkorb:", res.found);
 
         let cartButton = document.getElementById("cart-button");
-        if (res.found === true) {
+        let amountInput = document.getElementById("amount");
+        if (res.found !== []) {
             cartButton.textContent = 'Artikel aus Warenkorb entfernen';
+            amount.value = res.found.quantity
             cartButton.dataset.isInCart = "true";
         } else {
             cartButton.textContent = 'In den Warenkorb legen';

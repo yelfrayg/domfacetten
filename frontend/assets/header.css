@@ -35,7 +35,6 @@
             padding: 0;
 
             li {
-                border-radius: 50px;
                 transition: 0.2s;
 
                 a {
@@ -52,7 +51,7 @@
                     }
                 }
 
-                .user-logged-in {
+                /* .user-logged-in {
                     .user-letter {
                         width: 32px;
                         height: 32px;
@@ -69,14 +68,17 @@
                     :hover {
                         background-color: rgb(216, 151, 20) !important;
                     }
-                }
+                } */
             }
 
-            li.active::after {
+            /* li::after {
                 width: 100%;
-            }
+            } */
 
-            li:not(:has(.user-logged-in))::after {
+
+            /* li:not(:has(.user-logged-in)) */
+            
+            li::after {
                 content: "";
                 display: block;
                 width: 0;
@@ -85,7 +87,7 @@
                 transition: width 0.3s ease-in-out;
             }
 
-            li:not(:has(.user-logged-in)):hover::after {
+            li:hover::after {
                 width: 100%;
             }
         }
@@ -161,12 +163,14 @@
             gap: var(--s);
             list-style: none;
             margin: 0;
-            padding: 0;
+            padding: 0 !important;
 
             li {
                 padding: var(--m);
                 border: 1px solid transparent;
                 width: 100%;
+                transition: filter 0.3s ease-in-out;
+                filter: drop-shadow(0px 0px 0px transparent);
 
                 a {
                     color: black;
@@ -200,6 +204,7 @@
     }
 
     .mobile-menu.active {
+        transition: filter 0.3s ease-in-out;
         transform: translateX(0);
         filter: drop-shadow(-200px 0px #ffffffa3);
         z-index: 100;
