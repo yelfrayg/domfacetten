@@ -139,7 +139,7 @@
             .out-of-stock {
 
                 .product-img-container {
-                    filter: grayscale(100%);
+                    filter: grayscale(10%);
                 }
                 
                 .product-img-container::after {

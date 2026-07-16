@@ -3,7 +3,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
 function generateToken(userId, email) {
-    return jwt.sign({ userId, email }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    return jwt.sign({ userId, email }, process.env.JWT_SECRET); // Zur Not mit { expiresIn: "24h" } ergänzen.
 }
 
 function verifyToken(req, res, next) {

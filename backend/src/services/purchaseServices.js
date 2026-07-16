@@ -80,7 +80,7 @@ const saveSingleOrder = async (userId, productObj, paypalOrderId) => {
                 data: {
                     orderId: paypalOrderId, 
                     products: productDataForOrders, 
-                    // code: code, // Optional: Wenn ein Rabattcode verwendet wurde, kann dieser hier gespeichert werden
+                    //code: code, // Optional: Wenn ein Rabattcode verwendet wurde, kann dieser hier gespeichert werden
                     customerId: userId
                 }
             })
@@ -168,7 +168,7 @@ const createCartOrder = async (userId, code) => {
     }
 }
 
-const completeCartOrder = async (userId, paypalOrderId) => {
+const completeCartOrder = async (userId, paypalOrderId, code) => {
     try {
         return await prisma.$transaction(async tx => {
             const allProductsInCart = await tx.cart.findMany({
@@ -177,6 +177,27 @@ const completeCartOrder = async (userId, paypalOrderId) => {
                 },
                 include: {
                     product: true
+                }
+            })
+
+            allProductsInCart.forEach(async (cartItem) => {
+                const { product, quantity } = cartItem
+                console.log('Reduziere Produktbestand für:', product.artnr, 'um', quantity)
+                const reduceProductStock = await tx.product.update({
+                    where: {
+                        artnr: product.artnr
+                    },
+                    data: {
+                        inStock: {
+                            decrement: quantity
+                        }
+                    }
+                })
+            })
+
+            const checkCode = await tx.codes.findFirst({
+                where: {
+                    codeId: code.toUpperCase()
                 }
             })
 
@@ -189,7 +210,8 @@ const completeCartOrder = async (userId, paypalOrderId) => {
                 data: {
                     orderId: paypalOrderId, // Die tatsächliche PayPal Order ID (wird vom Frontend/PayPal übergeben)
                     products: allProductsInCart, // Speichert die Produkte direkt im JSON-Format
-                    customerId: userId
+                    customerId: userId,
+                    code: checkCode || {}
                 }
             })
 

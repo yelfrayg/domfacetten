@@ -26,10 +26,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             }
             allProducts.forEach((p) => {
                 if (p.getAttribute("data-colors").includes(selectedColors)) {
-                    p.style.display = "block";
+                    p.style.display = "block";                    
                 }
                 else {
-                    p.style.display = "none";
+                    p.style.display = 'none'
                 }
             })
         })

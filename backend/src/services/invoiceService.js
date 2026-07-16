@@ -37,15 +37,22 @@ const newInvoice = async (orderId, code) => {
             }
         });
 
-        const findCode = await prisma.codes.findFirst({
-            where: {
-                codeId: code
-            }
-        });
+        // Prefer a code stored on the order (userData.code) if present.
+        // Otherwise only query the codes table when an explicit `code` parameter was passed.
+        let findCode = null;
+        if (userData && userData.code && userData.code.codeId) {
+            findCode = userData.code;
+        } else if (code) {
+            findCode = await prisma.codes.findFirst({
+                where: {
+                    codeId: code
+                }
+            });
+        }
 
         const discountName = findCode ? findCode.codeId : '';
-        const discountValue = findCode ? findCode.codeValue : 0
-        const discount = 1 - discountValue
+        const discountValue = findCode ? Number(findCode.codeValue) : 0;
+        const discount = 1 - discountValue;
         
         const products = Array.isArray(userData.products) ? userData.products : [userData.products];
         const grandTotal = products.map(p => p.product.price * p.quantity).reduce((a, b) => a + b, 0);

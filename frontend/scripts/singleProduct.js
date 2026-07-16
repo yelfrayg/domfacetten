@@ -47,12 +47,12 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 </ul>
                 <div class="arrow-container">
                     ${product.image2
-                ? `
-                        <button class="arrow-left">〈</button>
-                        <button class="arrow-right">⟩</button>
-                    `
-                : ""
-            }
+                        ? `
+                                <button class="arrow-left">〈</button>
+                                <button class="arrow-right">⟩</button>
+                            `
+                        : ""
+                    }
                 </div>
             </div>
 
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 userId: userId,
                 quantity: Number(document.getElementById("amount").value) || 1,
             };
-            console.log('----', cartButton.dataset)
+
             if (cartButton.dataset.isInCart === "true") {
                 await removeItem(data);
                 cartButton.textContent = 'In den Warenkorb legen';
@@ -277,7 +277,10 @@ async function findItem(userId, artnr) {
 
         let cartButton = document.getElementById("cart-button");
         let amountInput = document.getElementById("amount");
-        if (res.found !== []) {
+        
+        if(res.found === null) return
+
+        if (res.found) {
             cartButton.textContent = 'Artikel aus Warenkorb entfernen';
             amount.value = res.found.quantity
             cartButton.dataset.isInCart = "true";

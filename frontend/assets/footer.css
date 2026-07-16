@@ -37,6 +37,7 @@ footer {
 
 @media (max-width: 768px) {
     footer {
+        margin-top: 0;
         padding-bottom: var(--m);
         .footer-container {
             gap: var(--3xl) !important;
