@@ -1,48 +1,40 @@
 const filters = document.querySelectorAll("#checkmark");
 const productContainer = document.querySelector(".products-container");
-let filterobjects = [];
-let allproductsArray = [];
 
 document.addEventListener("DOMContentLoaded", async (_) => {
-    const savedFilters = localStorage.getItem("productFilters");
-    if (savedFilters) {
-        try {
-            filterobjects = JSON.parse(savedFilters) || [];
-        } catch (e) {
-            filterobjects = [];
-        }
-    }
+    await fetchProducts();
+
+
+    let selectedColors = []
 
     filters.forEach((f) => {
-        const colorValue = f.getAttribute("data-value");
-
-        if (filterobjects.includes(colorValue)) {
-            f.checked = true;
-        }
-
-        f.addEventListener("click", (_) => {
-            if (!filterobjects.includes(colorValue)) {
-                filterobjects.push(colorValue);
-            } else {
-                filterobjects = filterobjects.filter(
-                    (item) => item !== colorValue,
-                );
+        f.addEventListener('click', _ => {
+            const colorValue = f.getAttribute("data-value");
+            if (!selectedColors.includes(colorValue)) {
+                selectedColors.push(colorValue);
             }
-
-            if (filterobjects.length > 0) {
-                localStorage.setItem(
-                    "productFilters",
-                    JSON.stringify(filterobjects),
-                );
-            } else {
-                localStorage.removeItem("productFilters");
+            else {
+                selectedColors = selectedColors.filter((c) => c !== colorValue);
             }
-
-            showProducts(filterobjects);
-        });
+            const allProducts = document.querySelectorAll(".product");
+            console.log(selectedColors);
+            if (selectedColors.length === 0) {
+                allProducts.forEach((p) => {
+                    p.style.display = "block";
+                })
+                return
+            }
+            allProducts.forEach((p) => {
+                if (p.getAttribute("data-colors").includes(selectedColors)) {
+                    p.style.display = "block";
+                }
+                else {
+                    p.style.display = "none";
+                }
+            })
+        })
     });
 
-    fetchProducts();
 });
 
 async function fetchProducts() {
@@ -50,34 +42,29 @@ async function fetchProducts() {
         const req = await fetch("http://localhost:3000/api/products");
         const res = await req.json();
         allproductsArray = res.products || [];
+        console.log(allproductsArray);
+        const productContainer = document.querySelector(".products-container");
 
-        // vorhandene (persistierte) Filter direkt anwenden
-        if (filterobjects.length > 0) {
-            showProducts(filterobjects);
-        } else {
-            loadAllProducts();
-        }
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-function loadAllProducts() {
-    productContainer.innerHTML = "";
-
-    allproductsArray.forEach((p) => {
-        const productElement = document.createElement("a");
-        productElement.classList.add("product");
-        if (p.inStock <= 0) {
-            productElement.classList.add("out-of-stock");
-        }
-        else {
-            productElement.href = `./product.html?id=${p.artnr}`;
-        }
-        productElement.innerHTML = `
+        allproductsArray.forEach((p) => {
+            const productElement = document.createElement("a");
+            productElement.classList.add("product");
+            console.log(p.keywords.join(','));
+            let colors = []
+            p.keywords.forEach((keyword) => {
+                colors.push(keyword.toLowerCase());
+            });
+            console.log(colors);
+            productElement.setAttribute("data-colors", colors);
+            if (p.inStock <= 0) {
+                productElement.classList.add("out-of-stock");
+            }
+            else {
+                productElement.href = `./product.html?id=${p.artnr}`;
+            }
+            productElement.innerHTML = `
             <div class="product-img-container">
                 <img src="http://localhost:3000/uploads/products/${p.heroImage
-            }" alt="Stoffarmband">
+                }" alt="Stoffarmband">
                 <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
             </div>
             <div class="product-info">
@@ -85,40 +72,10 @@ function loadAllProducts() {
                 <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
             </div>
         `;
+            productContainer.appendChild(productElement);
+        })
 
-        productContainer.append(productElement);
-    });
-}
-
-function showProducts(filterobjects) {
-    if (filterobjects.length === 0) {
-        loadAllProducts();
-        return;
+    } catch (error) {
+        console.log(error);
     }
-
-    const filteredProducts = allproductsArray.filter((p) => {
-        return filterobjects.every((f) => p.keywords.includes(f));
-    });
-    loadFilteredProducts(filteredProducts);
-}
-
-function loadFilteredProducts(products) {
-    productContainer.innerHTML = "";
-
-    products.forEach((p) => {
-        productContainer.innerHTML += `
-            <a class="product" href="./product.html?id=${p.artnr}">
-                <div class="product-img-container">
-                    <img src="http://localhost:3000/uploads/products/${encodeURIComponent(
-            p.heroImage,
-        )}" alt="Stoffarmband">
-                    <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">${p.name}</h3>
-                    <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
-                </div>
-            </a>
-        `;
-    });
 }
