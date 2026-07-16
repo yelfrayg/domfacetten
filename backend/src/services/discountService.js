@@ -34,6 +34,28 @@ const getDiscountByCode = async (code) => {
     }
 }
 
+const createDiscountCode = async (code, discount, available) => {
+    try {
+        const newCode = await prisma.codes.create({
+            data: {
+                codeId: code.toUpperCase(),
+                codeValue: discount,
+                expired: available
+            }
+        })
+        return {
+            code: 201,
+            discountObj: newCode
+        }
+    } catch (error) {
+        return {
+            code: 500,
+            message: error.message
+        }
+    }
+}
+
 module.exports = {
-    getDiscountByCode
+    getDiscountByCode,
+    createDiscountCode
 }

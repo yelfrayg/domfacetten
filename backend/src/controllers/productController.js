@@ -56,12 +56,7 @@ async function createProduct(req, res) {
         const description = body.description;
         const keywords = parseKeywords(body.keywords);
         const price = body.price; // Prisma Decimal ist oft am sichersten als String
-        const available =
-            body.available === true ||
-            body.available === "true" ||
-            body.available === "on" ||
-            body.available === 1 ||
-            body.available === "1";
+        const inStock = body.inStock 
 
         const newDataSet = {
             arttype,
@@ -70,7 +65,7 @@ async function createProduct(req, res) {
             description,
             keywords,
             price,
-            available,
+            inStock,
             heroImage,
             secondImage,
             thirdImage,

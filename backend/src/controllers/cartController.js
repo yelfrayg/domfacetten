@@ -40,7 +40,7 @@ async function findItemInCart(req, res) {
         const item = await cartService.findCartItem(req.body)
         res.status(200).json({ found: item.found, message: 'Funktion zum Suchen wurde ausgeführt.' })
     } catch (error) {
-        res.status(500).json({ found: false, message: error.message })
+        res.status(500).json({ found: [], message: error.message })
     }
 }
 

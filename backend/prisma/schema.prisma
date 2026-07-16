@@ -13,7 +13,7 @@ model Product {
   description String
   keywords    Json
   price       Decimal
-  available   Boolean
+  inStock     Int
   heroImage   String
   image2      String?
   image3      String?
@@ -25,6 +25,7 @@ model Orders {
   products   Json
   timestamp  DateTime @default(now())
   customerId String
+  code       Json?
   user       Users?   @relation(fields: [customerId], references: [userId], onDelete: Cascade)
 }
 

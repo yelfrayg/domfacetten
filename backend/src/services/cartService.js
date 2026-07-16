@@ -36,7 +36,7 @@ async function addToCart(data) {
             data: {
                 userId: userId,
                 productId: productId,
-                quantity: quantity > 5 ? 5 : quantity, // Maximal 5 Artikel pro Produkt
+                quantity: quantity, 
             }
         });
         return {
@@ -86,24 +86,16 @@ async function removeFromCart(data) {
 async function findCartItem(data) {
     try {
         const { userId, productId } = data
-        const count = await prisma.cart.count({
+        const item = await prisma.cart.findFirst({
             where: {
                 userId: userId,
                 productId: productId
             }
         })
 
-        let found 
-        if(count > 0) {
-            found = true
-        }
-        else {
-            found = false
-        }
-
         return {
             code: 200,
-            found: found
+            found: item,
         }
     } catch (error) {
         return {

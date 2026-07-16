@@ -66,7 +66,7 @@ const createNewProduct = async (data) => {
                 description: data.description,
                 keywords: data.keywords,
                 price: data.price,
-                available: data.available,
+                inStock: parseInt(data.inStock),
                 heroImage: data.heroImage,
                 image2: data.secondImage,
                 image3: data.thirdImage,

@@ -43,7 +43,7 @@ const newInvoice = async (orderId, code) => {
             }
         });
 
-        const discountName = findCode? findCode.codeId : '';
+        const discountName = findCode ? findCode.codeId : '';
         const discountValue = findCode ? findCode.codeValue : 0
         const discount = 1 - discountValue
         
@@ -97,10 +97,9 @@ const newInvoice = async (orderId, code) => {
         htmlContent = htmlContent.replace('<!-- ITEMS_PLACEHOLDER -->', itemsHtml);
 
         // 3. Von HTML zu PDF konvertieren (Kostenlos via Puppeteer Chromium)
-        // 3. Von HTML zu PDF konvertieren (Kostenlos via Puppeteer Chromium)
         const browser = await puppeteer.launch({ 
             headless: "new", 
-            executablePath: '/usr/bin/chromium',
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '',
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] 
         });
         const page = await browser.newPage();

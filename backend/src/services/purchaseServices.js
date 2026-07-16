@@ -80,6 +80,7 @@ const saveSingleOrder = async (userId, productObj, paypalOrderId) => {
                 data: {
                     orderId: paypalOrderId, 
                     products: productDataForOrders, 
+                    // code: code, // Optional: Wenn ein Rabattcode verwendet wurde, kann dieser hier gespeichert werden
                     customerId: userId
                 }
             })
