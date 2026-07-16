@@ -95,6 +95,8 @@ h1 {
 
         .user-orders {
             list-style-type: none;
+            max-height: 50vh;
+            overflow-y: auto;
 
             .user-order {
                 display: flex;

@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     }
 
     const userData = await getUserInfo(userId);
-    console.log("Geladene Userdaten:", userData);
+    // console.log("Geladene Userdaten:", userData);
     const userOrders = await getOrders(userId);
 
     if (userData && userData.code === 200) {
@@ -168,6 +168,7 @@ async function getOrders(userId) {
 
         res.orders.forEach((order) => {
             const orderProducts = Array.isArray(order.products) ? order.products : [order.products];
+            let orderCode = order.code != null ? 1-order.code.codeValue : 1;
             const listItem = document.createElement("li");
             listItem.classList.add("user-order");
             listItem.innerHTML = `
@@ -186,7 +187,7 @@ async function getOrders(userId) {
                                     ${orderProducts.map((p) => `<tr><td class="table-img-container"><img src="http://localhost:3000/uploads/products/${p.product.heroImage}" alt="${p.product.name}"/></td><td class="tg-0lax">A${p.product.artnr}</td><td class="tg-0lax">${p.quantity}</td></tr>`).join("")}
                                 </tbody>
                             </table>
-                            <p class ="order-total">Gesamtpreis: <span class="order-total-price">${orderProducts.map((p) => p.product.price * p.quantity).reduce((a, b) => (a + b), 0).toFixed(2).replace('.', ',')} €</span></p>
+                            <p class ="order-total">Gesamtpreis: <span class="order-total-price">${(orderProducts.map((p) => p.product.price * p.quantity).reduce((a, b) => (a + b), 0)*orderCode).toFixed(2).replace('.', ',')} €</span></p>
                             <button id="bill-button" data-order-id="${order.orderId}">Rechnung herunterladen</button>
                         </details>
             `;
