@@ -31,12 +31,15 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             `;
             return;
         }
-        if(product.inStock <= 0) {
+        if (product.inStock <= 0) {
             productContainer.innerHTML = `
                 <h2>Produkt aktuell nicht verfügbar.</h2>
             `;
             return;
         }
+
+        console.log('Product max:', product.inStock - 2 <= 0 ? 1 : product.inStock - 2)
+        console.log('---------')
 
         productContainer.innerHTML = `
             <div class="highlight-product-imgs">
@@ -47,12 +50,12 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 </ul>
                 <div class="arrow-container">
                     ${product.image2
-                        ? `
+                ? `
                                 <button class="arrow-left">〈</button>
                                 <button class="arrow-right">⟩</button>
                             `
-                        : ""
-                    }
+                : ""
+            }
                 </div>
             </div>
 
@@ -125,15 +128,13 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             }
             const userId = localStorage.getItem("userId");
 
-            if(document.getElementById("amount").value > product.inStock - 2) {
-                alert(`Die maximale Menge, die Sie bestellen können, beträgt ${product.inStock - 2}.`);
-                return;
-            }
+            const userQuantity = parseInt(document.getElementById("amount").value, 10);
+            const maximum = parseInt(document.getElementById("amount").max, 10);
 
             let data = {
                 productId: parseInt(artnr),
                 userId: userId,
-                quantity: Number(document.getElementById("amount").value) || 1,
+                quantity: userQuantity,
             };
 
             if (cartButton.dataset.isInCart === "true") {
@@ -141,6 +142,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 cartButton.textContent = 'In den Warenkorb legen';
                 cartButton.dataset.isInCart = "false";
             } else {
+                if (userQuantity > maximum || userQuantity < 1) {
+                    alert('Maximale Menge beträgt ' + maximum + ' Stück!')
+                    return
+                }
                 await addItem(data);
                 cartButton.textContent = 'Artikel aus Warenkorb entfernen';
                 cartButton.dataset.isInCart = "true";
@@ -157,10 +162,10 @@ async function addItem(data) {
     if (bag) {
         // Remove the wiggle class if it exists
         bag.classList.remove("wiggle");
-        
+
         // Force a reflow to reset the animation
         void bag.offsetWidth;
-        
+
         // Add a small delay to ensure the animation plays
         setTimeout(() => {
             bag.classList.add("wiggle");
@@ -204,10 +209,10 @@ async function removeItem(data) {
     if (bag) {
         // Remove the throw class if it exists
         bag.classList.remove("throw");
-        
+
         // Force a reflow to reset the animation
         void bag.offsetWidth;
-        
+
         // Add a small delay to ensure the animation plays
         setTimeout(() => {
             bag.classList.add("throw");
@@ -277,8 +282,8 @@ async function findItem(userId, artnr) {
 
         let cartButton = document.getElementById("cart-button");
         let amountInput = document.getElementById("amount");
-        
-        if(res.found === null) return
+
+        if (res.found === null) return
 
         if (res.found) {
             cartButton.textContent = 'Artikel aus Warenkorb entfernen';

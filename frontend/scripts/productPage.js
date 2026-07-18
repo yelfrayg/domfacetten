@@ -39,10 +39,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
 async function fetchProducts() {
     try {
-        const req = await fetch("http://localhost:3000/api/products");
+        const req = await fetch(`http://localhost:3000/api/products`);
         const res = await req.json();
         allproductsArray = res.products || [];
-        console.log(allproductsArray);
+        // console.log(allproductsArray);
         const productContainer = document.querySelector(".products-container");
 
         allproductsArray.forEach((p) => {
@@ -61,6 +61,7 @@ async function fetchProducts() {
             else {
                 productElement.href = `./product.html?id=${p.artnr}`;
             }
+            
             productElement.innerHTML = `
             <div class="product-img-container">
                 <img src="http://localhost:3000/uploads/products/${p.heroImage

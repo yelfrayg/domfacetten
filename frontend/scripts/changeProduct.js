@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 const nameInput = document.getElementById("editName").value;
                 const descriptionInput = document.getElementById("editDescription").value;
                 const priceInput = document.getElementById("editPrice").value;
-                const availabilityInput = document.getElementById("editAvailability").checked;
+                const availabilityInput = document.getElementById("editAvailability").value;
 
                 let data = {
                     arttype: selectedForEdit.arttype,
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                     name: nameInput,
                     description: descriptionInput,
                     price: parseFloat(priceInput),
-                    available: availabilityInput
+                    inStock: parseInt(availabilityInput, 10)
                 };
 
                 await applyChanges(data);
