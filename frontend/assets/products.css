@@ -139,11 +139,11 @@
             .out-of-stock {
 
                 .product-img-container {
-                    filter: grayscale(10%);
+                    filter: grayscale(100%);
                 }
                 
                 .product-img-container::after {
-                    content: "Ausverkauft!";
+                    content: "Ausverkauft";
                     position: absolute;
                     top: 50%;
                     left: 50%;
