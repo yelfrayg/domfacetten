@@ -2,10 +2,10 @@ const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
 const path = require("path");
 const fs = require("fs/promises");
-const argon = require('argon2')
 const bcrypt = require('bcrypt')
 const SALT_ROUNDS = 10
 const { generateToken } = require("../middleware/checkAuth.js");
+const { sendOTPMail } = require("../utils/mail/mail.js");
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -187,4 +187,118 @@ async function getOrders(userId) {
     }
 }
 
-module.exports = { createUser, updateUser, getUserData, deleteAccount, login, getOrders };
+async function findUserByEmail(email) {
+    try {
+        const user = await prisma.users.findFirst({
+            where: {
+                email: email
+            }
+        })
+        return user;
+    } catch (error) {
+        return {
+            code: 500,
+            message: 'E-Mail ist nicht hinterlegt.'
+        }
+    }
+}
+
+async function requestPasswordReset(email) {
+    try {
+        const user = await findUserByEmail(email);
+        if (!user) {
+            return {
+                code: 404,
+                message: 'E-Mail ist nicht hinterlegt.'
+            }
+        }
+        const otp = Math.floor(100000 + Math.random() * 900000);
+        const expirationTime = new Date(Date.now() + 3 * 60 * 1000); // 3 Minuten
+        // OTP in der Datenbank speichern
+        await prisma.users.update({
+            where: {
+                email: email
+            },
+            data: {
+                otp: parseInt(otp),
+                otpExpiry: expirationTime
+            }
+        });
+        const sendMail = await sendOTPMail(email, otp);
+        if(!sendMail || sendMail.code !== 200) {
+            return {
+                code: 500,
+                message: 'Fehler beim Senden der OTP-Mail.'
+            }
+        }
+        return {
+            code: 200,
+            message: 'OTP erfolgreich generiert und in der Datenbank gespeichert.',
+            otp: otp
+        }
+    } catch(error) {
+        return {
+            code: 500,
+            message: error.message
+        }
+    }
+}
+
+async function verifyOTP(email, otp) {
+    try {
+        const user = await findUserByEmail(email);
+        if (!user) {
+            return {
+                code: 404,
+                message: 'E-Mail ist nicht hinterlegt.'
+            }
+        }
+        const currentTime = new Date();
+        if (user.otp !== parseInt(otp)) {
+            return {
+                code: 400,
+                message: 'Ungültiger OTP-Code.'
+            }
+        }
+        if (currentTime > user.otpExpiry) {
+            return {
+                code: 400,
+                message: 'OTP-Code ist abgelaufen.'
+            }
+        }
+        return {
+            code: 200,
+            message: 'OTP-Code ist gültig.'
+        }
+    } catch (error) {
+        return {
+            code: 500,
+            message: error.message
+        }
+    }
+}
+
+async function updatePassword(userId, newPassword) {
+    try {
+        const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+        await prisma.users.update({
+            where: {
+                userId: userId
+            },
+            data: {
+                password: hashedPassword
+            }
+        })
+        return {
+            code: 200,
+            message: 'Passwort erfolgreich aktualisiert.'
+        }
+    } catch (error) {
+        return {
+            code: 500,
+            message: error.message
+        }
+    }
+}
+
+module.exports = { createUser, updateUser, getUserData, deleteAccount, login, getOrders, findUserByEmail, requestPasswordReset, verifyOTP, updatePassword };

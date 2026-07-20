@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer");
 const path = require("path");
-const userService = require('../../services/userService')
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 const { PrismaClient } = require("@prisma/client");
@@ -63,6 +62,41 @@ async function sendMail(userId, orderId) {
     }
 }
 
+async function sendOTPMail(email, otp) {
+    try {
+        const transporter = nodemailer.createTransport({
+            host: "smtp.web.de",
+            port: 587,
+            secure: false, // use STARTTLS (upgrade connection to TLS after connecting)
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
+            },
+        });
+
+        const info = await transporter.sendMail({
+            from: '"Domfacetten-Team" <domfacetten@web.de>',
+            to: `${email}`,
+            subject: "Passwort zurücksetzen", 
+            html: `
+                <h2>Bitte folgenden Code in der Anwendung eingeben:</h2>
+                <h3>${otp}</h3>
+                <p>Der Code ist 3 Minuten gültig.</p>
+            `,
+        });
+        return {
+            code: 200,
+            message: 'Passwort-Reset-E-Mail erfolgreich gesendet.'
+        }
+    } catch (error) {
+        return {
+            code: 500,
+            message: error.message
+        }
+    }
+}
+
 module.exports = {
     sendMail,
+    sendOTPMail
 };

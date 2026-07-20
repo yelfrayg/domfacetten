@@ -44,6 +44,8 @@ model Users {
   address    Json     @default(dbgenerated("'{}'"))
   orders     Orders[] // [] = 1:n relation
   cart       Cart[]
+  otp        Int  @default(000000)
+  otpExpiry  DateTime @default(now())
 }
 
 model Cart {

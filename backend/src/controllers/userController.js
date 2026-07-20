@@ -70,11 +70,47 @@ async function fetchOrders(req, res) {
     }
 }
 
+async function requestOTP(req, res) {
+    try {
+        const { email } = req.body;
+        const result = await userService.requestPasswordReset(email);
+        return res.status(result.code).json({ message: result });
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+}
+
+async function verifyOTP(req, res) {
+    try {
+        const { email, otp } = req.body;
+        const result = await userService.verifyOTP(email, otp);
+        res.status(result.code).json({ message: result.message });
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+async function updatePassword(req, res) {
+    try {
+        const { userId, newPassword } = req.body;
+        const result = await userService.updatePassword(userId, newPassword);
+        if(!result) {
+            return res.status(400).json({ message: 'Fehler beim Aktualisieren des Passworts.' });
+        }
+        return res.status(result.code).json({ message: result.message });
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+}
+
 module.exports = {
     createNewUser,
     updateUserInfo,
     getUserData,
     deleteUser,
     loginUser,
-    fetchOrders
+    fetchOrders,
+    requestOTP,
+    verifyOTP,
+    updatePassword
 };
