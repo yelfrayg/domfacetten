@@ -12,6 +12,10 @@
         padding-bottom: var(--3xl);
         font-size: var(--l);
 
+        h3 {
+            font-size: var(--2xl);
+        }
+
         .filter-mobile {
             display: none;
         }

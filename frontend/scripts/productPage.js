@@ -1,5 +1,8 @@
 const filters = document.querySelectorAll("#checkmark");
 const productContainer = document.querySelector(".products-container");
+const filter = document.querySelector(".filter");
+const filterMobile = document.querySelector(".filter-mobile");
+const heading = document.querySelector(".products-container");
 
 document.addEventListener("DOMContentLoaded", async (_) => {
     await fetchProducts();
@@ -77,6 +80,8 @@ async function fetchProducts() {
         })
 
     } catch (error) {
-        console.log(error);
+        heading.innerHTML = "<h3>Hmm, anscheinend möchte der Server grade nicht arbeiten...<br>Wir arbeiten aktuell an einer Lösung!</h3>";
+        filter.style.display = "none";
+        filterMobile.style = "display: none !important";
     }
 }

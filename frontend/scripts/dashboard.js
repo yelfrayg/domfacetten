@@ -18,6 +18,7 @@ const updateButton = document.getElementById("updateButton");
 const ordersTableBody = document.querySelector(".user-orders");
 
 document.addEventListener("DOMContentLoaded", async (_) => {
+
     const showPasswordBtn = document.getElementById("show-password");
 
     showPasswordBtn.addEventListener("click", (e) => {

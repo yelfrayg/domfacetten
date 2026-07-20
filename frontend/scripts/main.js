@@ -1,20 +1,24 @@
-// document.addEventListener('DOMContentLoaded', _ => {
-//     // Session weiter eine Minute Counten
-//     const sessionTimeout = 1000  * 60; // 60 Minuten
-//     const firstName = localStorage.getItem('user-letter') || ''
-//     if (!localStorage.getItem('sessionTimeout')) {
-//         localStorage.setItem('sessionTimeout', Date.now() + sessionTimeout);
-//     }
+async function pingServer() {
+  const startTime = performance.now();
+  
+  try {
+    // HEAD fragt nur den Header ab, lädt nicht die ganze Seite runter (spart Daten)
+    await fetch('http://localhost:3000', { method: 'GET', mode: 'no-cors' });
+    print("Server ist erreichbar!");
+    
+    const duration = performance.now() - startTime;
+    console.log(`Server ist erreichbar! Antwortzeit: ${duration.toFixed(0)} ms`);
+    return duration;
+  } catch (error) {
+    console.error("Server ist offline oder nicht erreichbar:", error);
+    if(window.location.pathname == '/dashboard.html' || window.location.pathname == '/cart.html') {
+        window.location = "./userAuth.html?msg=500";
+    }
+    return null;
+  }
+}
 
-//     if (localStorage.getItem('sessionTimeout') && Date.now() > localStorage.getItem('sessionTimeout')) {
-//         localStorage.removeItem('sessionTimeout');
-//         localStorage.removeItem('user-letter');
-//     }
-
-//     if (firstName !== '') {
-//         document.querySelector('.user-logged-in').innerHTML = `
-//                 <span class="user-letter">${firstName[0]}</span>
-//             `
-//     }
-// })
+document.addEventListener("DOMContentLoaded", async (_) => {
+    await pingServer();
+})
 

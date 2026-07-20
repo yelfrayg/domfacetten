@@ -1,19 +1,29 @@
 const errorMessageLogin = document.getElementById('error-message-login')
 const errorMessageRegister = document.getElementById('error-message-register')
 const msgFromUrl = new URLSearchParams(window.location.search).get('msg')
+const hasAccount = document.getElementById("show-login-form");
+const noAccount = document.getElementById("show-register-form");
 
 if (msgFromUrl === '403') {
     errorMessage("Bitte logge dich ein, um Artikel in den Warenkorb zu legen.", 'login')
+}
+
+if(msgFromUrl === '500') {
+    errorMessage("Server ist offline oder nicht erreichbar.", 'login')
+    localStorage.removeItem("userToken")
+    localStorage.removeItem("userId")
 }
 
 function errorMessage(message, type) {
     if (type == 'login') {
         errorMessageLogin.textContent = message
         errorMessageLogin.style.display = 'flex'
+        errorMessageRegister.style.display = 'none'
     }
     if (type == 'register') {
         errorMessageRegister.textContent = message
         errorMessageRegister.style.display = 'flex'
+        errorMessageLogin.style.display = 'none'
     }
 }
 
@@ -22,6 +32,14 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     const register = document.querySelector("form.form1");
     const login = document.querySelector("form.form2");
     const turnSymbol = document.querySelector(".turn");
+
+    noAccount.addEventListener("click", () => {
+        toggleForms('register');
+    });
+
+    hasAccount.addEventListener("click", () => {
+        toggleForms('login');
+    });
 
     register.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -187,5 +205,18 @@ function isTokenExpired(token) {
     } catch (error) {
         console.error('Fehler beim Dekodieren des Tokens:', error);
         return true; // Im Fehlerfall als abgelaufen behandeln
+    }
+}
+
+function toggleForms(formId) {
+    const registerForm = document.querySelector('.register-form-container');
+    const loginForm = document.querySelector('.login-form-container');
+
+    if (formId === 'register') {
+        registerForm.style.display = 'block';
+        loginForm.style.display = 'none';
+    } else if (formId === 'login') {
+        registerForm.style.display = 'none';
+        loginForm.style.display = 'block';
     }
 }
