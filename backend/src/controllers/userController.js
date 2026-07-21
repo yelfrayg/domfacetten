@@ -84,7 +84,7 @@ async function verifyOTP(req, res) {
     try {
         const { email, otp } = req.body;
         const result = await userService.verifyOTP(email, otp);
-        res.status(result.code).json({ message: result.message });
+        res.status(result.code).json({ message: result, userId: result.userId });
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
@@ -92,12 +92,12 @@ async function verifyOTP(req, res) {
 
 async function updatePassword(req, res) {
     try {
-        const { userId, newPassword } = req.body;
-        const result = await userService.updatePassword(userId, newPassword);
+        const { mail, newPassword } = req.body;
+        const result = await userService.updatePassword(mail, newPassword);
         if(!result) {
             return res.status(400).json({ message: 'Fehler beim Aktualisieren des Passworts.' });
         }
-        return res.status(result.code).json({ message: result.message });
+        return res.status(result.code).json({ message: result });
     } catch (error) {
         return res.status(500).json({ message: error.message })
     }

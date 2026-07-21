@@ -42,8 +42,17 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     }
 
     const userData = await getUserInfo(userId);
-    // console.log("Geladene Userdaten:", userData);
+    console.log("Geladene Userdaten:", userData);
     const userOrders = await getOrders(userId);
+
+    if(userData.userInfo === null) {
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("user-letter");
+        console.error("Fehler beim Laden der Userdaten:", userData);
+        alert("Daten konnten nicht geladen werden.");
+        window.location = "/userAuth.html?msg=401";
+    }
 
     if (userData && userData.code === 200) {
         const userInfo = userData.userInfo;
@@ -58,9 +67,6 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         }
         localStorage.setItem("user-letter", userInfo.first_name)
 
-    } else {
-        console.error("Fehler beim Laden der Userdaten:", userData);
-        alert("Daten konnten nicht geladen werden.");
     }
 
     updateForm.addEventListener("submit", async (e) => {

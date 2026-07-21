@@ -14,12 +14,15 @@ main {
     border: 1px solid black;
 
     .register-form-container,
-    .login-form-container {
+    .login-form-container,
+    .password-reset-container,
+    .otp-form-container,
+    .new-password-container {
         align-items: flex-start;
         background-color: #fff;
         padding: var(--3xl);
 
-        .form1, .form2 {
+        .form1, .form2, .form3, .form4, .form5 {
             display: flex;
             flex-direction: column;
 
@@ -40,7 +43,8 @@ main {
             }
 
             #error-message-login,
-            #error-message-register {
+            #error-message-register,
+            #error-message-pw-reset {
                 display: none;
                 color: red;
                 margin-bottom: var(--m);
@@ -60,7 +64,10 @@ main {
         }
 
         #show-register-form,
-        #show-login-form {
+        #show-login-form,
+        #show-password-reset-form,
+        #show-otp-form,
+        #show-new-password-form {
             margin-top: var(--m);
             background-color: white;
             color: black;
@@ -70,7 +77,10 @@ main {
         }   
     }
 
-    .register-form-container {
+    .register-form-container,
+    .password-reset-container,
+    .otp-form-container,
+    .new-password-container {
         display: none;
     }
 }

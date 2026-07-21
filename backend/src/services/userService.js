@@ -234,7 +234,6 @@ async function requestPasswordReset(email) {
         return {
             code: 200,
             message: 'OTP erfolgreich generiert und in der Datenbank gespeichert.',
-            otp: otp
         }
     } catch(error) {
         return {
@@ -268,7 +267,8 @@ async function verifyOTP(email, otp) {
         }
         return {
             code: 200,
-            message: 'OTP-Code ist gültig.'
+            message: 'OTP-Code ist gültig.',
+            userId: user.userId
         }
     } catch (error) {
         return {
@@ -278,12 +278,12 @@ async function verifyOTP(email, otp) {
     }
 }
 
-async function updatePassword(userId, newPassword) {
+async function updatePassword(email, newPassword) {
     try {
         const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
         await prisma.users.update({
             where: {
-                userId: userId
+                email: email
             },
             data: {
                 password: hashedPassword

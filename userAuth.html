@@ -108,7 +108,7 @@
                     </form>
                 </div>
                 <div class="login-form-container">
-                    <form class="form2" action="POST">
+                    <form class="form2" method="POST">
                         <h2>Anmelden</h2>
                         <input
                             type="email"
@@ -127,6 +127,53 @@
                         <button id="login">Zum Dashboard</button>
                         <button id="show-register-form">
                             Ich habe noch keinen Account!
+                        </button>
+                        <button id="show-password-reset-form">
+                            Passwort vergessen?
+                        </button>
+                    </form>
+                </div>
+                <div class="password-reset-container">
+                    <form class="form3">
+                        <h2>Passwort zurücksetzen</h2>
+                        <input
+                            type="email"
+                            id="email-reset"
+                            placeholder="E-Mail"
+                        />
+                        <button id="reset-otp">E-Mail anfordern</button>
+                        <button id="show-login-form">
+                            Ich weiß mein Passwort wieder!
+                        </button>
+                    </form>
+                </div>
+                <div class="otp-form-container">
+                    <form method="POST" class="form4">
+                        <h2>OTP eingeben</h2>
+                        <input
+                            type="text"
+                            id="otp-input"
+                            placeholder="OTP"
+                        />
+                        <button id="send-otp">OTP senden</button>
+                        <button id="show-login-form">
+                            Ich weiß mein Passwort wieder!
+                        </button>
+                    </form>
+                </div>
+                <div class="new-password-container">
+                    <form method="post" class="form5">
+                        <h2>Neues Passwort erstellen</h2>
+                        <h3>Gilt für <span class="user-mail"></span>.</h3>
+                        <input type="password" name="pw-reset-one" id="pw-reset-one" placeholder="Neues Passwort" />
+                        <input type="password" name="pw-reset-two" id="pw-reset-two" placeholder="Passwort bestätigen" />
+                        <output id="error-message-pw-reset"
+                            >Keine Übereinstimmung bei E-Mail und
+                            Passwort!</output
+                        >
+                        <button id="update-password">Passwort aktualisieren</button>
+                        <button id="show-login-form">
+                            Ich weiß mein Passwort wieder!
                         </button>
                     </form>
                 </div>
