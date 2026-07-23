@@ -9,6 +9,9 @@ const sendOTPBtn = document.getElementById("send-otp");
 const updatePasswordBtn = document.getElementById("update-password");
 const errorMessagePwReset = document.getElementById('error-message-pw-reset')
 
+if(msgFromUrl === '401') {
+    errorMessage("Bitte logge dich ein, um auf deine Daten zuzugreifen.", 'login')
+}
 
 if (msgFromUrl === '403') {
     errorMessage("Bitte logge dich ein, um Artikel in den Warenkorb zu legen.", 'login')
@@ -110,6 +113,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 return;
             }
             console.log(res);
+            if(res.message.code === 400) {
+                alert("Ungültiger OTP-Code. Bitte überprüfen Sie Ihre Eingabe.");
+            }
+            
         } catch (error) {
             console.log(error)
         }

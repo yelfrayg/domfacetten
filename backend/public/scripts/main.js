@@ -10,8 +10,8 @@ async function pingServer() {
     return duration;
   } catch (error) {
     // console.error("Server ist offline oder nicht erreichbar:", error);
-    if(window.location.pathname == '/dashboard.html' || window.location.pathname == '/cart.html') {
-        window.location = "./userAuth.html?msg=500";
+    if(window.location.pathname == '/dashboard.html' || window.location.pathname == '/cart') {
+        window.location = "./userAuth?msg=500";
     }
     return null;
   }

@@ -46,7 +46,7 @@ window.addEventListener("productLoaded", (e) => {
                         );
                         if (error.error == "Invalid token" || error.error == "Bitte anmelden, um auf diese Seite zuzugreifen.") {
                             Promise.reject(error);
-                            window.location.href = "/userAuth.html?reason=unauthorizedATB";
+                            window.location.href = "/userAuth?reason=unauthorizedATB";
                         } else {
                             alert(
                                 "Hmm. Anscheinend ist der Server gerade am Schlafen. Bitte versuchen Sie es später erneut :)",

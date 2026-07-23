@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 return
             }
             allProducts.forEach((p) => {
-                if (p.getAttribute("data-colors").includes(selectedColors)) {
-                    p.style.display = "block";                    
+                if (selectedColors.every((color) => p.getAttribute("data-colors").includes(color))) {
+                    p.style.display = "block";
                 }
                 else {
                     p.style.display = 'none'
@@ -37,16 +37,15 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             })
         })
     });
-
 });
 
 async function fetchProducts() {
     try {
-        const req = await fetch(`http://localhost:3000/api/products`);
+        const req = await fetch(`/api/products`);
         const res = await req.json();
         allproductsArray = res.products || [];
-        // console.log(allproductsArray);
-        const productContainer = document.querySelector(".products-container");
+        console.log(allproductsArray);
+        const productContainer = document.querySelector(".productPage-container");
 
         allproductsArray.forEach((p) => {
             const productElement = document.createElement("a");
@@ -62,20 +61,19 @@ async function fetchProducts() {
                 productElement.classList.add("out-of-stock");
             }
             else {
-                productElement.href = `./product.html?id=${p.artnr}`;
+                productElement.href = `./product/${String(p.artnr).padStart(3, '0')}`;
             }
-            
+
             productElement.innerHTML = `
-            <div class="product-img-container">
-                <img src="http://localhost:3000/uploads/products/${p.heroImage
-                }" alt="Stoffarmband">
-                <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
-            </div>
-            <div class="product-info">
-                <h3 class="product-name">${p.name}</h3>
-                <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
-            </div>
-        `;
+                <div class="product-img-container">
+                    <img src="/uploads/products/${p.heroImage}" alt="Stoffarmband">
+                    <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">${p.name}</h3>
+                    <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
+                </div>
+            `;
             productContainer.appendChild(productElement);
         })
 

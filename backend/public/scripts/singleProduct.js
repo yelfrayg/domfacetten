@@ -1,12 +1,13 @@
 const url = new URL(window.location.href);
-const artnr = url.searchParams.get("id");
+//Suche den letzten Parameter in der Url = localhost:3000/product/1234
+
+const artnr = url.pathname.split('/').pop();
 const productContainer = document.querySelector(".highlight-product-container");
 const userId = localStorage.getItem("userId")
 
 
-
 if (!artnr) {
-    window.location.href = "./index.html";
+    window.location.href = "/";
 }
 
 document.addEventListener("DOMContentLoaded", async (_) => {
@@ -19,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             return;
         }
 
-        const req = await fetch("http://localhost:3000/api/products");
+        const req = await fetch("/api/products");
         const res = await req.json();
         const product = (res.products || []).find(
             (p) => Number(p.artnr) === artnrNum,
@@ -44,9 +45,9 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         productContainer.innerHTML = `
             <div class="highlight-product-imgs">
                 <ul class="img-caroussel">
-                    <li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.heroImage)}" alt=""></li>
-                    ${product.image2 ? `<li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.image2)}" alt=""></li>` : ""}
-                    ${product.image3 ? `<li class="img-container"><img src="http://localhost:3000/uploads/products/${encodeURIComponent(product.image3)}" alt=""></li>` : ""}
+                    <li class="img-container"><img src="/uploads/products/${encodeURIComponent(product.heroImage)}" alt=""></li>
+                    ${product.image2 ? `<li class="img-container"><img src="/uploads/products/${encodeURIComponent(product.image2)}" alt=""></li>` : ""}
+                    ${product.image3 ? `<li class="img-container"><img src="/uploads/products/${encodeURIComponent(product.image3)}" alt=""></li>` : ""}
                 </ul>
                 <div class="arrow-container">
                     ${product.image2
@@ -66,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
                 <label class ="text">Menge : <input id="amount" type="number" min="1" max = ${product.inStock - 2 <= 0 ? 1 : product.inStock - 2} value="1" step="1"></label>
                 <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}">In den Warenkorb legen</button>
-                <button class ="buyNow" id="buyNow"><a href="./cart.html">Jetzt kaufen</a></button>
+                <button class ="buyNow" id="buyNow"><a href="./cart">Jetzt kaufen</a></button>
             </div>
         `;
 
@@ -123,7 +124,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         cartButton?.addEventListener("click", async (e) => {
             if (!localStorage.getItem("userId")) {
                 // alert("Bitte logge dich ein, um Artikel in den Warenkorb zu legen.");
-                window.location.href = "/userAuth.html?msg=403";
+                window.location.href = "/userAuth?msg=403";
                 return;
             }
             const userId = localStorage.getItem("userId");
@@ -186,7 +187,7 @@ async function addItem(data) {
 
     try {
         const req = await fetch(
-            "http://localhost:3000/api/cartManagement/addCartItems",
+            "/api/cartManagement/addCartItems",
             {
                 method: "POST",
                 headers: {
@@ -231,7 +232,7 @@ async function removeItem(data) {
         console.error("Bag element not found!");
     }
     try {
-        const req = await fetch('http://localhost:3000/api/cartManagement/removeItem', {
+        const req = await fetch('/api/cartManagement/removeItem', {
             method: 'DELETE',
             headers: {
                 "Content-Type": "application/json",
@@ -260,7 +261,7 @@ async function findItem(userId, artnr) {
         }
 
         const req = await fetch(
-            "http://localhost:3000/api/cartManagement/findItem",
+            "/api/cartManagement/findItem",
             {
                 method: "POST",
                 headers: {

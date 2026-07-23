@@ -27,7 +27,7 @@ let originalPrice = 0
 document.addEventListener('DOMContentLoaded', async _ => {
     try {
         const userId = localStorage.getItem('userId')
-        const reqCartItems = await fetch(`http://localhost:3000/api/cartManagement/getCartItems/${userId}`, {
+        const reqCartItems = await fetch(`/api/cartManagement/getCartItems/${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
         const resCartItems = await reqCartItems.json()
         if (reqCartItems.status == 401) {
             // alert('Access denied!')
-            // window.location = "/productPage.html"
+            // window.location = "/productPage"
             return
         }
 
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
             cartEntry.classList.add('single-cart-item')
             cartEntry.innerHTML = `
                 <td class="image-container">
-                    <img src="http://localhost:3000/uploads/products/${element.product.heroImage}" alt="Image" />
+                    <img src="/uploads/products/${element.product.heroImage}" alt="Image" />
                 </td>
                 <td class="art-info-text">
                     <div class="product-info">
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
 
         //??????????????????????????????????????????????????        
 
-        const reqUser = await fetch(`http://localhost:3000/api/userManagement/getUserInfo/${userId}`, {
+        const reqUser = await fetch(`/api/userManagement/getUserInfo/${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ async function ppCart() {
                 const codeInput = document.getElementById('code-input')
                 const code = codeInput ? codeInput.value.toUpperCase() : ''
                 return fetch(
-                    "http://localhost:3000/api/purchases/createCartPurchase",
+                    "/api/purchases/createCartPurchase",
                     {
                         method: "POST",
                         headers: {
@@ -175,7 +175,7 @@ async function ppCart() {
                 const codeInput = document.getElementById('code-input')
                 const code = codeInput ? codeInput.value.toUpperCase() : ''
                 return actions.order.capture().then(async function (details) {
-                    const completeOrder = await fetch('http://localhost:3000/api/purchases/completeCartPurchase', {
+                    const completeOrder = await fetch('/api/purchases/completeCartPurchase', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -207,7 +207,7 @@ async function deleteFromCart() {
                     productId: parseInt(artnr)
                 }
 
-                const req = await fetch('http://localhost:3000/api/cartManagement/removeItem', {
+                const req = await fetch('/api/cartManagement/removeItem', {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -245,7 +245,7 @@ async function codeChecker() {
 
         if (iconCheck) iconCheck.innerHTML = icons.waiting
 
-        const req = await fetch(`http://localhost:3000/api/discountManagement/getDiscount/${code}`)
+        const req = await fetch(`/api/discountManagement/getDiscount/${code}`)
         const res = await req.json()
         // console.log(res)
         if (res.code == 200) {

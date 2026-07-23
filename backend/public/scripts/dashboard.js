@@ -1,6 +1,8 @@
-const paramsString = window.location.search;
-const searchParams = new URLSearchParams(paramsString);
-const userId = searchParams.get("userId");
+const url = new URL(window.location.href);
+const params = url.searchParams;
+
+// Die User-ID kommt aus dem Query-Parameter der URL oder aus dem Local Storage.
+const userId = localStorage.getItem("userId") || url.pathname.split('/').pop();
 
 // Selektiere alle Formularfelder unter "Meine Angaben"
 let firstNameInput = document.getElementById("first-name");
@@ -37,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         localStorage.removeItem("userId");
         localStorage.removeItem("userToken");
         localStorage.removeItem("user-letter");
-        window.location = "/userAuth.html";
+        window.location = "/userAuth";
         return;
     }
 
@@ -46,12 +48,12 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     const userOrders = await getOrders(userId);
 
     if(userData.userInfo === null) {
-        localStorage.removeItem("userId");
-        localStorage.removeItem("userToken");
-        localStorage.removeItem("user-letter");
+        // localStorage.removeItem("userId");
+        // localStorage.removeItem("userToken");
+        // localStorage.removeItem("user-letter");
         console.error("Fehler beim Laden der Userdaten:", userData);
         alert("Daten konnten nicht geladen werden.");
-        window.location = "/userAuth.html?msg=401";
+        // window.location = "/userAuth?msg=401";
     }
 
     if (userData && userData.code === 200) {
@@ -77,21 +79,21 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     deleteBtn.addEventListener("click", async (_) => {
         await deleteUser(userId);
         localStorage.removeItem("userId");
-        window.location = "/userAuth.html"
+        window.location = "/userAuth"
     });
 
     logoutBtn.addEventListener("click", async (_) => {    
         localStorage.removeItem("userId");
         localStorage.removeItem("userToken");
         localStorage.removeItem("user-letter");
-        window.location = "/userAuth.html";
+        window.location = "/userAuth";
     })
 });
 
 async function getUserInfo(userId) {
     try {
         const req = await fetch(
-            `http://localhost:3000/api/userManagement/getUserInfo/${userId}`, {
+            `/api/userManagement/getUserInfo/${userId}`, {
             method: 'GET',
             headers: {
                 "Authorization": localStorage.getItem("userToken") || ""
@@ -119,7 +121,7 @@ async function updateUserInfo() {
         };
 
         const req = await fetch(
-            `http://localhost:3000/api/userManagement/updateUserInfo/${userId}`,
+            `/api/userManagement/updateUserInfo/${userId}`,
             {
                 method: "PUT",
                 headers: {
@@ -148,7 +150,7 @@ async function updateUserInfo() {
 async function deleteUser(userId) {
     try {
         const req = await fetch(
-            `http://localhost:3000/api/userManagement/deleteUser/${userId}`,
+            `/api/userManagement/deleteUser/${userId}`,
             { method: "DELETE" },
         );
         const res = await req.json();
@@ -161,7 +163,7 @@ async function deleteUser(userId) {
 async function getOrders(userId) {
     try {
         const req = await fetch(
-            `http://localhost:3000/api/userManagement/getOrders/${userId}`,
+            `/api/userManagement/getOrders/${userId}`,
         );
         const res = await req.json();
         console.log(res);
@@ -191,7 +193,7 @@ async function getOrders(userId) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${orderProducts.map((p) => `<tr><td class="table-img-container"><img src="http://localhost:3000/uploads/products/${p.product.heroImage}" alt="${p.product.name}"/></td><td class="tg-0lax">A${p.product.artnr}</td><td class="tg-0lax">${p.quantity}</td></tr>`).join("")}
+                                    ${orderProducts.map((p) => `<tr><td class="table-img-container"><img src="/uploads/products/${p.product.heroImage}" alt="${p.product.name}"/></td><td class="tg-0lax">A${p.product.artnr}</td><td class="tg-0lax">${p.quantity}</td></tr>`).join("")}
                                 </tbody>
                             </table>
                             <p class ="order-total">Gesamtpreis: <span class="order-total-price">${(orderProducts.map((p) => p.product.price * p.quantity).reduce((a, b) => (a + b), 0)*orderCode).toFixed(2).replace('.', ',')} €</span></p>
@@ -207,7 +209,7 @@ async function getOrders(userId) {
                 button.addEventListener("click", async (e) => {
                     const orderId = e.target.getAttribute("data-order-id");
 
-                    const req = await fetch(`http://localhost:3000/api/purchases/getInvoice/${orderId}`)
+                    const req = await fetch(`/api/purchases/getInvoice/${orderId}`)
                     
                     // Da der Server eine Binärdatei (.pdf) zurückgibt, dürfen wir nicht req.json() aufrufen
                     if (!req.ok) {

@@ -8,6 +8,11 @@ const path = require('path');
 app.use(express.json());
 app.use(cors())
 
+app.use(express.static(path.resolve(__dirname, 'public')));
+
+const viewRoutes = require('./src/routes/viewRoutes');
+app.use('/', viewRoutes);
+
 const productRoutes = require('./src/routes/productRoutes');
 app.use('/api/products', productRoutes);
 
@@ -28,9 +33,6 @@ app.use(
   express.static(path.resolve(__dirname, 'uploads', 'products')),
 );
 
-app.get('/', (req, res) => {
-  res.send('Willkommen zum Domfacetten Backend!');
-})
 
 app.listen(3000, '0.0.0.0', () => {
   console.log('Server läuft auf Port 3000');
