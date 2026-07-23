@@ -53,12 +53,12 @@ const newInvoice = async (orderId, code) => {
         const discountName = findCode ? findCode.codeId : '';
         const discountValue = findCode ? Number(findCode.codeValue) : 0;
         const discount = 1 - discountValue;
-        
+
         const products = Array.isArray(userData.products) ? userData.products : [userData.products];
         const grandTotal = products.map(p => p.product.price * p.quantity).reduce((a, b) => a + b, 0);
 
         let shipping_cost = 0;
-        if(grandTotal < 39) {
+        if (grandTotal < 39) {
             shipping_cost += 1.55
         }
 
@@ -76,9 +76,17 @@ const newInvoice = async (orderId, code) => {
             </tr>`;
         }).join('\n');
 
+        const logoPath = path.resolve(__dirname, '../../public/images/Logo.png');
+        let logoBase64 = '';
+
+        if (fs.existsSync(logoPath)) {
+            const logoBuffer = fs.readFileSync(logoPath);
+            logoBase64 = `data:image/png;base64,${logoBuffer.toString('base64')}`;
+        }
         // 2. Platzhalter für das HTML Objekt vorbereiten
         // Wir nehmen an, du nutzt {{ variable }} im HTML
         const variables = {
+            logo_src: logoBase64,
             datum: new Date().toLocaleDateString('de-DE'),
             order_id: orderId,
             customer_name: `${userData.user.first_name} ${userData.user.last_name || 'Teststraße'}`.trim(),
@@ -86,17 +94,15 @@ const newInvoice = async (orderId, code) => {
             customer_adress: userData.user.address ? Object.values(userData.user.address).join(', ') : '',
             quantity: products.reduce((acc, p) => acc + p.quantity, 0) || 0,
             item_total: grandTotal || 100,
-            grand_total: (parseFloat(grandTotal*discount) + shipping_cost).toFixed(2).replace('.', ','),
+            grand_total: (parseFloat(grandTotal * discount) + shipping_cost).toFixed(2).replace('.', ','),
             shipping_cost: shipping_cost.toString(),
             discount_name: discountName || '',
-            discount_value: (discountValue*100) || 0
+            discount_value: (discountValue * 100) || 0
         };
 
         // Platzhalter im HTML String austauschen (egal ob mit einfachen { } oder doppelten {{ }})
         for (const [key, value] of Object.entries(variables)) {
-            // Tauscht {{ key }} aus
             htmlContent = htmlContent.replace(new RegExp(`{{\\s*${key}\\s*}}`, 'gi'), value);
-            // Tauscht { key } aus (als Fallback)
             htmlContent = htmlContent.replace(new RegExp(`{\\s*${key}\\s*}`, 'gi'), value);
         }
 
@@ -104,20 +110,20 @@ const newInvoice = async (orderId, code) => {
         htmlContent = htmlContent.replace('<!-- ITEMS_PLACEHOLDER -->', itemsHtml);
 
         // 3. Von HTML zu PDF konvertieren (Kostenlos via Puppeteer Chromium)
-        const browser = await puppeteer.launch({ 
-            headless: "new", 
+        const browser = await puppeteer.launch({
+            headless: "new",
             executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '',
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] 
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
         });
         const page = await browser.newPage();
-        
+
         // Das manipulierte HTML in die unsichtbare Seite laden
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
         // 4. PDF Speichern und im Speicher halten
-        const pdfBuf = await page.pdf({ 
-            format: 'A4', 
-            printBackground: true, 
+        const pdfBuf = await page.pdf({
+            format: 'A4',
+            printBackground: true,
             margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' }
         });
         await browser.close();

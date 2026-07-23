@@ -29,6 +29,22 @@
                 gap: 20px;
                 padding-bottom: 100px;
 
+                .logo {
+                    width: 240px;
+                    max-width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    
+                    img {
+                        width: 100%;
+                        height: auto;
+                        object-fit: contain;
+                        max-height: 85px;
+                        display: block;
+                    }
+                }
+
                 .header-left {
                     align-self: flex-start;
                     font-style: italic;
@@ -112,6 +128,12 @@
                 border-top: 1px solid #333;
             }
 
+            footer {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
             /* Print Styles */
             @media print {
                 body {
@@ -139,7 +161,7 @@
         <header>
             <div class="invoice-header">
                 <div class="logo">
-                    <img src="./images/Firmenlogo.svg" alt="Domfacetten Logo" />
+                    <img src="{{ logo_src }}" alt="Domfacetten Logo" />
                 </div>
                 <div class="header-left">
                     <p>Domfacetten, Norbertstraße 2-4, D-50670 Köln</p>

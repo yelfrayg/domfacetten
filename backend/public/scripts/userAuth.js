@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         mail = email;
         console.log('Request for: ' + mail)
         try {
-            const req = await fetch("http://localhost:3000/api/userManagement/request-otp", {
+            const req = await fetch("/api/userManagement/request-otp", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         const otp = document.getElementById("otp-input").value;
         try {
             console.log(mail, otp)
-            const req = await fetch("http://localhost:3000/api/userManagement/verify-otp", {
+            const req = await fetch("/api/userManagement/verify-otp", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             }
             console.log('Passwörter stimmen überein. Sende Anfrage zum Aktualisieren des Passworts...');
             console.log(mail, newPassword)
-            const req = await fetch("http://localhost:3000/api/userManagement/update-password", {
+            const req = await fetch("/api/userManagement/update-password", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             console.log(data);
 
             const req = await fetch(
-                "http://localhost:3000/api/userManagement/register",
+                "/api/userManagement/register",
                 {
                     method: "POST",
                     headers: {
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             console.log("Login: ", data);
 
             const req = await fetch(
-                "http://localhost:3000/api/userManagement/login",
+                "/api/userManagement/login",
                 {
                     method: "POST",
                     headers: {
@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 async function login(data) {
     try {
         const req = await fetch(
-            "http://localhost:3000/api/userManagement/login",
+            "/api/userManagement/login",
             {
                 method: "POST",
                 headers: {

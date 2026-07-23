@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
                 <label class ="text">Menge : <input id="amount" type="number" min="1" max = ${product.inStock - 2 <= 0 ? 1 : product.inStock - 2} value="1" step="1"></label>
                 <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}">In den Warenkorb legen</button>
-                <button class ="buyNow" id="buyNow"><a href="./cart">Jetzt kaufen</a></button>
+                <button class ="buyNow" id="buyNow"><a href="/cart">Jetzt kaufen</a></button>
             </div>
         `;
 

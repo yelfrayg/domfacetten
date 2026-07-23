@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 available: availableCheckbox.checked
             };
             console.log(data);
-            const req = await fetch('http://localhost:3000/api/discountManagement/createCode', {
+            const req = await fetch('/api/discountManagement/createCode', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
