@@ -10,12 +10,12 @@ router.get('/', (req, res) => {
     res.sendFile(pathToFile('index.html'));
 });
 
-router.get('/productPage', (req, res) => {
+router.get('/products', (req, res) => {
     res.sendFile(pathToFile('productPage.html'));
 });
 
 router.get('/cart', (req, res) => {
-    res.sendFile(pathToFile('cart.html'));
+    res.render(pathToFile('cart.ejs'), { paypalClientID: process.env.PAYPAL_CLIENT_ID || ''});
 });
 
 router.get('/product/:id', (req, res) => {

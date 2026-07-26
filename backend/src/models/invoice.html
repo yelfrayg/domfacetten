@@ -191,7 +191,7 @@
                     <tr>
                         <th>Art.-Nr.</th>
                         <th>Beschreibung</th>
-                        <th>Preis</th>
+                        <th>Einzelpreis</th>
                         <th>Menge</th>
                         <th>Gesamt</th>
                     </tr>
@@ -209,11 +209,11 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="4">Versand</td>
+                        <td colspan="4">Versandkosten</td>
                         <td>{{ shipping_cost }} €</td>
                     </tr>
                     <tr>
-                        <td colspan="4">RABATTCODE: {{ discount_name }}</td>
+                        <td colspan="4">Rabattcode: {{ discount_name }}</td>
                         <td>-{{ discount_value }}%</td>
                     </tr>
                 </tfoot>
