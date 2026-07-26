@@ -39,8 +39,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             return;
         }
 
-        console.log('Product max:', product.inStock - 2 <= 0 ? 1 : product.inStock - 2)
-        console.log('---------')
+        // console.log('Product max:', product.inStock - 2 <= 0 ? 1 : product.inStock - 2)
+        // console.log('---------')
 
         productContainer.innerHTML = `
             <div class="highlight-product-imgs">
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         });
 
         let cartButton = document.getElementById("cart-button");
-        console.log("Cart button:", cartButton);
+        // console.log("Cart button:", cartButton);
 
         cartButton?.addEventListener("click", async (e) => {
             if (!localStorage.getItem("userId")) {
@@ -278,7 +278,7 @@ async function findItem(userId, artnr) {
         }
 
         const res = await req.json();
-        console.log("findItem response:", res);
+        // console.log("findItem response:", res);
         // console.log("Produkt gefunden im Warenkorb:", res.found);
 
         let cartButton = document.getElementById("cart-button");

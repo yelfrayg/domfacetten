@@ -3,23 +3,23 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/assets/footer.css" />
-        <link rel="stylesheet" href="/assets/base.css" />
-        <link rel="stylesheet" href="/assets/dashboard.css" />
-        <link rel="stylesheet" href="/assets/header.css" />
-        <link rel="stylesheet" href="/assets/animation.css" />
+        <link rel="stylesheet" href="assets/footer.css" />
+        <link rel="stylesheet" href="assets/base.css" />
+        <link rel="stylesheet" href="assets/dashboard.css" />
+        <link rel="stylesheet" href="assets/header.css" />
+        <link rel="stylesheet" href="assets/animation.css" />
         <title>Mein Dashboard</title>
     </head>
     <body>
         <header>
             <div class="header-container">
                 <div class="logo-container">
-                    <img src="/images/Firmenlogo.svg" alt="Logo" />
+                    <img src="images/Firmenlogo.svg" alt="Logo" />
                 </div>
                 <nav class="header-nav">
                     <ul class="header-nav-list">
                         <li class="active"><a href="/">Home</a></li>
-                        <li><a href="/productPage">Produkte</a></li>
+                        <li><a href="/products">Produkte</a></li>
                         <li><a href="/places">Orte</a></li>
                         <li>
                             <a class="bag" href="/cart">
@@ -65,7 +65,7 @@
                 <aside class="mobile-menu">
                     <ul class="mobile-menu-list">
                         <li><a href="/">Home</a></li>
-                        <li><a href="/productPage">Produkte</a></li>
+                        <li><a href="/products">Produkte</a></li>
                         <li><a href="/places">Orte</a></li>
                         <li><a href="/userAuth">Mein Konto</a></li>
                         <li><a href="/cart">Warenkorb</a></li>
@@ -83,31 +83,31 @@
                             type="text"
                             name="firstname"
                             id="first-name"
-                            value="Anna"
+                            value="Max"
                             placeholder="Vorname"
                         />
                         <input
                             type="text"
                             id="last-name"
-                            value="Maier"
+                            value="Mustermann"
                             placeholder="Nachname"
                         />
                         <input
                             type="email"
                             id="email"
-                            value="anna-maier@test.com"
+                            value="max-mustermann@test.com"
                             placeholder="E-Mail"
                         />
                         <input
                             type="text"
                             id="straße-nr"
-                            value="Antonstraße 2"
+                            value="Musterstraße 1"
                             placeholder="Straße + Hausnummer"
                         />
                         <input
                             type="text"
                             id="stadt-plz"
-                            value="50679 Köln"
+                            value="12345 Musterstadt"
                             placeholder="PLZ + Stadt"
                         />
                         <div class="password">
@@ -141,6 +141,7 @@
                         <h2>Meine Bestellungen</h2>
                         <ul class="user-orders">
                             <!--? Hier werden die Bestellungen angezeigt -->
+                            <div class="loaderCode"></div>
                         </ul>
                     </div>
                     <div class="button-actions">

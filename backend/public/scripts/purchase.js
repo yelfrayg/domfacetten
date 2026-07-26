@@ -17,7 +17,7 @@ window.addEventListener("productLoaded", (e) => {
                     amount: amount,
                 };
                 return fetch(
-                    "http://localhost:3000/api/purchases/createSinglePurchase",
+                    "/api/purchases/createSinglePurchase",
                     {
                         method: "POST",
                         headers: {
@@ -82,7 +82,7 @@ window.addEventListener("productLoaded", (e) => {
 
                     try {
                         const req = await fetch(
-                            "http://localhost:3000/api/purchases/completeSinglePurchase",
+                            "/api/purchases/completeSinglePurchase",
                             {
                                 method: "POST",
                                 headers: {

@@ -80,7 +80,7 @@
             }
         }
 
-        .productPage-container {
+        .products-container {
             display: flex;
             flex-wrap: wrap;
             gap: var(--3xl);

@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Elms+Sans:ital,wght@0,100..900;1,100..900&family=Jost:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');
+
 * {
     margin: 0;
     padding: 0;
-    font-family: "Figtree", sans-serif;
+    font-family: "Elms Sans", sans-serif;
     box-sizing: border-box;
 }
 
@@ -9,10 +11,11 @@ header {
     position: fixed;
     width: 100%;
     z-index: 1000;
+    font-family: "Jost", sans-serif;
 }
 
 body {
-    background-image: url("/images/DomMuster.png");
+    /* background-image: url("/images/DomMuster.png"); */
     box-sizing: border-box;
 }
 

@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
         const resCartItems = await reqCartItems.json()
         if (reqCartItems.status == 401) {
             // alert('Access denied!')
-            // window.location = "/productPage"
+            // window.location = "/products"
             return
         }
 

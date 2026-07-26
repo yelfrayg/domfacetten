@@ -48,20 +48,20 @@
     }
 }
 
+/* HTML: <div class="loader"></div> */
 .loader {
-    display: inline-block;
-    width: 3vh;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    border: 2px solid;
-    border-color: #000 #0000;
-    animation: l1 1s infinite;
+  height: 4px;
+  width: 100%;
+  --c: no-repeat linear-gradient(#393737 0 0);
+  background: var(--c), var(--c),#d0cfd0;
+  background-size: 50% 100%;
+  animation: l16 3s infinite;
 }
 
-@keyframes l1 {
-    to {
-        transform: rotate(0.5turn);
-    }
+@keyframes l16 {
+  0%   {background-position:-150% 0,-150% 0}
+  66%  {background-position: 250% 0,-150% 0}
+  100% {background-position: 250% 0, 250% 0}
 }
 
 .invisible {
