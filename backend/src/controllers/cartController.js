@@ -44,9 +44,20 @@ async function findItemInCart(req, res) {
     }
 }
 
+async function updateAmount(req, res) {
+    try {
+        const result = await cartService.updateCartItemAmount(req.body);
+        res.status(result.code).json(result);
+    }
+    catch (error) {
+        res.status(500).json({ code: 500, message: error.message });
+    }
+}
+
 module.exports = {
     getCartItems,
     addToCart,
     removeItem,
-    findItemInCart
-};
+    findItemInCart,
+    updateAmount
+}

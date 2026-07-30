@@ -106,9 +106,52 @@ async function findCartItem(data) {
     }
 }
 
+async function updateCartItemAmount(data) {
+    try {
+        const { userId, productId, quantity } = data;
+        if (quantity <= 0) {
+            return {
+                code: 400,
+                message: "Ungültige Menge. Bitte geben Sie eine positive Zahl ein."
+            };
+        }
+        const updatedItem = await prisma.cart.update({
+            where: {
+                userId_productId: {
+                    userId: userId,
+                    productId: productId
+                }
+            },
+            data: {
+                quantity: quantity
+            }
+        });
+        return {
+            code: 200,
+            message: "Menge erfolgreich aktualisiert.",
+            data: updatedItem
+        };
+    }
+    catch (error) {
+        if (error.code === 'P2025') { 
+            return {
+                code: 404,
+                message: "Produkt wurde im Warenkorb dieses Nutzers nicht gefunden."
+            };
+        }
+
+        return {
+            code: 500,
+            message: "Ein interner Serverfehler ist aufgetreten." 
+        };
+    }
+}
+    
+
 module.exports = {
     getCartItems,
     addToCart,
     removeFromCart,
-    findCartItem
+    findCartItem,
+    updateCartItemAmount
 };
