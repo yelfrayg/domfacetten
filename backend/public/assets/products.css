@@ -137,6 +137,11 @@
                         font-weight: 400;
                         color: var(--primary-color);
                     }
+
+                    .product-warning {
+                        font-size: var(--m);
+                        color: red;
+                    }
                 }
             }
 
