@@ -149,6 +149,7 @@
         width: 100%;
         flex-direction: column;
         gap: var(--m);
+        padding: 15vh var(--m) var(--m) var(--m);
 
         .highlight-product-imgs,
         .highlight-product-info {
