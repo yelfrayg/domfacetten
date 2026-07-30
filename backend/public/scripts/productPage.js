@@ -44,7 +44,9 @@ async function fetchProducts() {
         const res = await req.json();
         allproductsArray = res.products || [];
 
-        allproductsArray.forEach((p) => {
+        allproductsArray
+        .sort((a, b) => a.artnr - b.artnr)
+        .forEach((p) => {
             const productElement = document.createElement("a");
             productElement.classList.add("product");
             console.log(p.keywords.join(','));

@@ -10,6 +10,10 @@ const discountCodeInput = document.getElementById('code-input')
 const iconCheck = document.querySelector('.code-verification-wrapper')
 const pencil = document.querySelector('.pencil-wrapper')
 
+let codeValue = 0
+let products
+let isApplied = false
+
 pencil.addEventListener('click', _ => {
     window.location = `/dashboard.html?userId=${localStorage.getItem('userId')}`
 })
@@ -20,68 +24,13 @@ const icons = {
     invalid: '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ff0000"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>'
 }
 
-let price = 0
-let originalPrice = 0
-
 
 document.addEventListener('DOMContentLoaded', async _ => {
     try {
         const userId = localStorage.getItem('userId')
-        const reqCartItems = await fetch(`/api/cartManagement/getCartItems/${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': localStorage.getItem("userToken") || ''
-            }
-        })
-        const resCartItems = await reqCartItems.json()
-        if (reqCartItems.status == 401) {
-            // alert('Access denied!')
-            // window.location = "/products"
-            return
-        }
-
-        if (resCartItems.cartItems.length == 0) {
-            cartItemsContainer.innerHTML = '<h2>Dein Warenkorb ist leer!</h2>'
-            paypalContainer.style.display = 'none'
-        }
-
-        // totalPrice.textContent = String(price).replace('.', ',') + '0 €'
-
-        resCartItems.cartItems.forEach(element => {
-            console.log(element)
-            const cartEntry = document.createElement('tr')
-            cartEntry.classList.add('single-cart-item')
-            cartEntry.innerHTML = `
-                <td class="image-container">
-                    <img src="/uploads/products/${element.product.heroImage}" alt="Image" />
-                </td>
-                <td class="art-info-text">
-                    <div class="product-info">
-                        <span class="artname">${element.product.name}</span>
-                        <span class="quantity">Menge: <button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="decrease">-</button><span class="item-quantity" data-max-amount="${element.product.inStock - 2}">${element.quantity}</span><button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="increase">+</button></span>
-                        <span class="item-price">${parseFloat(element.product.price).toFixed(2).replace('.', ',')} €</span>
-                    </div>
-                    <button class="delete-btn" data-artnr="${element.product.artnr}">X</button>
-                </td>
-            `
-            cartItemsContainer.appendChild(cartEntry)
-            price += element.product.price * element.quantity
-            totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
-        });
-
-        const quantityButtons = document.querySelectorAll('.quantity-btn')
-        quantityButtons.forEach(button => {
-            button.addEventListener('click', async (event) => {
-                const productId = event.target.dataset.artnr
-                const action = event.target.dataset.action
-
-                await updateAmount(productId, action)
-            })
-        })
-
-        originalPrice = price
-        // console.log(originalPrice)
+        //load all Cart Items
+        await loadCartItems(userId)
+        await calculateTotalPrice()
 
         await deleteFromCart()
 
@@ -116,8 +65,6 @@ document.addEventListener('DOMContentLoaded', async _ => {
         deliverName.textContent = resUser.userInfo.first_name + ' ' + resUser.userInfo.last_name
         deliverStreet.textContent = resUser.userInfo.address.street === '' ? '---' : resUser.userInfo.address.street
         deliverCity.textContent = resUser.userInfo.address.city === '' ? '---' : resUser.userInfo.address.city
-        itemCounter.textContent = resCartItems.cartItems.length === 1 ? '1 Produkt' : resCartItems.cartItems.length + ' Produkte'
-        itemCounterPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
 
         await ppCart()
 
@@ -136,6 +83,71 @@ document.addEventListener('DOMContentLoaded', async _ => {
         console.log(error)
     }
 })
+
+async function loadCartItems(userId) {
+    try {
+        const reqCartItems = await fetch(`/api/cartManagement/getCartItems/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem("userToken") || ''
+            }
+        })
+        const resCartItems = await reqCartItems.json()
+        if (reqCartItems.status == 401) {
+            // alert('Access denied!')
+            // window.location = "/products"
+            return
+        }
+
+        if (resCartItems.cartItems.length == 0) {
+            cartItemsContainer.innerHTML = '<h2>Dein Warenkorb ist leer!</h2>'
+            paypalContainer.style.display = 'none'
+        }
+
+        products = resCartItems.cartItems
+        cartItemsContainer.innerHTML = ''
+        products
+        .sort((a, b) => a.productId - b.productId)
+        .forEach(element => {
+            console.log(element)
+            const cartEntry = document.createElement('tr')
+            cartEntry.classList.add('single-cart-item')
+            cartEntry.innerHTML = `
+                <td class="image-container">
+                    <img src="/uploads/products/${element.product.heroImage}" alt="Image" />
+                </td>
+                <td class="art-info-text">
+                    <div class="product-info">
+                        <span class="artname">${element.product.name}</span>
+                        <span class="quantity">Menge: <button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="decrease">-</button><span class="item-quantity" data-max-amount="${element.product.inStock - 2}">${element.quantity}</span><button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="increase">+</button></span>
+                        <span class="item-price">${parseFloat(element.product.price).toFixed(2).replace('.', ',')} €</span>
+                    </div>
+                    <button class="delete-btn" data-artnr="${element.product.artnr}">X</button>
+                </td>
+            `
+            cartItemsContainer.appendChild(cartEntry)
+        });
+
+        const quantityButtons = document.querySelectorAll('.quantity-btn')
+        quantityButtons.forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const buttonElement = event.currentTarget
+                const row = buttonElement.closest('.single-cart-item')
+                const quantityElement = row?.querySelector('.item-quantity')
+                const productId = buttonElement.dataset.artnr
+                const action = buttonElement.dataset.action
+
+                await updateAmount(productId, action, quantityElement)
+                await calculateTotalPrice()
+            })
+        })
+        return resCartItems
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
 
 async function ppCart() {
     paypal
@@ -254,15 +266,17 @@ async function deleteFromCart() {
     })
 }
 
+//! BUG
 async function codeChecker() {
     try {
+        
         const code = discountCodeInput.value.toUpperCase()
+        const originalPrice = parseFloat(document.getElementById('total-price').textContent.replace(',', '.').replace(' €', ''))
 
-        if (code === '') {
+        if (code === '' || isApplied == true) {
             if (iconCheck) iconCheck.innerHTML = ``
-            price = originalPrice
-            totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
-            itemCounterPrice.textContent = price.toFixed(2).replace('.', ',') + " €"
+            await loadCartItems(localStorage.getItem('userId'))
+            await calculateTotalPrice()
             return
         }
 
@@ -272,6 +286,7 @@ async function codeChecker() {
         const res = await req.json()
         // console.log(res)
         if (res.code == 200) {
+            isApplied = true
             if (iconCheck) iconCheck.innerHTML = icons.valid
             const discount = res.discountObj.codeValue
             const discountedPrice = parseFloat(originalPrice * (1 - discount))
@@ -290,17 +305,21 @@ async function codeChecker() {
     }
 }
 
-async function updateAmount(id, action) {
-    const currentAmount = parseInt(document.querySelector(`.item-quantity`).textContent)
+async function updateAmount(id, action, quantityElement) {
+    if (!quantityElement) {
+        return
+    }
+
+    const currentAmount = parseInt(quantityElement.textContent)
     if ((currentAmount <= 1 && action === 'decrease')) {
         return
     }
-    if ((currentAmount >= parseInt(document.querySelector(`.item-quantity`).dataset.maxAmount) && action === 'increase')) {
-        document.querySelector(`.item-quantity`).textContent = parseInt(document.querySelector(`.item-quantity`).dataset.maxAmount)
+    if ((currentAmount >= parseInt(quantityElement.dataset.maxAmount) && action === 'increase')) {
+        quantityElement.textContent = parseInt(quantityElement.dataset.maxAmount)
         return
-     }
-    document.querySelector(`.item-quantity`).textContent = action === 'increase' ? currentAmount + 1 : currentAmount - 1
-    const amountToBeUpdated = document.querySelector(`.item-quantity`).textContent
+    }
+    quantityElement.textContent = action === 'increase' ? currentAmount + 1 : currentAmount - 1
+    const amountToBeUpdated = quantityElement.textContent
     console.log('New Amount: ', amountToBeUpdated)
 
     try {
@@ -326,6 +345,19 @@ async function updateAmount(id, action) {
     catch (error) {
         console.log(error)
     }
+}
+
+async function calculateTotalPrice() {
+    let price = 0
+    // Code erst hier auslesen, wenn Button geklickt wird
+    console.log(products)
+    // load all Products
+    await loadCartItems(localStorage.getItem('userId'))
+    products.forEach(product => {
+        price += product.product.price * product.quantity
+    })
+    itemCounterPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
+    totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
 }
 
 function debounce(func, delay) {
