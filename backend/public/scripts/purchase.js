@@ -1,4 +1,5 @@
 window.addEventListener("productLoaded", (e) => {
+    const productContainer = document.getElementById("cart-items");
     const buyNowBtn = document.querySelector(".buyNow");
     let { arttype, artnr } = e.detail;
     let amount = 1;
@@ -93,11 +94,20 @@ window.addEventListener("productLoaded", (e) => {
                             },
                         );
                         const res = await req.json();
+                        console.log('--------')
                         if (res.ok) {
-                            alert("Alles hat geklappt!");
+                            productContainer.innerHTML = `
+                                <div class="success-message">
+                                    <h2>Vielen Dank für Ihren Einkauf!</h2>
+                                    <p>Ihre Bestellung wurde erfolgreich abgeschlossen.</p>
+                                    <p>Sie können die Bestellung in ihrem Dashboard einsehen.</p>
+                                    <p>Sie erhalten in Kürze eine Bestätigung per E-Mail.</p>
+                                </div>
+                            `;
                             return;
                         }
                         // window.location = '/product.html?id=' + artnr
+
                     } catch (error) {
                         console.log(
                             "Es gab einen Fehler beim Speichern der Bestellung",

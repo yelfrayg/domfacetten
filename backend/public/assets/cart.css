@@ -91,10 +91,28 @@ main {
 
                         .quantity,
                         .item-price {
-                            width: 7vw;
+                            width: auto;
                             justify-content: center;
                             font-size: var(--m);
                             font-weight: 500;
+                        }
+
+                        .quantity {
+                            button {
+                                background: transparent;
+                                border: 1px solid #000000;
+                                font-size: var(--m);
+                                color: #696969;
+                                padding: var(--xs) var(--s);
+                                cursor: pointer;
+                            }
+
+                            .item-quantity {
+                                min-width: 20vw;
+                                font-size: var(--m);
+                                font-weight: 500;
+                                margin: 0 var(--s);
+                            }
                         }
 
                         .item-price {

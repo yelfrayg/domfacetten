@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
         // totalPrice.textContent = String(price).replace('.', ',') + '0 €'
 
         resCartItems.cartItems.forEach(element => {
+            console.log(element)
             const cartEntry = document.createElement('tr')
             cartEntry.classList.add('single-cart-item')
             cartEntry.innerHTML = `
@@ -58,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async _ => {
                 <td class="art-info-text">
                     <div class="product-info">
                         <span class="artname">${element.product.name}</span>
-                        <span class="quantity">Menge: ${element.quantity}</span>
+                        <span class="quantity">Menge: <button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="decrease">-</button><span class="item-quantity" data-max-amount="${element.product.inStock - 2}">${element.quantity}</span><button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="increase">+</button></span>
                         <span class="item-price">${parseFloat(element.product.price).toFixed(2).replace('.', ',')} €</span>
                     </div>
                     <button class="delete-btn" data-artnr="${element.product.artnr}">X</button>
@@ -68,6 +69,16 @@ document.addEventListener('DOMContentLoaded', async _ => {
             price += element.product.price * element.quantity
             totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
         });
+
+        const quantityButtons = document.querySelectorAll('.quantity-btn')
+        quantityButtons.forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const productId = event.target.dataset.artnr
+                const action = event.target.dataset.action
+
+                await updateAmount(productId, action)
+            })
+        })
 
         originalPrice = price
         // console.log(originalPrice)
@@ -189,6 +200,20 @@ async function ppCart() {
                     })
                     const resOrder = await completeOrder.json()
                     console.log(resOrder)
+                    if (resOrder) {
+                        cartItemsContainer.innerHTML =
+                            `
+                            <div class="success-message">
+                                <h2>Vielen Dank für Ihren Einkauf!</h2>
+                                <p>Ihre Bestellung wurde erfolgreich abgeschlossen.</p>
+                                <p>Sie können die Bestellung in ihrem Dashboard einsehen.</p>
+                                <p>Sie erhalten in Kürze eine Bestätigung per E-Mail.</p>
+                            </div>
+                        `
+                        totalPrice.innerHTML = '-,-- €'
+                        itemCounter.textContent = '0 Produkte'
+                        itemCounterPrice.textContent = '-,-- €'
+                    }
                 });
             },
         })
@@ -231,11 +256,9 @@ async function deleteFromCart() {
 
 async function codeChecker() {
     try {
-        // console.log('Code Checker aufgerufen!')
         const code = discountCodeInput.value.toUpperCase()
 
         if (code === '') {
-            // Wenn Code leer ist, Originalpreis wiederherstellen
             if (iconCheck) iconCheck.innerHTML = ``
             price = originalPrice
             totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
@@ -252,7 +275,6 @@ async function codeChecker() {
             if (iconCheck) iconCheck.innerHTML = icons.valid
             const discount = res.discountObj.codeValue
             const discountedPrice = parseFloat(originalPrice * (1 - discount))
-            // console.log(`Code gültig! Du erhältst ${discount}% Rabatt auf deine Bestellung!`)
             price = discountedPrice
             totalPrice.textContent = discountedPrice.toFixed(2).replace('.', ',') + ' €'
             return
@@ -264,6 +286,44 @@ async function codeChecker() {
         itemCounterPrice.textContent = price.toFixed(2).replace('.', ',') + " €"
         return
     } catch (error) {
+        console.log(error)
+    }
+}
+
+async function updateAmount(id, action) {
+    const currentAmount = parseInt(document.querySelector(`.item-quantity`).textContent)
+    if ((currentAmount <= 1 && action === 'decrease')) {
+        return
+    }
+    if ((currentAmount >= parseInt(document.querySelector(`.item-quantity`).dataset.maxAmount) && action === 'increase')) {
+        document.querySelector(`.item-quantity`).textContent = parseInt(document.querySelector(`.item-quantity`).dataset.maxAmount)
+        return
+     }
+    document.querySelector(`.item-quantity`).textContent = action === 'increase' ? currentAmount + 1 : currentAmount - 1
+    const amountToBeUpdated = document.querySelector(`.item-quantity`).textContent
+    console.log('New Amount: ', amountToBeUpdated)
+
+    try {
+        const data = {
+            userId: localStorage.getItem('userId'),
+            productId: parseInt(id),
+            quantity: parseInt(amountToBeUpdated)
+        }
+
+        const req = await fetch(`/api/cartManagement/updateAmount`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('userToken') || ''
+            },
+            body: JSON.stringify(data)
+        })
+        const res = await req.json()
+        if (res.code === 200) {
+            console.log(res.message)
+        }
+    }
+    catch (error) {
         console.log(error)
     }
 }
