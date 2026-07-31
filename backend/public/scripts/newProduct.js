@@ -27,13 +27,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             getKeywords()
+
             const formData = new FormData();
             formData.append("arttype", arttype?.value || "");
             formData.append("artnr", artnr?.value || "");
             formData.append("name", name?.value || "");
             formData.append("description", description?.value || "");
             formData.append("price", price?.value || "");
-            formData.append("keywords", getKeywords().join(", "));
+            formData.append("keywords", getKeywords());
             formData.append("inStock", inStock?.value || 0);
 
             formData.append("heroImage", heroImageInput.files[0]);
@@ -77,8 +78,29 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function getKeywords() {
+    const colorMap = new Map([
+        ['green', 'Grün'],
+        ['red', 'Rot'],
+        ['black', 'Schwarz'],
+        ['white', 'Weiß'],
+        ['blue', 'Blau'],
+        ['yellow', 'Gelb'],
+        ['orange', 'Orange'],
+        ['purple', 'Lila'],
+        ['pink', 'Rosa'],
+        ['brown', 'Braun'],
+        ['gray', 'Grau'],
+        ['wristband', 'Armband'],
+        ['fabric', 'Stoff'],
+        ['metal', 'Metall']
+    ]);
     const keywordCheckboxes = document.querySelectorAll('input[name="keyword"]:checked');
     const keywords = Array.from(keywordCheckboxes).map(checkbox => checkbox.value);
-    return keywords;
+    let returnList = [];
+    keywords.forEach(keyword => {
+        returnList.push(colorMap.get(keyword))
+    })
+    console.log("Keywords:", returnList);
+    return returnList;
 }
 

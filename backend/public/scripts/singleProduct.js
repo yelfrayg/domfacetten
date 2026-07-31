@@ -45,9 +45,9 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         productContainer.innerHTML = `
             <div class="highlight-product-imgs">
                 <ul class="img-caroussel">
-                    <li class="img-container"><img src="/uploads/products/${encodeURIComponent(product.heroImage)}" alt=""></li>
-                    ${product.image2 ? `<li class="img-container"><img src="/uploads/products/${encodeURIComponent(product.image2)}" alt=""></li>` : ""}
-                    ${product.image3 ? `<li class="img-container"><img src="/uploads/products/${encodeURIComponent(product.image3)}" alt=""></li>` : ""}
+                    <li class="img-container"><img src="/uploads/products/${encodeURIComponent(product.heroImage)}" alt="" loading="lazy"></li>
+                    ${product.image2 ? `<li class="img-container"><img src="/uploads/products/${encodeURIComponent(product.image2)}" alt="" loading="lazy"></li>` : ""}
+                    ${product.image3 ? `<li class="img-container"><img src="/uploads/products/${encodeURIComponent(product.image3)}" alt="" loading="lazy"></li>` : ""}
                 </ul>
                 <div class="arrow-container">
                     ${product.image2
