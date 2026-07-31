@@ -92,7 +92,7 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                margin-bottom: var(--xl);
+                margin-bottom: var(--l);
                 cursor: pointer;
                 background-color: white;
                 color: black;
