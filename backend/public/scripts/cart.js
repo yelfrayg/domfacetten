@@ -110,7 +110,6 @@ async function loadCartItems(userId) {
         products
         .sort((a, b) => a.productId - b.productId)
         .forEach(element => {
-            console.log(element)
             const cartEntry = document.createElement('tr')
             cartEntry.classList.add('single-cart-item')
             cartEntry.innerHTML = `
@@ -120,7 +119,7 @@ async function loadCartItems(userId) {
                 <td class="art-info-text">
                     <div class="product-info">
                         <span class="artname">${element.product.name}</span>
-                        <span class="quantity">Menge: <button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="decrease">-</button><span class="item-quantity" data-max-amount="${element.product.inStock - 2}">${element.quantity}</span><button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="increase">+</button></span>
+                        <span class="quantity">Menge: <button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="decrease">-</button><span class="item-quantity" data-max-amount="${element.product.inStock}">${element.quantity}</span><button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="increase">+</button></span>
                         <span class="item-price">${parseFloat(element.product.price).toFixed(2).replace('.', ',')} €</span>
                     </div>
                     <button class="delete-btn" data-artnr="${element.product.artnr}">X</button>
@@ -349,9 +348,7 @@ async function updateAmount(id, action, quantityElement) {
 
 async function calculateTotalPrice() {
     let price = 0
-    // Code erst hier auslesen, wenn Button geklickt wird
-    console.log(products)
-    // load all Products
+    
     await loadCartItems(localStorage.getItem('userId'))
     products.forEach(product => {
         price += product.product.price * product.quantity

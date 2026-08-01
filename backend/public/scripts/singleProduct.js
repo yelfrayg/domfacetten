@@ -65,7 +65,13 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 ${product.description ? `<p class="product-description">${product.description}</p>` : ""}
                 <p class="product-price">${parseFloat(product.price).toFixed(2).replace('.', ',')} €</p>
                 <p class ="text">*inkl. MwSt. zzgl. Versandkosten</p>
-                <label class ="text">Menge : <input id="amount" type="number" min="1" max = ${product.inStock - 2 <= 0 ? 1 : product.inStock - 2} value="1" step="1"></label>
+                <div class="product-quantity-wrapper">
+                    <div class="text">
+                        <label for="amount">Menge:</label>
+                        <input id="amount" type="number" min="1" max = ${product.inStock} value="1" step="1">
+                    </div>
+                    ${(product.inStock > 0) && (product.inStock < 8) ? `<p class="inStock-warning">(Nur noch ${product.inStock} Stück auf Lager!)</p>` : ""}
+                </div>
                 <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}">In den Warenkorb legen</button>
                 <button class ="buyNow" id="buyNow"><a href="/cart">Jetzt kaufen</a></button>
             </div>
@@ -144,7 +150,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 cartButton.dataset.isInCart = "false";
             } else {
                 if (userQuantity > maximum || userQuantity < 1) {
-                    alert('Maximale Menge beträgt ' + maximum + ' Stück!')
+                    document.getElementById("amount").value = maximum;
                     return
                 }
                 await addItem(data);

@@ -47,19 +47,16 @@ async function fetchProducts() {
         const req = await fetch(`/api/products`);
         const res = await req.json();
         allproductsArray = res.products || [];
-        console.log("Fetched products:", allproductsArray);
 
         allproductsArray
             .sort((a, b) => a.artnr - b.artnr)
             .forEach((p) => {
                 const productElement = document.createElement("a");
                 productElement.classList.add("product");
-                console.log(p.keywords.join(','));
                 let colors = []
                 p.keywords.forEach((keyword) => {
                     colors.push(keyword.toLowerCase());
                 });
-                console.log(colors);
                 productElement.setAttribute("data-colors", colors);
                 if (p.inStock <= 0) {
                     productElement.classList.add("out-of-stock");
@@ -94,8 +91,6 @@ async function fetchProducts() {
 function createFilters(products) {
     const filterContainers = document.querySelectorAll(".filters");
     let filters = []
-    console.log("Products for filter creation:", products);
-    console.log('Container geleert.')
 
     filterContainers.forEach((filterContainer) => {
         filterContainer.innerHTML = "";
@@ -103,8 +98,6 @@ function createFilters(products) {
 
     products.forEach((p) => {
         p.keywords.forEach((keyword) => {
-            console.log("Creating filter for keyword:", keyword);
-            // TODO: Implementiere eine Überprüfung, um Duplikate zu vermeiden
             if (!filters.includes(keyword)) {
                 filters.push(keyword);
             }
@@ -117,14 +110,14 @@ function createFilters(products) {
             filterElement.classList.add("filter-object-wrapper");
             filterElement.innerHTML = `
                 <span class="filter-object">
-                                    <p>${filter}</p>
-                                    <input
-                                        type="checkbox"
-                                        name="checkmark"
-                                        id="checkmark"
-                                        data-value="${filter.toLowerCase()}"
-                                    />
-                                </span>
+                    <p>${filter}</p>
+                    <input
+                        type="checkbox"
+                        name="checkmark"
+                        id="checkmark"
+                        data-value="${filter.toLowerCase()}"
+                    />
+                </span>
             `;
             filterContainer.appendChild(filterElement);
         })
