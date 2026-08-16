@@ -7,7 +7,7 @@ main {
 .welcome-text {
     width: 100%;
     height: calc(100vh - 15vh);
-    background-image: url("/images/koelnerDom.jpg");
+    background-image: url("/images/test-wallpaper.jpg");
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.3);

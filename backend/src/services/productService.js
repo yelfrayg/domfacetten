@@ -73,10 +73,21 @@ const createNewProduct = async (data) => {
             },
         });
     } catch (error) {
+        if (
+            error.code === 'P2002'
+        ) {
+            // Optional: Prüfen, welches Feld betroffen war (falls meta.target vorhanden ist)
+            const target = error.meta?.target;
+            return {
+                code: 409, // Conflict
+                message: `Ein Produkt mit dieser ${target} existiert bereits.`,
+            };
+        }
+
         return {
             code: 500,
-            message: "Fehler beim Erstellen",
-        };
+            message: "Fehler beim Erstellen des Produkts",
+        }
     }
 };
 

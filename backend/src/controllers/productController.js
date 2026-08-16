@@ -72,10 +72,10 @@ async function createProduct(req, res) {
         };
 
         const newProduct = await productService.createNewProduct(newDataSet);
-        if (newProduct.code && newProduct.code === 500) {
+        if (newProduct.code) {
             return res
-                .status(500)
-                .json({ message: "Fehler beim Erstellen des Produkts" });
+                .status(newProduct.code)
+                .json({ message: newProduct.message });
         }
         return res.status(201).json({
             code: 201,
@@ -85,7 +85,7 @@ async function createProduct(req, res) {
     } catch (error) {
         return res
             .status(500)
-            .json({ message: "Fehler beim Erstellen des Produkts" });
+            .json({ message: error.message });
     }
 }
 

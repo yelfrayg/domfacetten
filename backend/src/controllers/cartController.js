@@ -28,6 +28,9 @@ async function addToCart(req, res) {
 
 async function removeItem(req, res) {
     try {
+        if(!req.body.userId || !req.body.productId) {
+            return res.status(400).json({ code: 400, message: "Ungültige Anfrage. Bitte stellen Sie sicher, dass userId, productId und quantity im Body enthalten sind." });
+        }
         const remove = await cartService.removeFromCart(req.body)
         res.status(200).json({ code: 200, message: remove.message })
     } catch (error) {

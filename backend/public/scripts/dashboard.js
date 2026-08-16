@@ -50,12 +50,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     const userOrders = await getOrders(userId);
 
     if (userData.userInfo === null) {
-        // localStorage.removeItem("userId");
-        // localStorage.removeItem("userToken");
-        // localStorage.removeItem("user-letter");
         console.error("Fehler beim Laden der Userdaten:", userData);
         alert("Daten konnten nicht geladen werden.");
-        // window.location = "/userAuth?msg=401";
+        window.location = "/userAuth?msg=401";
+        localStorage.removeItem("userId");
     }
 
     if (userData && userData.code === 200) {

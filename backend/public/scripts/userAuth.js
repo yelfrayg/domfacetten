@@ -286,6 +286,8 @@ async function redirect() {
         const userId = localStorage.getItem("userId")
         const token = localStorage.getItem("userToken")
 
+        // Vom Backend prüfen, ob Nutzer existiert
+
         if (userId && token && userId.length !== 0 && token.length !== 0) {
             // Token prüfen - wenn NICHT abgelaufen, zum Dashboard
             console.log(isTokenExpired(token))
