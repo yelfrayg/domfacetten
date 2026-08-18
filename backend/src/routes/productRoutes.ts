@@ -1,10 +1,11 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 const productController = require('../controllers/productController');
 const productImageUpload = require('../middleware/productImageUpload');
-const checkAuth = require('../middleware/checkAuth');
 
 router.get('/', productController.fetchProducts);
+
+router.get('/:artnr', productController.fetchProductByArtNr);
 
 router.post('/newProduct', productImageUpload.fields([
     { name: 'heroImage', maxCount: 1 },

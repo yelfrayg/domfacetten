@@ -1,16 +1,17 @@
-const { PrismaClient } = require("@prisma/client");
-const { PrismaPg } = require("@prisma/adapter-pg");
-const path = require("path");
-const fs = require("fs/promises");
+import { PrismaClient, Product } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import path from "path";
+import fs from "fs/promises";
+import { ServiceResponse } from "../data/types";
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
-    log: ["info", "warn", "error"],
+    log: ["warn", "error"],
 });
 
 const uploadDir = path.resolve(__dirname, "..", "..", "uploads", "products");
 
-const slugify = (value) => {
+const slugify = (value: any) => {
     const str = String(value ?? "")
         .trim()
         .toLowerCase();
@@ -21,30 +22,42 @@ const slugify = (value) => {
     return slug;
 };
 
-const safeUnlink = async (absoluteFilePath) => {
+const safeUnlink = async (absoluteFilePath: string) => {
     try {
         await fs.unlink(absoluteFilePath);
         return { ok: true };
-    } catch (err) {
-        if (err && err.code === "ENOENT") return { ok: true, missing: true };
-        return { ok: false, error: err };
+    } catch (err: unknown) {
+        const fsError = err as NodeJS.ErrnoException;
+        if (fsError?.code === "ENOENT") return { ok: true, missing: true };
+        return {
+            ok: false,
+            error: err instanceof Error ? err : new Error(String(err)),
+        };
     }
 };
 
-const getAllProducts = async () => {
+const getAllProducts = async (): Promise<ServiceResponse> => {
     try {
-        return await prisma.product.findMany();
-    } catch (error) {
-        return [];
+        const products: Product[] = await prisma.product.findMany();
+        const response: ServiceResponse = {
+            code: 200,
+            message: "Produkte erfolgreich geladen",
+            data: products,
+        };
+        return response;
+    }
+    catch (error) {
+        const response: ServiceResponse = {
+            code: 500,
+            message: "Fehler beim Laden der Produkte",
+        };
+        return response;
     }
 };
 
-const getSingleProduct = async (arttype, artnr) => {
+const getSingleProduct = async (arttype: string, artnr: string): Promise<Product | null> => {
     try {
         const parsedArtnr = parseInt(artnr, 10);
-        if (Number.isNaN(parsedArtnr)) {
-            return null;
-        }
         return await prisma.product.findFirst({
             where: {
                 arttype,
@@ -56,7 +69,7 @@ const getSingleProduct = async (arttype, artnr) => {
     }
 };
 
-const createNewProduct = async (data) => {
+const createNewProduct = async (data: any) => {
     try {
         return await prisma.product.create({
             data: {
@@ -72,7 +85,7 @@ const createNewProduct = async (data) => {
                 image3: data.thirdImage,
             },
         });
-    } catch (error) {
+    } catch (error: any) {
         if (
             error.code === 'P2002'
         ) {
@@ -91,10 +104,9 @@ const createNewProduct = async (data) => {
     }
 };
 
-const deleteExistingProduct = async (arttype, artnr) => {
+const deleteExistingProduct = async (arttype: string, artnr: string) => {
     try {
-        // In the current Prisma schema, only `artnr` is unique.
-        // We use `deleteMany` to still honor the intended (arttype + artnr) filter.
+        // Durch neue TS-Syntax ersetzen.
         return await prisma.product.deleteMany({
             where: {
                 arttype: arttype,
@@ -106,7 +118,7 @@ const deleteExistingProduct = async (arttype, artnr) => {
     }
 };
 
-const deleteExistingProductWithImages = async (arttype, artnr) => {
+const deleteExistingProductWithImages = async (arttype: string, artnr: string) => {
     const parsedArtnr = parseInt(artnr, 10);
     if (!arttype || Number.isNaN(parsedArtnr)) {
         return { code: 400, message: "Ungültige Parameter (arttype/artnr)" };
@@ -134,14 +146,14 @@ const deleteExistingProductWithImages = async (arttype, artnr) => {
         product.heroImage,
         product.image2,
         product.image3,
-    ].filter(Boolean);
+    ].filter((filename): filename is string => Boolean(filename));
 
     const artnrPart = `a${String(parsedArtnr).replace(/\D/g, "")}`;
     const arttypePart = `t${slugify(arttype) || "unknown"}`;
     const newPrefix = `${arttypePart}-${artnrPart}-`;
     const oldPrefix = `${artnrPart}-`;
 
-    let fileNamesToDelete = new Set(filenamesFromDb);
+    let fileNamesToDelete = new Set<string>(filenamesFromDb);
 
     // Also delete any additional files for the same arttype+artnr prefix (e.g. -2 suffixes)
     try {
@@ -183,8 +195,8 @@ const deleteExistingProductWithImages = async (arttype, artnr) => {
         // ignore
     }
 
-    const deletedFiles = [];
-    const fileDeleteErrors = [];
+    const deletedFiles: string[] = [];
+    const fileDeleteErrors: Array<{ filename: string; error: string }> = [];
     for (const filename of fileNamesToDelete) {
         // prevent path traversal: only allow plain filenames
         if (filename.includes("/") || filename.includes("\\")) continue;
@@ -210,24 +222,32 @@ const deleteExistingProductWithImages = async (arttype, artnr) => {
     };
 };
 
-const updateExistingProduct = async (data) => {
+const updateExistingProduct = async (data: any) => {
     try {
         const parsedArtnr = parseInt(data?.artnr, 10);
-        if (Number.isNaN(parsedArtnr)) {
-            return { code: 400, message: "Ungültige artnr" };
-        }
 
         const updateData = { ...data };
         delete updateData.artnr;
 
-        return await prisma.product.update({
+        const update = await prisma.product.update({
             where: {
                 artnr: parsedArtnr,
             },
             data: updateData,
         });
+
+        const response: ServiceResponse = {
+            code: 200,
+            message: "Produkt erfolgreich aktualisiert",
+        }        
+        return response;
     } catch (error) {
-        return { code: 500, message: "Aktualisierung in DB fehlgeschlagen" };
+
+        const response: ServiceResponse = {
+            code: 500,
+            message: "Aktualisierung in DB fehlgeschlagen",
+        }
+        return response;
     }
 };
 
