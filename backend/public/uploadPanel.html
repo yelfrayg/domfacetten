@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../assets/adminPanel.css" />
+        <title>Produkt erstellen</title>
+    </head>
+    <body>
+        <header></header>
+        <main>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="arttype">Artikeltyp</label>
+                    <input type="text" id="arttype" placeholder="Artikeltyp" />
+                </div>
+
+                <div class="form-group">
+                    <label for="artnr">Artikelnummer</label>
+                    <input type="text" id="artnr" placeholder="Artikelnummer" />
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" placeholder="Name" />
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Beschreibung</label>
+                    <input
+                        type="text"
+                        id="description"
+                        placeholder="Beschreibung"
+                    />
+                </div>
+
+                <fieldset id="keywords">
+                    <legend>Stichwörter auswählen:</legend>
+
+                    <input
+                        type="checkbox"
+                        id="green"
+                        name="keyword"
+                        value="green"
+                    />
+                    <label for="green">Grün</label><br />
+
+                    <input
+                        type="checkbox"
+                        id="red"
+                        name="keyword"
+                        value="red"
+                    />
+                    <label for="red">Rot</label><br />
+
+                    <input
+                        type="checkbox"
+                        id="yellow"
+                        name="keyword"
+                        value="yellow"
+                    />
+                    <label for="yellow">Gelb</label><br />
+
+                    <input
+                        type="checkbox"
+                        id="blue"
+                        name="keyword"
+                        value="blue"
+                    />
+                    <label for="blue">Blau</label><br />
+
+                    <input
+                        type="checkbox"
+                        id="black"
+                        name="keyword"
+                        value="black"
+                    />
+                    <label for="black">Schwarz</label><br />
+
+                    <input
+                        type="checkbox"
+                        id="white"
+                        name="keyword"
+                        value="white"
+                    />
+                    <label for="white">Weiß</label><br />
+
+                    <input
+                        type="checkbox"
+                        id="armband"
+                        name="keyword"
+                        value="wristband"
+                    />
+                    <label for="armband">Armband</label><br />
+
+                    <input
+                        type="checkbox"
+                        id="stoff"
+                        name="keyword"
+                        value="stoff"
+                    />
+                    <label for="stoff">Stoff</label>
+                </fieldset>
+
+                <div class="form-group">
+                    <label for="price">Preis in Euro</label>
+                    <input
+                        type="number"
+                        name="price"
+                        id="price"
+                        placeholder="Preis in Euro"
+                        step="0.01"
+                    />
+                </div>
+
+                <div class="form-group check">
+                    <input
+                        type="number"
+                        name="inStock"
+                        id="inStock"
+                        placeholder="Anzahl verfügbarer Artikel"
+                        min="0"
+                    />
+                    <label for="inStock">Auf Lager</label>
+                </div>
+                <div class="image-container">
+                    <div class="hero-image-container">
+                        <h2>Foto 1 (Verpflichtend)</h2>
+                        <label for="heroImage">Foto 1 hochladen</label><br />
+                        <input type="file" name="heroImage" id="heroImage" />
+                    </div>
+                    <div class="second-image-container">
+                        <h2>Foto 2</h2>
+                        <label for="secondImage">Foto 2 hochladen</label><br />
+                        <input
+                            type="file"
+                            name="secondImage"
+                            id="secondImage"
+                        />
+                    </div>
+                    <div class="third-image-container">
+                        <h2>Foto 3</h2>
+                        <label for="thirdImage">Foto 3 hochladen</label><br />
+                        <input type="file" name="thirdImage" id="thirdImage" />
+                    </div>
+                </div>
+                <button id="createProduct" type="submit">Erstellen!</button>
+            </form>
+
+            <hr />
+
+            <form method="POST">
+                <div class = "form-group">
+                    <label for="codeId">Codename</label><br />
+                    <input type="text" id="codeId" placeholder="Z.B. SOMMER20" />
+                </div>
+                <div class="form-group">
+                    <label for="codeValue">Code Wert</label><br />
+                    <input
+                        type="number"
+                        min="5"
+                        max="50"
+                        id="codeValue"
+                        placeholder="Wert in Prozent z.B. 20 für 20%"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="available">Verfügbar</label>
+                    <input type="checkbox" id="available" name="available" />
+                </div>
+                <button id="createCode" type="submit">Erstellen!</button>
+            </form>
+        </main>
+        <footer></footer>
+        <script src="../scripts/main.js"></script>
+        <script src="../scripts/newProduct.js"></script>
+        <script src="../scripts/code.js"></script>
+    </body>
+</html>

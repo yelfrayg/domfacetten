@@ -1,0 +1,113 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: white;
+    border: 1px solid black;
+
+    .register-form-container,
+    .login-form-container,
+    .password-reset-container,
+    .otp-form-container,
+    .new-password-container {
+        align-items: flex-start;
+        background-color: #fff;
+        padding: var(--3xl);
+
+        .form1, .form2, .form3, .form4, .form5 {
+            display: flex;
+            flex-direction: column;
+
+            h2 {
+                text-align: center;
+                padding-bottom: var(--xl);
+            }
+
+            label {
+                font-weight: bold;
+            }
+
+            input {
+                padding: var(--s) 0 var(--s) var(--s);
+                width: 30vw;
+                border: 1px solid #696969;
+                margin-bottom: var(--m);
+            }
+
+            #error-message-login,
+            #error-message-register,
+            #error-message-pw-reset {
+                display: none;
+                color: red;
+                margin-bottom: var(--m);
+            }
+
+            button {
+                padding: var(--s);
+                background-color: black;
+                color: white;
+                border: none;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #393939;
+                }
+            }
+        }
+
+        #show-register-form,
+        #show-login-form,
+        #show-password-reset-form,
+        #show-otp-form,
+        #show-new-password-form {
+            margin-top: var(--m);
+            background-color: white;
+            color: black;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+        }   
+    }
+
+    .register-form-container,
+    .password-reset-container,
+    .otp-form-container,
+    .new-password-container {
+        display: none;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .form-container {
+        margin-top: 15vh;
+        flex-direction: column;
+        width: 100vw;
+
+        .register-form-container,
+        .login-form-container {
+            width: 100%;
+            padding: 0;
+
+            .form1, .form2 {
+                padding: var(--xl);
+
+                input {
+                    width: 100%;
+                }
+            }
+        }
+
+        .login-form-container {
+            border-top: 1px solid black;
+        }
+    }
+}
