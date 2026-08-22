@@ -36,6 +36,33 @@ main {
                 display: flex;
                 flex-direction: column;
                 gap: var(--m);
+
+                .empty-cart-container {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    gap: var(--m);
+                    height: 50vh;
+
+                    .empty-cart-icon-container {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 3vw;
+                        height: 3vw;
+
+                        svg {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+
+                    .empty-cart-text {
+                        font-size: var(--xl);
+                        font-weight: 500;
+                    }
+                }
             }
 
             .single-cart-item {
@@ -87,6 +114,14 @@ main {
                         .artname {
                             font-weight: 600;
                             font-size: var(--l);
+                             a {
+                                text-decoration: none;
+                                color: black;
+
+                                &:hover {
+                                    color: #696969;
+                                }
+                             }
                         }
 
                         .quantity,

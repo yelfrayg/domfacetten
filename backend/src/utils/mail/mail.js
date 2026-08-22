@@ -77,10 +77,12 @@ async function sendOTPMail(email, otp) {
         const info = await transporter.sendMail({
             from: '"Domfacetten-Team" <domfacetten@web.de>',
             to: `${email}`,
-            subject: "Passwort zurücksetzen", 
+            subject: "Einmal-Code für Passwort-Reset", 
             html: `
                 <h2>Bitte folgenden Code in der Anwendung eingeben:</h2>
+                <br>
                 <h3>${otp}</h3>
+                <br>
                 <p>Der Code ist 3 Minuten gültig.</p>
             `,
         });

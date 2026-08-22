@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 
-export function handleError(error: unknown): string {
+export function handleError<E>(error: E): string {
     if (error instanceof Error) return error.message;
     if (typeof error === "string") return error;
     if (error instanceof Prisma.PrismaClientKnownRequestError) {

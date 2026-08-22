@@ -34,4 +34,5 @@ router.get('/places', (req, res) => {
     res.sendFile(pathToFile('places.html'));
 });
 
+// Catch-all route for undefined paths
 module.exports = router;

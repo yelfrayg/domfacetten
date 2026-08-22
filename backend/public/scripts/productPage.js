@@ -46,7 +46,8 @@ async function fetchProducts() {
     try {
         const req = await fetch(`/api/products`);
         const res = await req.json();
-        allproductsArray = res.products || [];
+        // console.log(res);
+        allproductsArray = res.data.reqData || [];
 
         allproductsArray
             .sort((a, b) => a.artnr - b.artnr)

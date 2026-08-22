@@ -20,27 +20,31 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             return;
         }
 
-        const req = await fetch("/api/products");
+        const req = await fetch(`/api/products/${artnr}`);
         const res = await req.json();
-        const product = (res.products || []).find(
-            (p) => Number(p.artnr) === artnrNum,
-        );
+        console.log(res);
 
-        if (!product) {
+        if (res.status === 'FAILURE') {
+            console.log('Fehler beim Abrufen des Produkts:', res.message || 'Unbekannter Fehler');
             productContainer.innerHTML = `
-                <h2>Produkt nicht gefunden.</h2>
+                <div class="error-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M78-206v-510h74v510H78Zm110 0v-510h74v510h-74Zm110 0v-510h36v510h-36Zm110 0v-510h72v510h-72Zm110 0v-510h110v510H518Zm146 0v-510h36v510h-36Zm110 0v-510h110v510H774Z"/></svg>
+                    <h1>Produkt nicht gefunden.</h1>
+                </div>
             `;
             return;
         }
+        const product = res.data.reqData || []
+
         if (product.inStock <= 0) {
             productContainer.innerHTML = `
-                <h2>Produkt aktuell nicht verfügbar.</h2>
+                <div class="error-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M78-206v-510h74v510H78Zm110 0v-510h74v510h-74Zm110 0v-510h36v510h-36Zm110 0v-510h72v510h-72Zm110 0v-510h110v510H518Zm146 0v-510h36v510h-36Zm110 0v-510h110v510H774Z"/></svg>
+                    <h1>Produkt nicht gefunden.</h1>
+                </div>
             `;
             return;
         }
-
-        // console.log('Product max:', product.inStock - 2 <= 0 ? 1 : product.inStock - 2)
-        // console.log('---------')
 
         productContainer.innerHTML = `
             <div class="highlight-product-imgs">
@@ -51,12 +55,12 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 </ul>
                 <div class="arrow-container">
                     ${product.image2
-                ? `
+                        ? `
                                 <button class="arrow-left">〈</button>
                                 <button class="arrow-right">⟩</button>
                             `
-                : ""
-            }
+                        : ""
+                    }
                 </div>
             </div>
 
@@ -68,14 +72,41 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 <div class="product-quantity-wrapper">
                     <div class="text">
                         <label for="amount">Menge:</label>
-                        <input id="amount" type="number" min="1" max = ${product.inStock} value="1" step="1">
+                        <input id="amount" type="number" min="1" max = ${product.inStock} value="1" step="1"/>
                     </div>
                     ${(product.inStock > 0) && (product.inStock < 8) ? `<p class="inStock-warning">(Nur noch ${product.inStock} Stück auf Lager!)</p>` : ""}
                 </div>
-                <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}">In den Warenkorb legen</button>
-                <button class ="buyNow" id="buyNow"><a href="/cart">Jetzt kaufen</a></button>
+                <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}"><div class="loaderCode"></div></button>
+                <button class ="buyNow" id="buyNow">Jetzt kaufen!</button>
             </div>
         `;
+
+        const buyBtn = document.getElementById("buyNow");
+        buyBtn?.addEventListener("click", async (e) => {
+            // Wenn das Item noch nicht im Cart ist, wird es hinzugefügt und dann zu /cart weitergeleitet
+            if (!localStorage.getItem("userId")) {
+                window.location.href = "/userAuth?msg=403";
+                return;
+            }
+            // Wenn das Item bereits im Cart ist, wird ohne es zu adden ein direct zu /cart durchgeführt
+            if (buyBtn.dataset.isInCart === "true") {
+                window.location.href = "/cart";
+                return;
+            }
+            const userId = localStorage.getItem("userId");
+            const userQuantity = parseInt(document.getElementById("amount").value, 10);
+            const maximum = parseInt(document.getElementById("amount").max, 10);
+            if (userId && userQuantity > 0 && userQuantity <= maximum) {
+                let data = {
+                    productId: parseInt(artnr),
+                    userId: userId,
+                    quantity: userQuantity,
+                };
+                await addItem(data);
+                window.location.href = "/cart";
+                return
+            }
+        })
 
         // <div id="paypal"></div> in Zeile 60
 
@@ -129,7 +160,6 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
         cartButton?.addEventListener("click", async (e) => {
             if (!localStorage.getItem("userId")) {
-                // alert("Bitte logge dich ein, um Artikel in den Warenkorb zu legen.");
                 window.location.href = "/userAuth?msg=403";
                 return;
             }
@@ -279,22 +309,26 @@ async function findItem(userId, artnr) {
         );
 
         if (!req.ok) {
-            // console.error("findItem request fehlgeschlagen:", req.status, req.statusText);
+            const cartButton = document.getElementById("cart-button");
+            if (cartButton) {
+                cartButton.textContent = 'In den Warenkorb legen';
+                cartButton.dataset.isInCart = "false";
+            }
             return;
         }
 
         const res = await req.json();
-        // console.log("findItem response:", res);
-        // console.log("Produkt gefunden im Warenkorb:", res.found);
+        const cartItem = res?.data?.reqData?.item ?? null;
+        const cartButton = document.getElementById("cart-button");
+        const amountInput = document.getElementById("amount");
 
-        let cartButton = document.getElementById("cart-button");
-        let amountInput = document.getElementById("amount");
+        if (!cartButton) return;
 
-        if (res.found === null) return
-
-        if (res.found) {
+        if (cartItem) {
             cartButton.textContent = 'Artikel aus Warenkorb entfernen';
-            amount.value = res.found.quantity
+            if (amountInput && typeof cartItem.quantity === 'number') {
+                amountInput.value = cartItem.quantity;
+            }
             cartButton.dataset.isInCart = "true";
         } else {
             cartButton.textContent = 'In den Warenkorb legen';

@@ -1,7 +1,7 @@
 const deliverName = document.querySelector('.delivery-name')
 const deliverStreet = document.querySelector('.delivery-street')
 const deliverCity = document.querySelector('.delivery-city')
-const cartItemsContainer = document.querySelector('#cart-items')
+const cartItemsContainer = document.getElementById('cart-items')
 const totalPrice = document.getElementById('total-price')
 const paypalContainer = document.getElementById('paypal')
 const itemCounter = document.querySelector('.product-count')
@@ -11,11 +11,25 @@ const iconCheck = document.querySelector('.code-verification-wrapper')
 const pencil = document.querySelector('.pencil-wrapper')
 
 let codeValue = 0
-let products
+let products = []
 let isApplied = false
 
+function formatMoney(value) {
+    const amount = Number(value) || 0
+    return `${amount.toFixed(2).replace('.', ',')} €`
+}
+
+function parseMoney(value) {
+    if (!value) return 0
+    const normalized = String(value)
+        .replace(/[^0-9,.-]/g, '')
+        .replace('.', '')
+        .replace(',', '.')
+    return Number(normalized) || 0
+}
+
 pencil.addEventListener('click', _ => {
-    window.location = `/dashboard.html?userId=${localStorage.getItem('userId')}`
+    window.location = `/dashboard/${localStorage.getItem('userId')}`
 })
 
 const icons = {
@@ -28,7 +42,6 @@ const icons = {
 document.addEventListener('DOMContentLoaded', async _ => {
     try {
         const userId = localStorage.getItem('userId')
-        //load all Cart Items
         await loadCartItems(userId)
         await calculateTotalPrice()
 
@@ -44,27 +57,29 @@ document.addEventListener('DOMContentLoaded', async _ => {
             }
         })
         const resUser = await reqUser.json()
-        // console.log(resUser.userInfo)
+        // console.log(resUser)
+        console.log('----------------')
+        const userObject = resUser.data.reqData
 
         if (
-            resUser.userInfo.first_name == '' ||
-            resUser.userInfo.last_name == '' ||
-            resUser.userInfo.address.street == '' ||
-            resUser.userInfo.address.city == ''
+            userObject.first_name == '' ||
+            userObject.last_name == '' ||
+            userObject.address.street == '' ||
+            userObject.address.city == ''
         ) {
             paypalContainer.style.display = 'none'
             cartItemsContainer.innerHTML = '<h2>Bitte hinterlege zuerst deine Lieferadresse im Dashboard, um fortzufahren!</h2>'
             totalPrice.innerHTML = '-,-- €'
-            deliverName.textContent = resUser.userInfo.first_name + ' ' + resUser.userInfo.last_name
-            deliverStreet.textContent = resUser.userInfo.address.street === '' ? '---' : resUser.userInfo.address.street
-            deliverCity.textContent = resUser.userInfo.address.city === '' ? '---' : resUser.userInfo.address.city
+            deliverName.textContent = userObject.first_name + ' ' + userObject.last_name
+            deliverStreet.textContent = userObject.address.street === '' ? '---' : userObject.address.street
+            deliverCity.textContent = userObject.address.city === '' ? '---' : userObject.address.city
             itemCounter.textContent = resCartItems.cartItems.length === 1 ? '1 Produkt' : resCartItems.cartItems.length + ' Produkte'
             return
         }
 
-        deliverName.textContent = resUser.userInfo.first_name + ' ' + resUser.userInfo.last_name
-        deliverStreet.textContent = resUser.userInfo.address.street === '' ? '---' : resUser.userInfo.address.street
-        deliverCity.textContent = resUser.userInfo.address.city === '' ? '---' : resUser.userInfo.address.city
+        deliverName.textContent = userObject.first_name + ' ' + userObject.last_name
+        deliverStreet.textContent = userObject.address.street === '' ? '---' : userObject.address.street
+        deliverCity.textContent = userObject.address.city === '' ? '---' : userObject.address.city
 
         await ppCart()
 
@@ -94,39 +109,56 @@ async function loadCartItems(userId) {
             }
         })
         const resCartItems = await reqCartItems.json()
-        if (reqCartItems.status == 401) {
-            // alert('Access denied!')
-            // window.location = "/products"
+        products = Array.isArray(resCartItems?.data?.reqData) ? resCartItems.data.reqData : []
+
+        if (resCartItems.status == 'FAILURE') {
+            alert('Access denied!')
+            window.location = "/products"
             return
         }
 
-        if (resCartItems.cartItems.length == 0) {
-            cartItemsContainer.innerHTML = '<h2>Dein Warenkorb ist leer!</h2>'
-            paypalContainer.style.display = 'none'
-        }
-
-        products = resCartItems.cartItems
         cartItemsContainer.innerHTML = ''
-        products
-        .sort((a, b) => a.productId - b.productId)
-        .forEach(element => {
-            const cartEntry = document.createElement('tr')
-            cartEntry.classList.add('single-cart-item')
-            cartEntry.innerHTML = `
-                <td class="image-container">
-                    <img src="/uploads/products/${element.product.heroImage}" alt="Image" />
-                </td>
-                <td class="art-info-text">
-                    <div class="product-info">
-                        <span class="artname">${element.product.name}</span>
-                        <span class="quantity">Menge: <button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="decrease">-</button><span class="item-quantity" data-max-amount="${element.product.inStock}">${element.quantity}</span><button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="increase">+</button></span>
-                        <span class="item-price">${parseFloat(element.product.price).toFixed(2).replace('.', ',')} €</span>
+
+        if (products.length === 0) {
+            console.log('Cart is empty!')
+            const cartItem = document.createElement('tr')
+            cartItemsContainer.innerHTML = `
+                <td colspan="4" class="empty-cart-container">
+                    <div class="empty-cart-icon-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="36px" viewBox="0 -960 960 960" width="36px" fill=#000000><path d="M223.5-103.5Q200-127 200-160t23.5-56.5Q247-240 280-240t56.5 23.5Q360-193 360-160t-23.5 56.5Q313-80 280-80t-56.5-23.5Zm400 0Q600-127 600-160t23.5-56.5Q647-240 680-240t56.5 23.5Q760-193 760-160t-23.5 56.5Q713-80 680-80t-56.5-23.5ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/></svg>
                     </div>
-                    <button class="delete-btn" data-artnr="${element.product.artnr}">X</button>
+                    <p class="empty-cart-text">Dein Warenkorb ist leer!</p>
                 </td>
             `
-            cartItemsContainer.appendChild(cartEntry)
-        });
+            paypalContainer.style.display = 'none'
+            itemCounter.textContent = '0 Produkte'
+            itemCounterPrice.textContent = '0,00 €'
+            totalPrice.textContent = '0,00 €'
+            return resCartItems
+        }
+
+        paypalContainer.style.display = 'block'
+
+        products
+            .sort((a, b) => a.productId - b.productId)
+            .forEach(element => {
+                const cartEntry = document.createElement('tr')
+                cartEntry.classList.add('single-cart-item')
+                cartEntry.innerHTML = `
+                    <td class="image-container">
+                        <img src="/uploads/products/${element.product.heroImage}" alt="Image" />
+                    </td>
+                    <td class="art-info-text">
+                        <div class="product-info">
+                            <span class="artname"><a href="/product/${element.product.artnr}">${element.product.name}</a></span>
+                            <span class="quantity">Menge: <button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="decrease">-</button><span class="item-quantity" data-max-amount="${element.product.inStock}">${element.quantity}</span><button class="quantity-btn" data-artnr="${element.product.artnr}" data-action="increase">+</button></span>
+                            <span class="item-price">${parseFloat(element.product.price).toFixed(2).replace('.', ',')} €</span>
+                        </div>
+                        <button class="delete-btn" data-artnr="${element.product.artnr}">X</button>
+                    </td>
+                `
+                cartItemsContainer.appendChild(cartEntry)
+            });
 
         const quantityButtons = document.querySelectorAll('.quantity-btn')
         quantityButtons.forEach(button => {
@@ -138,9 +170,11 @@ async function loadCartItems(userId) {
                 const action = buttonElement.dataset.action
 
                 await updateAmount(productId, action, quantityElement)
+                await loadCartItems(localStorage.getItem('userId'))
                 await calculateTotalPrice()
             })
         })
+
         return resCartItems
     }
     catch (error) {
@@ -268,9 +302,8 @@ async function deleteFromCart() {
 //! BUG
 async function codeChecker() {
     try {
-        
         const code = discountCodeInput.value.toUpperCase()
-        const originalPrice = parseFloat(document.getElementById('total-price').textContent.replace(',', '.').replace(' €', ''))
+        const originalPrice = parseMoney(totalPrice.textContent)
 
         if (code === '' || isApplied == true) {
             if (iconCheck) iconCheck.innerHTML = ``
@@ -283,21 +316,20 @@ async function codeChecker() {
 
         const req = await fetch(`/api/discountManagement/getDiscount/${code}`)
         const res = await req.json()
-        // console.log(res)
         if (res.code == 200) {
             isApplied = true
             if (iconCheck) iconCheck.innerHTML = icons.valid
-            const discount = res.discountObj.codeValue
-            const discountedPrice = parseFloat(originalPrice * (1 - discount))
-            price = discountedPrice
-            totalPrice.textContent = discountedPrice.toFixed(2).replace('.', ',') + ' €'
+            const discount = Number(res.discountObj.codeValue) || 0
+            const discountedPrice = originalPrice * (1 - discount)
+            totalPrice.textContent = formatMoney(discountedPrice)
+            itemCounterPrice.textContent = formatMoney(discountedPrice)
             return
         }
+
         console.log('Code ungültig!')
         if (iconCheck) iconCheck.innerHTML = icons.invalid
-        price = originalPrice
-        totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
-        itemCounterPrice.textContent = price.toFixed(2).replace('.', ',') + " €"
+        totalPrice.textContent = formatMoney(originalPrice)
+        itemCounterPrice.textContent = formatMoney(originalPrice)
         return
     } catch (error) {
         console.log(error)
@@ -309,24 +341,27 @@ async function updateAmount(id, action, quantityElement) {
         return
     }
 
-    const currentAmount = parseInt(quantityElement.textContent)
-    if ((currentAmount <= 1 && action === 'decrease')) {
+    const currentAmount = parseInt(quantityElement.textContent, 10)
+    if (currentAmount <= 1 && action === 'decrease') {
         return
     }
-    if ((currentAmount >= parseInt(quantityElement.dataset.maxAmount) && action === 'increase')) {
-        quantityElement.textContent = parseInt(quantityElement.dataset.maxAmount)
+    if (currentAmount >= parseInt(quantityElement.dataset.maxAmount, 10) && action === 'increase') {
+        quantityElement.textContent = parseInt(quantityElement.dataset.maxAmount, 10)
         return
     }
-    quantityElement.textContent = action === 'increase' ? currentAmount + 1 : currentAmount - 1
-    const amountToBeUpdated = quantityElement.textContent
-    console.log('New Amount: ', amountToBeUpdated)
+
+    const nextAmount = action === 'increase' ? currentAmount + 1 : currentAmount - 1
+    quantityElement.textContent = nextAmount
+    console.log('New Amount: ', nextAmount)
 
     try {
         const data = {
             userId: localStorage.getItem('userId'),
-            productId: parseInt(id),
-            quantity: parseInt(amountToBeUpdated)
+            productId: parseInt(id, 10),
+            quantity: parseInt(nextAmount, 10)
         }
+
+        console.log('Updating cart item with data:', data)
 
         const req = await fetch(`/api/cartManagement/updateAmount`, {
             method: 'PUT',
@@ -347,14 +382,26 @@ async function updateAmount(id, action, quantityElement) {
 }
 
 async function calculateTotalPrice() {
-    let price = 0
-    
-    await loadCartItems(localStorage.getItem('userId'))
-    products.forEach(product => {
-        price += product.product.price * product.quantity
-    })
-    itemCounterPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
-    totalPrice.textContent = price.toFixed(2).replace('.', ',') + ' €'
+    if (!products || products.length === 0) {
+        const cartProducts = await loadCartItems(localStorage.getItem('userId'))
+        products = Array.isArray(cartProducts?.data?.reqData) ? cartProducts.data.reqData : []
+    }
+
+    const total = products.reduce((sum, product) => {
+        const productPrice = Number(product?.product?.price) || 0
+        const quantity = Number(product?.quantity) || 0
+        return sum + productPrice * quantity
+    }, 0)
+
+    const totalItems = products.reduce((sum, product) => {
+        const quantity = Number(product?.quantity) || 0
+        return sum + quantity
+    }, 0)
+
+    itemCounter.textContent = totalItems === 1 ? '1 Produkt' : totalItems + ' Produkte'
+    itemCounterPrice.textContent = formatMoney(total)
+    totalPrice.textContent = formatMoney(total)
+    return total
 }
 
 function debounce(func, delay) {
