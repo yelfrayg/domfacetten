@@ -5,26 +5,31 @@ const filterMobile = document.querySelector(".filter-mobile");
 document.addEventListener("DOMContentLoaded", async (_) => {
     await fetchProducts();
 
-    let selectedColors = []
+    let selectedFilters = [];
 
-    document.addEventListener('change', event => {
-        if (!event.target.matches('input[name="checkmark"]')) {
+    document.addEventListener("click", (event) => {
+        const filterButton = event.target.closest(".filter-object-button");
+        if (!filterButton) {
             return;
         }
 
-        const colorValue = event.target.getAttribute("data-value");
-
-        if (event.target.checked) {
-            if (!selectedColors.includes(colorValue)) {
-                selectedColors.push(colorValue);
-            }
+        const filterValue = filterButton.getAttribute("data-value");
+        if (selectedFilters.includes(filterValue)) {
+            selectedFilters = selectedFilters.filter((value) => value !== filterValue);
         }
         else {
-            selectedColors = selectedColors.filter((c) => c !== colorValue);
+            selectedFilters.push(filterValue);
         }
 
+        document.querySelectorAll(`.filter-object-button[data-value="${filterValue}"]`)
+            .forEach((button) => {
+                const isSelected = selectedFilters.includes(filterValue);
+                button.classList.toggle("selected", isSelected);
+                button.setAttribute("aria-pressed", String(isSelected));
+            });
+
         const allProducts = document.querySelectorAll(".product");
-        if (selectedColors.length === 0) {
+        if (selectedFilters.length === 0) {
             allProducts.forEach((p) => {
                 p.style.display = "block";
             })
@@ -32,7 +37,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         }
 
         allProducts.forEach((p) => {
-            if (selectedColors.every((color) => p.getAttribute("data-colors").includes(color))) {
+            const productFilters = p.getAttribute("data-colors").split(",");
+            if (selectedFilters.every((value) => productFilters.includes(value))) {
                 p.style.display = "block";
             }
             else {
@@ -58,7 +64,7 @@ async function fetchProducts() {
                 p.keywords.forEach((keyword) => {
                     colors.push(keyword.toLowerCase());
                 });
-                productElement.setAttribute("data-colors", colors);
+                productElement.setAttribute("data-colors", colors.join(","));
                 if (p.inStock <= 0) {
                     productElement.classList.add("out-of-stock");
                 }
@@ -111,13 +117,13 @@ function createFilters(products) {
             filterElement.classList.add("filter-object-wrapper");
             filterElement.innerHTML = `
                 <span class="filter-object">
-                    <p>${filter}</p>
-                    <input
-                        type="checkbox"
-                        name="checkmark"
-                        id="checkmark"
+                    <button class="filter-object-button" name="checkmark"
+                        type="button"
                         data-value="${filter.toLowerCase()}"
-                    />
+                        aria-pressed="false"
+                        aria-label="Filter ${filter}">
+                        ${filter}
+                    </button>
                 </span>
             `;
             filterContainer.appendChild(filterElement);

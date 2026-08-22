@@ -91,14 +91,32 @@
 
             <section class="product-section">
                 <div class="heading-wrapper">
-                    <h2>Alle Produkte</h2>
-                    <button
-                        class="filter-mobile"
-                        commandfor="filter-mobile-popup"
-                        command="show-modal"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg>
-                    </button>
+                    <div class="heading-title-row">
+                        <h2>Alle Produkte</h2>
+                        <button
+                            class="filter-mobile"
+                            commandfor="filter-mobile-popup"
+                            command="show-modal"
+                            aria-label="Filter öffnen"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg>
+                        </button>
+                    </div>
+                    <aside class="filter">
+                        <ul class="filters">
+                            <!-- <li class="filter-object-wrapper">
+                                <span class="filter-object">
+                                    <p>Rot</p>
+                                    <input
+                                        type="checkbox"
+                                        name="checkmark"
+                                        id="checkmark"
+                                        data-value="Rot"
+                                    />
+                                </span>
+                            </li> -->
+                        </ul>
+                    </aside>
                     <dialog id="filter-mobile-popup">
                         <h3>Filter</h3>
                         <hr />
@@ -166,23 +184,6 @@
                 </div>
 
                 <div class="product-wrapper">
-                    <aside class="filter">
-                        <h3>Filter</h3>
-                        <hr />
-                        <ul class="filters">
-                            <!-- <li class="filter-object-wrapper">
-                                <span class="filter-object">
-                                    <p>Rot</p>
-                                    <input
-                                        type="checkbox"
-                                        name="checkmark"
-                                        id="checkmark"
-                                        data-value="Rot"
-                                    />
-                                </span>
-                            </li> -->
-                        </ul>
-                    </aside>
                     <div class="products-container">
                         <!-- <div class="product">
                             <div class="product-img-container">

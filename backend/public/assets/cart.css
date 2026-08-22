@@ -1,11 +1,10 @@
 main {
-    padding-top: 15vh;
+    padding-top: 12vh;
 }
 
 .cart-container {
     width: 90vw;
     margin: 0 auto;
-    border: 1px solid black;
     display: flex;
     flex-direction: row;
     background-color: white;

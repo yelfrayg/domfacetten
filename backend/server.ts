@@ -30,6 +30,9 @@ app.use('/api/cartManagement', cartRoutes)
 const discountRoutes = require('./src/routes/discountRoutes')
 app.use('/api/discountManagement', discountRoutes)
 
+const adminRoutes = require('./src/routes/adminRoutes')
+app.use('/api/adminManagement', adminRoutes)
+
 app.use(
   '/uploads/products',
   express.static(path.resolve(__dirname, 'uploads', 'products')),

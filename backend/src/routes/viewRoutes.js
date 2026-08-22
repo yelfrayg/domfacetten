@@ -34,5 +34,8 @@ router.get('/places', (req, res) => {
     res.sendFile(pathToFile('places.html'));
 });
 
-// Catch-all route for undefined paths
+router.get('/adminauth', (req, res) => {
+    res.sendFile(pathToFile('adminAuth.html'));
+});
+
 module.exports = router;
