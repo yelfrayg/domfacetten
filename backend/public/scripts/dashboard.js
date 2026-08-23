@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             const heading = document.getElementById("dashboard-title");
             heading.textContent = `Hallo ${userInfo.first_name}. Willkommen in deinem Dashboard!`;
         }
-        localStorage.setItem("user-letter", userInfo.first_name)
+        localStorage.setItem("user-letter", userInfo.first_name[0].toUpperCase());
     }
 
     updateForm.addEventListener("submit", async (e) => {
@@ -149,6 +149,7 @@ async function updateUserInfo() {
             emailInput.style.borderColor = "";
             emailInput.style.borderLeft = "";
             emailInput.placeholder = "E-Mail";
+            localStorage.setItem("user-letter", firstNameInput.value[0].toUpperCase());
             setTimeout(() => {
                 updateButton.textContent = "Daten aktualisieren";
                 updateButton.disabled = false;

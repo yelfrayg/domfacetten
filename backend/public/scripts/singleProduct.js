@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                     </div>
                     ${(product.inStock > 0) && (product.inStock < 8) ? `<p class="inStock-warning">(Nur noch ${product.inStock} Stück auf Lager!)</p>` : ""}
                 </div>
-                <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}"><div class="loaderCode"></div></button>
+                <button class="addToCart" id="cart-button" data-arttype="${product.arttype}" data-artnr="${product.artnr}">Bitte anmelden, um den Warenkorb zu nutzen!</button>
                 <button class ="buyNow" id="buyNow">Jetzt kaufen!</button>
             </div>
         `;

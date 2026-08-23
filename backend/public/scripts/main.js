@@ -19,5 +19,16 @@ async function pingServer() {
 
 document.addEventListener("DOMContentLoaded", async (_) => {
     await pingServer();
+    setLoginState();
 })
 
+
+function setLoginState() {
+  const isLoggedIn = localStorage.getItem('user-letter') !== null;
+  const accountIcon = document.querySelector('.user-logged-in');
+  console.log("isLoggedIn:", isLoggedIn);
+  console.log("user-letter:", localStorage.getItem('user-letter'));
+  if (isLoggedIn) {
+    accountIcon.innerHTML = `<span class="user-letter">${localStorage.getItem('user-letter')}</span>`;
+  }
+}

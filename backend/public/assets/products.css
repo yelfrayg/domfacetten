@@ -30,7 +30,7 @@
 
             .filter-object-wrapper {
                 list-style-type: none;
-                
+
                 .filter-object {
                     display: flex;
                     flex-direction: row;
@@ -92,12 +92,13 @@
 
     .product-wrapper {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: center;
         gap: var(--3xl);
         width: 90vw;
+        align-self: center; /* Zentriert den Produktcontainer mittig */
 
-        .filter {
+        /* .filter {
             position: sticky;
             left: 0;
             top: 20vh;
@@ -147,14 +148,14 @@
                     }
                 }
             }
-        }
+        } */
 
         .products-container {
             display: flex;
             flex-wrap: wrap;
             gap: var(--3xl);
             justify-content: center;
-            flex: 1;
+            align-items: flex-start;
             min-height: 40vh;
 
             .product {
@@ -166,12 +167,15 @@
                 background-color: white;
                 color: black;
                 border: 1px solid black;
+                animation: fadeIn 0.5s ease-in both;
+                animation-timeline: view();
+                animation-range: entry 0% cover 30%;
 
                 .product-img-container {
-                    position: relative;
                     width: 300px;
                     height: 300px;
                     overflow: hidden;
+                    position: relative;
 
                     img {
                         width: 100%;
@@ -215,11 +219,10 @@
             }
 
             .out-of-stock {
-
                 .product-img-container {
                     filter: grayscale(100%);
                 }
-                
+
                 .product-img-container::after {
                     content: "Ausverkauft";
                     position: absolute;

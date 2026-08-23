@@ -195,22 +195,24 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
             const res = await req.json();
             console.log(res);
-            if (res.code == 2002) {
-                errorMessage("E-Mail bereits vergeben.", 'register');
+            if (res.status == 'FAILURE') {
+                errorMessage(res.message, 'register');
                 loader.classList.add("invisible");
                 return
             }
 
-            if (!res.userId) {
+            if (!res.data.userId) {
                 errorMessage("Unbekannter Serverfehler", 'register');
                 loader.classList.add("invisible");
                 return;
             }
             console.log("Registrierung erfolgreich! Bitte melden Sie sich an.");
             register.reset();
-            localStorage.setItem("userId", res.userId);
+            toggleForms('login');
+            errorMessage("Registrierung erfolgreich! Bitte melden Sie sich an.", 'login');
+            localStorage.setItem("userId", res.data.userId);
         } catch (error) {
-            errorMessage("Serverfehler.", 'register');
+            errorMessage('Serverfehler.', 'register');
             console.log("Registrierungsfehler:", error);
             loader.classList.add("invisible");
         }

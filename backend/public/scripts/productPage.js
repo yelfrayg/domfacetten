@@ -73,16 +73,18 @@ async function fetchProducts() {
                 }
 
                 productElement.innerHTML = `
-                <div class="product-img-container">
-                    <img src="/uploads/products/${p.heroImage}" alt="Stoffarmband" loading="lazy">
-                    <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">${p.name}</h3>
-                    <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
-                    ${(p.inStock <= 8 && p.inStock != 0) ? `<p class="product-warning">Nur noch ${p.inStock} Stück auf Lager!</p>` : ""}
-                </div>
-            `;
+                    <div class="product-img-container">
+                        <img src="/uploads/products/${p.heroImage}" alt="Stoffarmband" loading="lazy">
+                        <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${p.name}</h3>
+                        <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
+                        ${(p.inStock <= 8 && p.inStock != 0) ? `<p class="product-warning">Nur noch ${p.inStock} Stück auf Lager!</p>` : ""}
+                    </div>
+                `;
+                // Nur wenn das Bild geladen ist, wird das Produkt angezeigt
+                
                 productContainer.appendChild(productElement);
             })
 

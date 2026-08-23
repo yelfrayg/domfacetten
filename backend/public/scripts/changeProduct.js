@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
         const nameInput = document.getElementById("editName").value;
         const descriptionInput = document.getElementById("editDescription").value;
-        const priceInput = document.getElementById("editPrice").value;
+        const priceInput = String(document.getElementById("editPrice").value).replace(',', '.');
         const availabilityInput = document.getElementById("editAvailability").value;
 
         let data = {
@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             price: parseFloat(priceInput),
             inStock: parseInt(availabilityInput, 10)
         };
+        console.log("New price value:", data.price);
 
         await applyChanges(data);
     });
@@ -55,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 async function loadAllProducts() {
     try {
         if (container) container.innerHTML = "";
-        const req = await fetch("http://localhost:3000/api/products");
+        const req = await fetch("/api/products");
         const res = await req.json();
         if (res) {
             res.data.reqData.forEach((p, index) => {
@@ -87,7 +88,7 @@ async function confirmDelete(arttype, artnr) {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    "Delete-Key": "04061973",
+                    "Authorization": `${localStorage.getItem('adminJWTCode')}`
                 },
                 body: JSON.stringify({
                     arttype: arttype,
@@ -115,15 +116,15 @@ async function applyChanges(data) {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `${localStorage.getItem('adminJWTCode')}`
                 },
                 body: JSON.stringify({ data }),
             },
         );
         const res = await req.json();
         console.log("Antwort vom Server:", res);
-        if (res.message == "success") {
-            alert("Produkt erfolgreich aktualisiert");
-            // window.location.reload();
+        if (res.status == "SUCCESS") {
+            window.location.reload();
         }
     } catch (error) {
         console.log(error);
