@@ -7,55 +7,59 @@ let selectedForEdit = null;
 
 document.addEventListener("DOMContentLoaded", async (_) => {
     await loadAllProducts();
-    const deleteButtons = document.querySelectorAll(".deleteBtn");
-    const editButtons = document.querySelectorAll(".editBtn");
+    container?.addEventListener("click", (event) => {
+        const target = event.target;
+        const button = target instanceof Element ? target.closest("button") : null;
+        if (!button) return;
 
-    deleteButtons.forEach((deleteButton) => {
-        deleteButton.addEventListener("click", async (_) => {
-            const clickedArttype = deleteButton.getAttribute("data-arttype");
-            const clickedArtnr = deleteButton.getAttribute("data-artnr");
-
+        if (button.classList.contains("deleteBtn")) {
+            const clickedArttype = button.getAttribute("data-arttype");
+            const clickedArtnr = button.getAttribute("data-artnr");
             selectedForDelete = { arttype: clickedArttype, artnr: clickedArtnr };
-            confirmButton.addEventListener("click", async (_) => {
-                await confirmDelete(selectedForDelete.arttype, selectedForDelete.artnr);
-            })
-        });
+            return;
+        }
+
+        if (button.classList.contains("editBtn")) {
+            const clickedArttype = button.getAttribute("data-arttype");
+            const clickedArtnr = button.getAttribute("data-artnr");
+            selectedForEdit = { arttype: clickedArttype, artnr: clickedArtnr };
+        }
     });
 
-    editButtons.forEach((editButton) => {
-        editButton.addEventListener("click", async (_) => {
-            const clickedArttype = editButton.getAttribute("data-arttype");
-            const clickedArtnr = editButton.getAttribute("data-artnr");
-            selectedForEdit = { arttype: clickedArttype, artnr: clickedArtnr };
+    confirmButton?.addEventListener("click", async (_) => {
+        if (!selectedForDelete) return;
+        await confirmDelete(selectedForDelete.arttype, selectedForDelete.artnr);
+    });
 
-            confirmEditButton.addEventListener('click', async () => {
-                const nameInput = document.getElementById("editName").value;
-                const descriptionInput = document.getElementById("editDescription").value;
-                const priceInput = document.getElementById("editPrice").value;
-                const availabilityInput = document.getElementById("editAvailability").value;
+    confirmEditButton?.addEventListener("click", async () => {
+        if (!selectedForEdit) return;
 
-                let data = {
-                    arttype: selectedForEdit.arttype,
-                    artnr: parseInt(selectedForEdit.artnr, 10),
-                    name: nameInput,
-                    description: descriptionInput,
-                    price: parseFloat(priceInput),
-                    inStock: parseInt(availabilityInput, 10)
-                };
+        const nameInput = document.getElementById("editName").value;
+        const descriptionInput = document.getElementById("editDescription").value;
+        const priceInput = String(document.getElementById("editPrice").value).replace(',', '.');
+        const availabilityInput = document.getElementById("editAvailability").value;
 
-                await applyChanges(data);
-            })
-        })
-    })
+        let data = {
+            arttype: selectedForEdit.arttype,
+            artnr: parseInt(selectedForEdit.artnr, 10),
+            name: nameInput,
+            description: descriptionInput,
+            price: parseFloat(priceInput),
+            inStock: parseInt(availabilityInput, 10)
+        };
+        console.log("New price value:", data.price);
+
+        await applyChanges(data);
+    });
 });
 
 async function loadAllProducts() {
     try {
         if (container) container.innerHTML = "";
-        const req = await fetch("http://localhost:3000/api/products");
+        const req = await fetch("/api/products");
         const res = await req.json();
         if (res) {
-            res.products.forEach((p, index) => {
+            res.data.reqData.forEach((p, index) => {
                 const createListElement = document.createElement("li");
                 createListElement.classList.add("list-element");
                 createListElement.innerHTML = `
@@ -84,7 +88,7 @@ async function confirmDelete(arttype, artnr) {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    "Delete-Key": "04061973",
+                    "Authorization": `${localStorage.getItem('adminJWTCode')}`
                 },
                 body: JSON.stringify({
                     arttype: arttype,
@@ -107,18 +111,19 @@ async function applyChanges(data) {
     console.log("Frage für Update an:", data);
     try {
         const req = await fetch(
-            "http://localhost:3000/api/products/updateProduct",
+            "/api/products/updateProduct",
             {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `${localStorage.getItem('adminJWTCode')}`
                 },
                 body: JSON.stringify({ data }),
             },
         );
         const res = await req.json();
-        if (res.message == "success") {
-            alert("Produkt erfolgreich aktualisiert");
+        console.log("Antwort vom Server:", res);
+        if (res.status == "SUCCESS") {
             window.location.reload();
         }
     } catch (error) {

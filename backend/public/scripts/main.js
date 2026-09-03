@@ -10,7 +10,7 @@ async function pingServer() {
     return duration;
   } catch (error) {
     // console.error("Server ist offline oder nicht erreichbar:", error);
-    if(window.location.pathname == '/dashboard.html' || window.location.pathname == '/cart') {
+    if(window.location.pathname == '/' || window.location.pathname == '/cart') {
         window.location = "./userAuth?msg=500";
     }
     return null;
@@ -19,5 +19,17 @@ async function pingServer() {
 
 document.addEventListener("DOMContentLoaded", async (_) => {
     await pingServer();
+    setLoginState();
 })
 
+
+function setLoginState() {
+  const isLoggedIn = localStorage.getItem('user-letter') !== null;
+  const accountIcon = document.querySelector('.user-logged-in');
+  console.log("loalStorage --------", localStorage.getItem('user-letter'));
+  
+
+  if (isLoggedIn && localStorage.getItem('user-letter') !== 'undefined') {
+    accountIcon.innerHTML = `<span class="user-letter">${localStorage.getItem('user-letter')}</span>`;
+  }
+}

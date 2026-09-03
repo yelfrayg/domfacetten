@@ -8,9 +8,78 @@
     .heading-wrapper {
         display: flex;
         justify-content: center;
-        flex-direction: row;
+        flex-direction: column;
         padding-bottom: var(--3xl);
         font-size: var(--l);
+
+        .heading-title-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            h2 {
+                padding-bottom: var(--xl);
+            }
+        }
+
+        .filters {
+            display: flex;
+            gap: var(--s);
+            flex-wrap: wrap;
+            justify-content: center;
+
+            .filter-object-wrapper {
+                list-style-type: none;
+
+                .filter-object {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    p {
+                        font-size: var(--l);
+                    }
+
+                    input[type="checkbox"] {
+                        appearance: none;
+                        -webkit-appearance: none;
+                        width: var(--m);
+                        height: var(--m);
+                        border: 1px solid black;
+                        background-color: white;
+                        cursor: pointer;
+                        display: inline-block;
+                        flex: 0 0 auto;
+                        transition:
+                            background-color 0.15s ease,
+                            box-shadow 0.15s ease;
+                    }
+
+                    input[type="checkbox"]:checked {
+                        border-color: green;
+                    }
+
+                    .filter-object-button {
+                        background: none;
+                        border: none;
+                        font-size: var(--l);
+                        cursor: pointer;
+                        border: 1px solid black;
+                        padding: var(--s);
+
+                        &:hover {
+                            background-color: rgb(227, 227, 227);
+                        }
+
+                        &.selected {
+                            background-color: black;
+                            color: white;
+                        }
+                    }
+                }
+            }
+        }
 
         h3 {
             font-size: var(--2xl);
@@ -23,12 +92,13 @@
 
     .product-wrapper {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: center;
         gap: var(--3xl);
         width: 90vw;
+        align-self: center; /* Zentriert den Produktcontainer mittig */
 
-        .filter {
+        /* .filter {
             position: sticky;
             left: 0;
             top: 20vh;
@@ -78,14 +148,14 @@
                     }
                 }
             }
-        }
+        } */
 
         .products-container {
             display: flex;
             flex-wrap: wrap;
             gap: var(--3xl);
             justify-content: center;
-            flex: 1;
+            align-items: flex-start;
             min-height: 40vh;
 
             .product {
@@ -97,12 +167,15 @@
                 background-color: white;
                 color: black;
                 border: 1px solid black;
+                animation: fadeIn 0.5s ease-in both;
+                animation-timeline: view();
+                animation-range: entry 0% cover 30%;
 
                 .product-img-container {
-                    position: relative;
                     width: 300px;
                     height: 300px;
                     overflow: hidden;
+                    position: relative;
 
                     img {
                         width: 100%;
@@ -146,11 +219,10 @@
             }
 
             .out-of-stock {
-
                 .product-img-container {
                     filter: grayscale(100%);
                 }
-                
+
                 .product-img-container::after {
                     content: "Ausverkauft";
                     position: absolute;
@@ -175,17 +247,22 @@
 }
 
 @media (max-width: 768px) {
+    .filter {
+        display: none;
+    }
     .heading-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: var(--s);
+        .heading-title-row {
+            gap: var(--s);
+        }
 
         .filter-mobile {
             display: flex !important;
             font-size: var(--xl);
             border: none;
             background-color: transparent;
+            padding: 0;
+            cursor: pointer;
+            margin-bottom: var(--xl);
         }
 
         #filter-mobile-popup {

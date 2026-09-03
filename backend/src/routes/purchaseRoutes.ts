@@ -1,6 +1,5 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const checkAuth = require('../middleware/checkAuth');
 const purchaseController = require('../controllers/purchaseController');
 const { verifyToken } = require('../middleware/checkAuth');
 
@@ -8,9 +7,6 @@ router.post('/createSinglePurchase', verifyToken, purchaseController.createSingl
 router.post('/completeSinglePurchase', verifyToken, purchaseController.completeSinglePurchase);
 router.post('/createCartPurchase', verifyToken, purchaseController.createCartPurchase);
 router.post('/completeCartPurchase', verifyToken, purchaseController.completeCartPurchase);
-
 router.get('/getInvoice/:orderId', purchaseController.getInvoice)
-
-
 
 module.exports = router;

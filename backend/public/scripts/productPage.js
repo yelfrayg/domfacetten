@@ -5,26 +5,31 @@ const filterMobile = document.querySelector(".filter-mobile");
 document.addEventListener("DOMContentLoaded", async (_) => {
     await fetchProducts();
 
-    let selectedColors = []
+    let selectedFilters = [];
 
-    document.addEventListener('change', event => {
-        if (!event.target.matches('input[name="checkmark"]')) {
+    document.addEventListener("click", (event) => {
+        const filterButton = event.target.closest(".filter-object-button");
+        if (!filterButton) {
             return;
         }
 
-        const colorValue = event.target.getAttribute("data-value");
-
-        if (event.target.checked) {
-            if (!selectedColors.includes(colorValue)) {
-                selectedColors.push(colorValue);
-            }
+        const filterValue = filterButton.getAttribute("data-value");
+        if (selectedFilters.includes(filterValue)) {
+            selectedFilters = selectedFilters.filter((value) => value !== filterValue);
         }
         else {
-            selectedColors = selectedColors.filter((c) => c !== colorValue);
+            selectedFilters.push(filterValue);
         }
 
+        document.querySelectorAll(`.filter-object-button[data-value="${filterValue}"]`)
+            .forEach((button) => {
+                const isSelected = selectedFilters.includes(filterValue);
+                button.classList.toggle("selected", isSelected);
+                button.setAttribute("aria-pressed", String(isSelected));
+            });
+
         const allProducts = document.querySelectorAll(".product");
-        if (selectedColors.length === 0) {
+        if (selectedFilters.length === 0) {
             allProducts.forEach((p) => {
                 p.style.display = "block";
             })
@@ -32,7 +37,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         }
 
         allProducts.forEach((p) => {
-            if (selectedColors.every((color) => p.getAttribute("data-colors").includes(color))) {
+            const productFilters = p.getAttribute("data-colors").split(",");
+            if (selectedFilters.every((value) => productFilters.includes(value))) {
                 p.style.display = "block";
             }
             else {
@@ -46,7 +52,8 @@ async function fetchProducts() {
     try {
         const req = await fetch(`/api/products`);
         const res = await req.json();
-        allproductsArray = res.products || [];
+        // console.log(res);
+        allproductsArray = res.data.reqData || [];
 
         allproductsArray
             .sort((a, b) => a.artnr - b.artnr)
@@ -57,7 +64,7 @@ async function fetchProducts() {
                 p.keywords.forEach((keyword) => {
                     colors.push(keyword.toLowerCase());
                 });
-                productElement.setAttribute("data-colors", colors);
+                productElement.setAttribute("data-colors", colors.join(","));
                 if (p.inStock <= 0) {
                     productElement.classList.add("out-of-stock");
                 }
@@ -66,16 +73,18 @@ async function fetchProducts() {
                 }
 
                 productElement.innerHTML = `
-                <div class="product-img-container">
-                    <img src="/uploads/products/${p.heroImage}" alt="Stoffarmband" loading="lazy">
-                    <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">${p.name}</h3>
-                    <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
-                    ${(p.inStock <= 8 && p.inStock != 0) ? `<p class="product-warning">Nur noch ${p.inStock} Stück auf Lager!</p>` : ""}
-                </div>
-            `;
+                    <div class="product-img-container">
+                        <img src="/uploads/products/${p.heroImage}" alt="Stoffarmband" loading="lazy">
+                        <span class="product-nr">${p.arttype}${String(p.artnr).padStart(3, '0')}</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${p.name}</h3>
+                        <p class="product-price">${parseFloat(p.price).toFixed(2).replace('.', ',')} €</p>
+                        ${(p.inStock <= 8 && p.inStock != 0) ? `<p class="product-warning">Nur noch ${p.inStock} Stück auf Lager!</p>` : ""}
+                    </div>
+                `;
+                // Nur wenn das Bild geladen ist, wird das Produkt angezeigt
+                
                 productContainer.appendChild(productElement);
             })
 
@@ -110,13 +119,13 @@ function createFilters(products) {
             filterElement.classList.add("filter-object-wrapper");
             filterElement.innerHTML = `
                 <span class="filter-object">
-                    <p>${filter}</p>
-                    <input
-                        type="checkbox"
-                        name="checkmark"
-                        id="checkmark"
+                    <button class="filter-object-button" name="checkmark"
+                        type="button"
                         data-value="${filter.toLowerCase()}"
-                    />
+                        aria-pressed="false"
+                        aria-label="Filter ${filter}">
+                        ${filter}
+                    </button>
                 </span>
             `;
             filterContainer.appendChild(filterElement);

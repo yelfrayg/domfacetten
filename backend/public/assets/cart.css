@@ -1,11 +1,10 @@
 main {
-    padding-top: 15vh;
+    padding-top: 12vh;
 }
 
 .cart-container {
     width: 90vw;
     margin: 0 auto;
-    border: 1px solid black;
     display: flex;
     flex-direction: row;
     background-color: white;
@@ -36,6 +35,33 @@ main {
                 display: flex;
                 flex-direction: column;
                 gap: var(--m);
+
+                .empty-cart-container {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    gap: var(--m);
+                    height: 50vh;
+
+                    .empty-cart-icon-container {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 3vw;
+                        height: 3vw;
+
+                        svg {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+
+                    .empty-cart-text {
+                        font-size: var(--xl);
+                        font-weight: 500;
+                    }
+                }
             }
 
             .single-cart-item {
@@ -87,6 +113,14 @@ main {
                         .artname {
                             font-weight: 600;
                             font-size: var(--l);
+                             a {
+                                text-decoration: none;
+                                color: black;
+
+                                &:hover {
+                                    color: #696969;
+                                }
+                             }
                         }
 
                         .quantity,
@@ -158,7 +192,7 @@ main {
 
         .code-section {
             margin-bottom: var(--l);
-            padding-bottom: var(--3xl);
+            padding-bottom: var(--l);
             border-bottom: 1px solid #696969;
 
             h3 {
@@ -173,6 +207,7 @@ main {
                 justify-content: space-between;
                 align-items: center;
                 gap: 20px;
+                padding-bottom: var(--s);
 
                 input {
                     color: white;
@@ -189,6 +224,12 @@ main {
                         text-transform: none;
                     }
                 }
+            }
+
+            #code-output {
+                font-size: var(--m);
+                color: #75FB4C;
+                margin-top: var(--s);
             }
         }
 

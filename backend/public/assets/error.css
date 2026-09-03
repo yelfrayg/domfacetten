@@ -1,0 +1,32 @@
+.error-wrapper {
+    width: 100%;
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    svg {
+        height: 80px;
+        width: 80px;
+    }
+    h1 {
+        font-weight: 600;
+    }
+}
+
+@media (max-width: 768px) {
+    .error-wrapper {
+        display: flex;
+        justify-content: center;
+        margin: 0 auto;
+        height: 40vh;
+        svg {
+            height: 60px;
+            width: 60px;
+        }
+        h1 {
+            width: 80vw;
+            text-align: center;
+        }
+    }
+}

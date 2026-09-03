@@ -213,6 +213,16 @@
                 align-items: center;
                 gap: var(--s);
 
+                .text {
+                    display: flex;
+                    align-items: center;
+
+                    label {
+                        font-size: var(--m);
+                        margin-right: var(--s);
+                    }
+                }
+
                 .inStock-warning {
                     font-size: var(--s);
                     color: red;

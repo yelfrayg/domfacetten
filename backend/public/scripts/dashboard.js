@@ -46,29 +46,34 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     ordersTableBody.innerHTML = "<p><div class='loader'></div></p>";
 
     const userData = await getUserInfo(userId);
+    console.log('--------------------')
     console.log("Geladene Userdaten:", userData);
     const userOrders = await getOrders(userId);
 
-    if (userData.userInfo === null) {
+    if (userData.data.reqData === null) {
         console.error("Fehler beim Laden der Userdaten:", userData);
         alert("Daten konnten nicht geladen werden.");
         window.location = "/userAuth?msg=401";
         localStorage.removeItem("userId");
     }
 
-    if (userData && userData.code === 200) {
-        const userInfo = userData.userInfo;
+    if (userData.data.reqData) {
+        const userInfo = userData.data.reqData;
         firstNameInput.value = userInfo.first_name || "";
         lastNameInput.value = userInfo.last_name || "";
         emailInput.value = userInfo.email || "";
-        passwordInput.value = userInfo.password || "";
+        passwordInput.value = "";
 
         if (userInfo.address) {
             streetInput.value = userInfo.address.street || "";
             cityInput.value = userInfo.address.city || "";
         }
-        localStorage.setItem("user-letter", userInfo.first_name)
 
+        if (userInfo.first_name && userInfo.first_name.length > 0) {
+            const heading = document.getElementById("dashboard-title");
+            heading.textContent = `Hallo ${userInfo.first_name}. Willkommen in deinem Dashboard!`;
+        }
+        localStorage.setItem("user-letter", userInfo.first_name[0]);
     }
 
     updateForm.addEventListener("submit", async (e) => {
@@ -79,6 +84,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     deleteBtn.addEventListener("click", async (_) => {
         await deleteUser(userId);
         localStorage.removeItem("userId");
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("user-letter");
         window.location = "/userAuth"
     });
 
@@ -130,18 +137,34 @@ async function updateUserInfo() {
                 body: JSON.stringify(updatedData),
             },
         );
-        const res = await req.json();
-        if (req.status === 200) {
-            console.log(res);
+
+        const bodyText = await req.text();
+        const res = bodyText ? JSON.parse(bodyText) : { status: "SUCCESS", message: "Daten aktualisiert." };
+
+        console.log(res);
+        console.log('--------------------');
+
+        if (res.status === "SUCCESS") {
             updateButton.textContent = "Daten aktualisiert!";
             updateButton.disabled = true;
             updateButton.classList.add("success");
+            emailInput.style.borderColor = "";
+            emailInput.style.borderLeft = "";
+            emailInput.placeholder = "E-Mail";
+            localStorage.setItem("user-letter", firstNameInput.value[0].toUpperCase());
             setTimeout(() => {
                 updateButton.textContent = "Daten aktualisieren";
                 updateButton.disabled = false;
                 updateButton.classList.remove("success");
-            }, 2000);
+
+            }, 1000);
+            return;
         }
+
+        emailInput.style.borderColor = "red";
+        emailInput.style.borderLeft = "5px solid red";
+        emailInput.placeholder = `${emailInput.value} ist bereits vergeben!`;
+        emailInput.value = "";
     } catch (error) {
         console.log(error);
     }
@@ -155,6 +178,13 @@ async function deleteUser(userId) {
         );
         const res = await req.json();
         console.log(res);
+        // if (res.status === "SUCCESS") {
+        //     alert("Account erfolgreich gelöscht.");
+        //     localStorage.removeItem("userId");
+        //     localStorage.removeItem("userToken");
+        //     localStorage.removeItem("user-letter");
+        //     window.location = "/userAuth";
+        // }
     } catch (error) {
         console.log(error);
     }
@@ -169,16 +199,16 @@ async function getOrders(userId) {
             );
             const res = await req.json();
             console.log(res);
-            if (res.orders.length == 0) {
+            if (res.data.reqData.length == 0) {
                 // console.log("Keine Bestellungen gefunden");
-                ordersTableBody.innerHTML = "<p>Keine Bestellungen gefunden</p>";
+                ordersTableBody.innerHTML = "<p>Keine Bestellungen gefunden.</p>";
                 return;
             }
             ordersTableBody.innerHTML = ""; // Leere den Loader
 
-            console.log("Bestellungen gefunden: ", res.orders);
+            console.log("Bestellungen gefunden: ", res.data.reqData);
 
-            res.orders.forEach((order) => {
+            res.data.reqData.forEach((order) => {
                 const orderProducts = Array.isArray(order.products) ? order.products : [order.products];
                 let orderCode = order.code != null ? 1 - order.code.codeValue : 1;
                 const listItem = document.createElement("li");

@@ -9,7 +9,7 @@ const sendOTPBtn = document.getElementById("send-otp");
 const updatePasswordBtn = document.getElementById("update-password");
 const errorMessagePwReset = document.getElementById('error-message-pw-reset')
 
-if(msgFromUrl === '401') {
+if (msgFromUrl === '401') {
     errorMessage("Bitte logge dich ein, um auf deine Daten zuzugreifen.", 'login')
 }
 
@@ -80,10 +80,14 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             },
             );
             const res = await req.json();
-            if (res.message.code === 200) {
+            if (res.status === 'SUCCESS') {
                 toggleForms('otp');
             }
             console.log(res);
+            if (res.status === 'FAILURE') {
+                console.log(res.message)
+                errorMessage(res.message, 'pw-reset');
+            }
         } catch (error) {
             console.log(error)
         }
@@ -91,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
     sendOTPBtn.addEventListener("click", async (event) => {
         event.preventDefault();
-        const otp = document.getElementById("otp-input").value;
+        const otp = Number(document.getElementById("otp-input").value);
         try {
             console.log(mail, otp)
             const req = await fetch("/api/userManagement/verify-otp", {
@@ -99,12 +103,11 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ mail, otp }),
-            },
-            );
+                body: JSON.stringify({ email: mail, otp }),
+            });
             const res = await req.json();
             console.log(res)
-            if (res.message.code === 200) {
+            if (res.status == 'SUCCESS') {
                 console.log("OTP verified successfully.");
                 // Weiterleitung oder andere Aktionen nach erfolgreicher OTP-Überprüfung
                 const user_mail_span = document.querySelector(".user-mail");
@@ -112,11 +115,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 toggleForms('new-password');
                 return;
             }
-            console.log(res);
-            if(res.message.code === 400) {
+            if (res.status === 'FAILURE') {
                 alert("Ungültiger OTP-Code. Bitte überprüfen Sie Ihre Eingabe.");
             }
-            
+
         } catch (error) {
             console.log(error)
         }
@@ -139,22 +141,19 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ mail, newPassword }),
+                body: JSON.stringify({ email: mail, newPassword }),
             })
             const res = await req.json();
             console.log(res)
-            if (res.message.code === 200) {
+            if (res.status == 'SUCCESS') {
                 console.log("Passwort erfolgreich aktualisiert. Als nächstes toggleForms('login')");
-                errorMessage("Passwort erfolgreich aktualisiert. Bitte loggen Sie sich ein.", 'login'); 
+                errorMessage("Passwort erfolgreich aktualisiert.", 'login');
                 toggleForms('login');
             }
         } catch (error) {
             console.log(error)
         }
     })
-
-
-
 
     register.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -196,22 +195,34 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             );
 
             const res = await req.json();
-            if (res.code == 2002) {
-                errorMessage("E-Mail bereits vergeben.", 'register');
+            console.log(res);
+            if (res.status == 'FAILURE') {
+                errorMessage(res.message, 'register');
                 loader.classList.add("invisible");
                 return
             }
 
-            if (!res.userId) {
+            if (res.status == 'SUCCESS' && res.data.userId) {
+                console.log("Registrierung erfolgreich! Bitte melden Sie sich an.");
+                register.reset();
+                toggleForms('login');
+                errorMessage("Registrierung erfolgreich! Bitte melden Sie sich an.", 'login');
+                localStorage.setItem("userId", res.data.userId);
+            }
+
+            if (!res.data.userId) {
                 errorMessage("Unbekannter Serverfehler", 'register');
                 loader.classList.add("invisible");
                 return;
             }
             console.log("Registrierung erfolgreich! Bitte melden Sie sich an.");
             register.reset();
-            localStorage.setItem("userId", res.userId);
+            toggleForms('login');
+            errorMessage("Registrierung erfolgreich! Bitte melden Sie sich an.", 'login');
+            localStorage.setItem("userId", res.data.userId);
         } catch (error) {
-            errorMessage("Serverfehler.", 'register');
+            errorMessage('Serverfehler.', 'register');
+            console.log("Registrierungsfehler:", error);
             loader.classList.add("invisible");
         }
     });
@@ -248,13 +259,14 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 
             const res = await req.json();
             console.log(res);
-            if (res.userId) {
-                localStorage.setItem("userId", res.userId);
-                localStorage.setItem("userToken", res.userToken)
-                window.location = `/dashboard.html?userId=${res.userId}`;
+            if (res.status == "SUCCESS") {
+                console.log("Login erfolgreich! Weiterleitung zum Dashboard...");
+                localStorage.setItem("userId", res.data.reqData.userId);
+                localStorage.setItem("userToken", res.data.reqData.userToken)
+                window.location = `/dashboard/${res.data.reqData.userId}`;
                 return;
             }
-            errorMessage("Falsche E-Mail/Passwort Kombination.", 'login');
+            errorMessage(res.message, 'login');
         } catch (error) {
             console.error("Login Fehler:", error);
             errorMessage("Serverfehler", 'login');
@@ -292,7 +304,7 @@ async function redirect() {
             // Token prüfen - wenn NICHT abgelaufen, zum Dashboard
             console.log(isTokenExpired(token))
             if (!isTokenExpired(token)) {
-                window.location = `/dashboard.html?userId=${userId}`
+                window.location = `/dashboard/${userId}`
             } else {
                 // Token abgelaufen - localStorage clearen
                 localStorage.removeItem("userToken")
@@ -366,4 +378,3 @@ function toggleForms(formId) {
         newPasswordForm.style.display = 'block';
     }
 }
-

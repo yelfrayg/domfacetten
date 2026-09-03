@@ -1,0 +1,4 @@
+User-Agent: *
+Disallow: /userAuth
+Disallow: /dashboard
+Disallow: /adminAuth

@@ -1,15 +1,17 @@
 require('dotenv').config();
 
-const express = require('express');
+import express from 'express';
+import cors from 'cors'
+import path from 'path';
 const app = express();
-const cors = require('cors')
-const path = require('path');
 
 app.use(express.json());
 app.use(cors())
 
 app.use(express.static(path.resolve(__dirname, 'public')));
 
+
+// Requires ersetzen
 const viewRoutes = require('./src/routes/viewRoutes');
 app.use('/', viewRoutes);
 
@@ -28,10 +30,17 @@ app.use('/api/cartManagement', cartRoutes)
 const discountRoutes = require('./src/routes/discountRoutes')
 app.use('/api/discountManagement', discountRoutes)
 
+const adminRoutes = require('./src/routes/adminRoutes')
+app.use('/api/adminManagement', adminRoutes)
+
 app.use(
   '/uploads/products',
   express.static(path.resolve(__dirname, 'uploads', 'products')),
 );
+
+app.use((req, res) => {
+  res.status(404).sendFile(path.resolve(__dirname, 'public', 'error.html'));
+});
 
 
 app.listen(3000, '0.0.0.0', () => {
