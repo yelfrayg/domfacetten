@@ -13,6 +13,7 @@ const pencil = document.querySelector('.pencil-wrapper')
 let codeValue = 0
 let products = []
 let isApplied = false
+let codeCheckRequest = 0
 
 function formatMoney(value) {
     const amount = Number(value) || 0
@@ -86,11 +87,15 @@ document.addEventListener('DOMContentLoaded', async _ => {
         const debouncedCodeChecker = debounce(codeChecker, 1000)
         discountCodeInput.addEventListener('input', _ => {
             const code = discountCodeInput.value.toUpperCase()
+            isApplied = false
             if (code) {
                 if (iconCheck) iconCheck.innerHTML = icons.waiting
                 debouncedCodeChecker()
             } else {
                 if (iconCheck) iconCheck.innerHTML = ''
+                const codeOutput = document.getElementById('code-output')
+                if (codeOutput) codeOutput.textContent = ''
+                calculateTotalPrice()
             }
         })
 
@@ -120,8 +125,6 @@ async function loadCartItems(userId) {
         cartItemsContainer.innerHTML = ''
 
         if (products.length === 0) {
-            console.log('Cart is empty!')
-            const cartItem = document.createElement('tr')
             cartItemsContainer.innerHTML = `
                 <td colspan="4" class="empty-cart-container">
                     <div class="empty-cart-icon-container">
@@ -299,15 +302,17 @@ async function deleteFromCart() {
     })
 }
 
-//! BUG
 async function codeChecker() {
     try {
         const code = discountCodeInput.value.toUpperCase()
-        const originalPrice = parseMoney(totalPrice.textContent)
+        const requestId = ++codeCheckRequest
+        const codeOutput = document.getElementById('code-output')
 
-        if (code === '' || isApplied == true) {
+
+        if (code == '') {
             if (iconCheck) iconCheck.innerHTML = ``
-            await loadCartItems(localStorage.getItem('userId'))
+            console.log('Code gelöscht!')
+            if (codeOutput) codeOutput.textContent = ''
             await calculateTotalPrice()
             return
         }
@@ -316,20 +321,31 @@ async function codeChecker() {
 
         const req = await fetch(`/api/discountManagement/getDiscount/${code}`)
         const res = await req.json()
-        if (res.code == 200) {
+        console.log('Code Checker Response:', res)
+
+        if (requestId !== codeCheckRequest || discountCodeInput.value.toUpperCase() !== code) {
+            return
+        }
+
+        const originalPrice = await calculateTotalPrice()
+
+        if (res.status == 'SUCCESS' && res.data.reqData.codeValue && res.data.reqData.expired === false) {
             isApplied = true
             if (iconCheck) iconCheck.innerHTML = icons.valid
-            const discount = Number(res.discountObj.codeValue) || 0
+            const discount = res.data.reqData.codeValue || 0
+            const name = res.data.reqData.codeId || ''
             const discountedPrice = originalPrice * (1 - discount)
+            if (codeOutput) {
+                codeOutput.textContent = `Code ${name} angewendet: ${discount * 100}% Rabatt`
+            }
             totalPrice.textContent = formatMoney(discountedPrice)
-            itemCounterPrice.textContent = formatMoney(discountedPrice)
             return
         }
 
         console.log('Code ungültig!')
+        if (codeOutput) codeOutput.textContent = ''
         if (iconCheck) iconCheck.innerHTML = icons.invalid
         totalPrice.textContent = formatMoney(originalPrice)
-        itemCounterPrice.textContent = formatMoney(originalPrice)
         return
     } catch (error) {
         console.log(error)

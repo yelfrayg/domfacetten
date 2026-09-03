@@ -1,4 +1,4 @@
-import { Product, Users, Orders, Cart } from "@prisma/client";
+import { Product, Users, Orders, Cart, Codes } from "@prisma/client";
 
 type ServiceResponse = {
     code: number;
@@ -16,11 +16,21 @@ type ServiceResponse = {
         | null;
 };
 
-type ResponseObject = {
+type ResponseObject<GenericResponse = Product | Product[] | Users | Orders | Cart | Cart[] | Codes | string | object | null> = {
     status: "SUCCESS" | "FAILURE";
     message: string;
     data?: {
-        reqData: Users | Product[] | Product | string | Cart[] | Cart;
+        reqData: GenericResponse;
+        furtherInfo?: string;
+    };
+    error?: string;
+};
+
+type NewObject<GenericResponse> = {
+    status: "SUCCESS" | "FAILURE";
+    message: string;
+    data?: {
+        reqData: GenericResponse;
         furtherInfo?: string;
     };
     error?: string;

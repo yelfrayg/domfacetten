@@ -4,11 +4,11 @@ import { Product } from "@prisma/client";
 import { ResponseObject, ServiceResponse } from "../data/types";
 import { handleError } from "../utils/errorHelper";
 
-async function fetchProducts(req: Request, res: Response<ResponseObject>) {
+async function fetchProducts(req: Request, res: Response<ResponseObject<Product[] | string>>) {
     try {
         const allProducts: ServiceResponse =
             await productService.getAllProducts();
-        const responseObject: ResponseObject = {
+        const responseObject: ResponseObject<Product[]> = {
             status: allProducts.code === 200 ? "SUCCESS" : "FAILURE",
             message: allProducts.message,
             data: {
@@ -18,7 +18,7 @@ async function fetchProducts(req: Request, res: Response<ResponseObject>) {
         };
         res.status(allProducts.code).json(responseObject);
     } catch (error) {
-        const responseObject: ResponseObject = {
+        const responseObject: ResponseObject<string> = {
             status: "FAILURE",
             message: "Fehler beim Laden der Produkte",
             error: handleError(error),
@@ -29,7 +29,7 @@ async function fetchProducts(req: Request, res: Response<ResponseObject>) {
 
 async function fetchProductByArtNr(
     req: Request,
-    res: Response<ResponseObject>,
+    res: Response<ResponseObject<Product | string>>,
 ) {
     try {
         const { arttype, artnr } = req.params;
@@ -37,27 +37,25 @@ async function fetchProductByArtNr(
             arttype,
             artnr,
         );
-        const responseObject: ResponseObject = {
+        const responseObject: ResponseObject<Product> = {
             status: product ? "SUCCESS" : "FAILURE",
             message: product
                 ? "Produkt erfolgreich geladen"
                 : "Produkt nicht gefunden",
             data: {
-                reqData: product ? product as Product : "Produkt nicht gefunden",
+                reqData: product as Product,
                 furtherInfo: product
                     ? undefined
                     : "Dieses Produkt existiert nicht in der Datenbank.",
             },
         };
         return res.status(200).json(responseObject);
-    } catch (error) {
+    } catch (error: any) {
         console.error("Fehler beim Laden des Produkts:", error);
-        const responseObject: ResponseObject = {
+        const responseObject: ResponseObject<string> = {
             status: "FAILURE",
             message: "Fehler beim Laden des Produkts",
-            data: {
-                reqData: "Fehler beim Laden des Produkts",
-            },
+            error: handleError(error),
         };
         return res.status(500).json(responseObject);
     }
@@ -170,15 +168,16 @@ async function deleteProduct(req: Request, res: Response) {
 
 async function updateProduct(
     req: Request,
-    res: Response,
-): Promise<Response<ResponseObject>> {
+    res: Response<ResponseObject<Product | string>>,
+) {
     try {
         const { data } = req.body || {};
         if (!data || typeof data !== "object") {
-            return res.status(400).json({
-                message: "failure",
-                info: "Keine Update-Daten erhalten.",
-            });
+            const response: ResponseObject<string> = {
+                status: "FAILURE",
+                message: "Ungültige Daten im Request-Body.",
+            };
+            return res.status(400).json(response);
         }
         const typedData = data as Record<string, unknown>;
         const checkedData: Record<string, unknown> = {};
@@ -194,7 +193,7 @@ async function updateProduct(
             }
         }
         const product = await productService.updateExistingProduct(checkedData);
-        const responseObject: ResponseObject = {
+        const responseObject: ResponseObject<Product> = {
             status: product ? "SUCCESS" : "FAILURE",
             message: product
                 ? "Produkt erfolgreich aktualisiert"
@@ -208,7 +207,7 @@ async function updateProduct(
         };
         return res.status(product.code).json(responseObject);
     } catch (error: any) {
-        const responseObject: ResponseObject = {
+        const responseObject: ResponseObject<string> = {
             status: "FAILURE",
             message: "Internes Serverproblem",
             data: {

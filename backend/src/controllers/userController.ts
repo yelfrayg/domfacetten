@@ -2,22 +2,23 @@ const userService = require("../services/userService.ts");
 import { Request, Response } from "express";
 import { ResponseObject, ServiceResponse } from "../data/types";
 import { handleError } from "../utils/errorHelper";
+import { Orders, Users } from "@prisma/client";
 
-async function createNewUser(req: Request, res: Response<ResponseObject>) {
+async function createNewUser(req: Request, res: Response<ResponseObject<Users | string>>) {
     try {
-        const newUser = await userService.createUser(req.body);
+        const newUser: ServiceResponse = await userService.createUser(req.body);
         console.log(newUser);
-        const response: ResponseObject = {
-            status: newUser ? "SUCCESS" : "FAILURE",
+        const response: ResponseObject<Users> = {
+            status: newUser.code == 201 ? "SUCCESS" : "FAILURE",
             message: newUser
                 ? newUser.message
                 : "Fehler beim Weiterreichen des Nutzerdaten",
-            data: newUser ? newUser.data : "",
+            data: newUser ? { reqData: newUser.data as Users } : undefined,
         };
         res.status(newUser.code).json(response);
-    } catch (error) {
+    } catch (error: any) {
         console.error("Fehler beim Erstellen eines neuen Nutzers:", error);
-        const response: ResponseObject = {
+        const response: ResponseObject<string> = {
             status: 'FAILURE',
             message: 'Fehler beim Erstellen eines neuen Nutzers',
             error: handleError(error),
@@ -28,19 +29,19 @@ async function createNewUser(req: Request, res: Response<ResponseObject>) {
     }
 }
 
-async function updateUserInfo(req: Request, res: Response<ResponseObject>) {
+async function updateUserInfo(req: Request, res: Response<ResponseObject<Users | string>>) {
     try {
         const data = req.body;
         data.userId = req.params.id;
         const result = await userService.updateUser(data);
-        const response: ResponseObject = {
+        const response: ResponseObject<Users> = {
             status: result.code === 200 ? "SUCCESS" : "FAILURE",
             message: result.message,
-            data: result.data ? { reqData: result.data } : undefined,
+            data: result.data ? { reqData: result.data as Users } : undefined,
         };
         res.status(result.code).json(response);
-    } catch (error) {
-        const response: ResponseObject = {
+    } catch (error: any) {
+        const response: ResponseObject<string> = {
             status: "FAILURE",
             message: "Fehler beim Aktualisieren der Nutzerdaten",
             error: handleError(error),
@@ -49,18 +50,18 @@ async function updateUserInfo(req: Request, res: Response<ResponseObject>) {
     }
 }
 
-async function getUserData(req: Request, res: Response<ResponseObject>) {
+async function getUserData(req: Request, res: Response<ResponseObject<Users | string>>) {
     try {
         const userId = req.params.id;
         const userData = await userService.getUserData(userId);
-        const response: ResponseObject = {
+        const response: ResponseObject<Users> = {
             status: userData.code === 200 ? "SUCCESS" : "FAILURE",
             message: userData.message,
-            data: userData.data ? { reqData: userData.data } : undefined,
+            data: userData.data ? { reqData: userData.data as Users } : undefined,
         };
         res.status(userData.code).json(response);
-    } catch (error) {
-        const response: ResponseObject = {
+    } catch (error: any) {
+        const response: ResponseObject<string> = {
             status: "FAILURE",
             message: "Fehler beim Abrufen der Nutzerdaten",
             error: handleError(error),
@@ -69,36 +70,36 @@ async function getUserData(req: Request, res: Response<ResponseObject>) {
     }
 }
 
-async function deleteUser(req: Request, res: Response<ResponseObject>) {
+async function deleteUser(req: Request, res: Response<ResponseObject<string>>) {
     try {
         const userId = req.params.id;
         const result = await userService.deleteAccount(userId);
-        const response: ResponseObject = {
+        const response: ResponseObject<string> = {
             status: 'SUCCESS',
             message: result.message
         }
         res.status(result.code).json(response);
-    } catch (error) {
-        const response: ResponseObject = {
-            status: 'SUCCESS',
+    } catch (error: any) {
+        const response: ResponseObject<string> = {
+            status: 'FAILURE',
             message: 'Es gab einen Fehler beim Löschen'
         }
         res.status(500).json(response);
     }
 }
 
-async function loginUser(req: Request, res: Response) {
+async function loginUser(req: Request, res: Response<ResponseObject<Users | string>>) {
     try {
         const userData = req.body;
         const findUser = await userService.login(userData);
-        const response: ResponseObject = {
+        const response: ResponseObject<Users> = {
             status: findUser.code === 200 ? "SUCCESS" : "FAILURE",
             message: findUser.message,
-            data: findUser.data ? { reqData: findUser.data } : undefined,
+            data: findUser.data ? { reqData: findUser.data as Users } : undefined,
         };
         res.status(findUser.code).json(response);
-    } catch (error) {
-        const response: ResponseObject = {
+    } catch (error: any) {
+        const response: ResponseObject<string> = {
             status: "FAILURE",
             message: "Fehler beim Einloggen des Nutzers",
         };
@@ -106,18 +107,18 @@ async function loginUser(req: Request, res: Response) {
     }
 }
 
-async function fetchOrders(req: Request, res: Response) {
+async function fetchOrders(req: Request, res: Response<ResponseObject<Orders[] | string>>) {
     try {
         const userId = req.params.id;
         const result = await userService.getOrders(userId);
-        const response: ResponseObject = {
+        const response: ResponseObject<Orders[]> = {
             status: result.code === 200 ? "SUCCESS" : "FAILURE",
             message: result.message,
-            data: result.data ? { reqData: result.data } : undefined,
+            data: result.data ? { reqData: result.data as Orders[]} : undefined,
         };
         res.status(result.code).json(response);
-    } catch (error) {
-        const response: ResponseObject = {
+    } catch (error: any) {
+        const response: ResponseObject<string> = {
             status: "FAILURE",
             message: "Fehler beim Abrufen der Bestellungen",
         };
@@ -125,17 +126,17 @@ async function fetchOrders(req: Request, res: Response) {
     }
 }
 
-async function requestOTP(req: Request, res: Response<ResponseObject>) {
+async function requestOTP(req: Request, res: Response<ResponseObject<string>>) {
     try {
         const { email } = req.body;
         const result = await userService.requestPasswordReset(email);
-        const response: ResponseObject = {
+        const response: ResponseObject<string> = {
             status: result.code === 200 ? "SUCCESS" : "FAILURE",
             message: result.message,
         };
         return res.status(result.code).json(response);
-    } catch (error) {
-        const response: ResponseObject = {
+    } catch (error: any) {
+        const response: ResponseObject<string> = {
             status: "FAILURE",
             message: 'Fehler beim Anfordern des OTP',
         };
@@ -153,7 +154,7 @@ async function verifyOTP(req: Request, res: Response<ResponseObject>) {
             data: result.data ? { reqData: result.data } : undefined,
         };
         res.status(result.code).json(response);
-    } catch (error) {
+    } catch (error: any) {
         const response: ResponseObject = {
             status: "FAILURE",
             message: 'Fehler beim Überprüfen des OTP',

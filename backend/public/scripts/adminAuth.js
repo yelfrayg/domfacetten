@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await response.json();
             if(res.status === 'SUCCESS') {
                 localStorage.setItem('adminJWTCode', res.data.reqData);
-                window.location.href = '/editProducts';
+                window.location.href = '/adminDashboard';
             }
             console.log('Admin authentication response:', res);
         } catch (error) {

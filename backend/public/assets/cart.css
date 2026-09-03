@@ -192,7 +192,7 @@ main {
 
         .code-section {
             margin-bottom: var(--l);
-            padding-bottom: var(--3xl);
+            padding-bottom: var(--l);
             border-bottom: 1px solid #696969;
 
             h3 {
@@ -207,6 +207,7 @@ main {
                 justify-content: space-between;
                 align-items: center;
                 gap: 20px;
+                padding-bottom: var(--s);
 
                 input {
                     color: white;
@@ -223,6 +224,12 @@ main {
                         text-transform: none;
                     }
                 }
+            }
+
+            #code-output {
+                font-size: var(--m);
+                color: #75FB4C;
+                margin-top: var(--s);
             }
         }
 

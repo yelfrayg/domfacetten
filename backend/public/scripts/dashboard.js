@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async (_) => {
             const heading = document.getElementById("dashboard-title");
             heading.textContent = `Hallo ${userInfo.first_name}. Willkommen in deinem Dashboard!`;
         }
-        localStorage.setItem("user-letter", userInfo.first_name[0].toUpperCase());
+        localStorage.setItem("user-letter", userInfo.first_name[0]);
     }
 
     updateForm.addEventListener("submit", async (e) => {
@@ -84,6 +84,8 @@ document.addEventListener("DOMContentLoaded", async (_) => {
     deleteBtn.addEventListener("click", async (_) => {
         await deleteUser(userId);
         localStorage.removeItem("userId");
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("user-letter");
         window.location = "/userAuth"
     });
 
@@ -176,6 +178,13 @@ async function deleteUser(userId) {
         );
         const res = await req.json();
         console.log(res);
+        // if (res.status === "SUCCESS") {
+        //     alert("Account erfolgreich gelöscht.");
+        //     localStorage.removeItem("userId");
+        //     localStorage.removeItem("userToken");
+        //     localStorage.removeItem("user-letter");
+        //     window.location = "/userAuth";
+        // }
     } catch (error) {
         console.log(error);
     }
@@ -197,9 +206,9 @@ async function getOrders(userId) {
             }
             ordersTableBody.innerHTML = ""; // Leere den Loader
 
-            console.log("Bestellungen gefunden: ", res.orders);
+            console.log("Bestellungen gefunden: ", res.data.reqData);
 
-            res.orders.forEach((order) => {
+            res.data.reqData.forEach((order) => {
                 const orderProducts = Array.isArray(order.products) ? order.products : [order.products];
                 let orderCode = order.code != null ? 1 - order.code.codeValue : 1;
                 const listItem = document.createElement("li");

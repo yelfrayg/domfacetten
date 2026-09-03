@@ -26,9 +26,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
 function setLoginState() {
   const isLoggedIn = localStorage.getItem('user-letter') !== null;
   const accountIcon = document.querySelector('.user-logged-in');
-  console.log("isLoggedIn:", isLoggedIn);
-  console.log("user-letter:", localStorage.getItem('user-letter'));
-  if (isLoggedIn) {
+  console.log("loalStorage --------", localStorage.getItem('user-letter'));
+  
+
+  if (isLoggedIn && localStorage.getItem('user-letter') !== 'undefined') {
     accountIcon.innerHTML = `<span class="user-letter">${localStorage.getItem('user-letter')}</span>`;
   }
 }

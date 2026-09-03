@@ -84,6 +84,10 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 toggleForms('otp');
             }
             console.log(res);
+            if (res.status === 'FAILURE') {
+                console.log(res.message)
+                errorMessage(res.message, 'pw-reset');
+            }
         } catch (error) {
             console.log(error)
         }
@@ -151,9 +155,6 @@ document.addEventListener("DOMContentLoaded", async (_) => {
         }
     })
 
-
-
-
     register.addEventListener("submit", async (event) => {
         event.preventDefault();
 
@@ -199,6 +200,14 @@ document.addEventListener("DOMContentLoaded", async (_) => {
                 errorMessage(res.message, 'register');
                 loader.classList.add("invisible");
                 return
+            }
+
+            if (res.status == 'SUCCESS' && res.data.userId) {
+                console.log("Registrierung erfolgreich! Bitte melden Sie sich an.");
+                register.reset();
+                toggleForms('login');
+                errorMessage("Registrierung erfolgreich! Bitte melden Sie sich an.", 'login');
+                localStorage.setItem("userId", res.data.userId);
             }
 
             if (!res.data.userId) {
@@ -369,4 +378,3 @@ function toggleForms(formId) {
         newPasswordForm.style.display = 'block';
     }
 }
-
