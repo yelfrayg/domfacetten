@@ -21,12 +21,13 @@ model Product {
 }
 
 model Orders {
-  orderId    String   @id @default(cuid())
+  orderId    String     @id @default(cuid())
   products   Json
-  timestamp  DateTime @default(now())
+  timestamp  DateTime   @default(now())
   customerId String
   code       Json?
-  user       Users?   @relation(fields: [customerId], references: [userId], onDelete: Cascade)
+  user       Users?     @relation(fields: [customerId], references: [userId], onDelete: SetNull)
+  withdraw   Withdrawal[]
 }
 
 model Codes {
@@ -36,16 +37,17 @@ model Codes {
 }
 
 model Users {
-  userId     String   @id @default(cuid())
-  email      String   @unique
-  first_name String   @default("")
-  last_name  String   @default("")
+  userId     String     @id @default(cuid())
+  email      String     @unique
+  first_name String     @default("")
+  last_name  String     @default("")
   password   String
-  address    Json     @default(dbgenerated("'{}'"))
+  address    Json       @default(dbgenerated("'{}'"))
   orders     Orders[] // [] = 1:n relation
   cart       Cart[]
-  otp        Int  @default(000000)
-  otpExpiry  DateTime @default(now())
+  otp        Int        @default(000000)
+  otpExpiry  DateTime   @default(now())
+  withdraws  Withdrawal[]
 }
 
 model Cart {
@@ -57,4 +59,17 @@ model Cart {
   quantity  Int     @default(1)
 
   @@unique([userId, productId])
+}
+
+model Withdrawal {
+  withdrawalId String   @id @default(cuid())
+  userId     String
+  orderId    String
+  amount     Decimal
+  status     String   @default("PENDING")
+  declaredAt  DateTime @default(now())
+  withDrawalItem Json
+
+  user  Users  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  order Orders @relation(fields: [orderId], references: [orderId], onDelete: Restrict)
 }
