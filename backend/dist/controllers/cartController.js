@@ -7,10 +7,7 @@ const cartService = require("../services/cartService");
 const { verifyToken } = require("../middleware/checkAuth");
 async function getCartItems(req, res) {
     try {
-        const userId = req.userId;
-        if (!userId || (req.params.id && req.params.id !== userId)) {
-            return res.status(403).json({ status: "FAILURE", message: "Zugriff verweigert." });
-        }
+        const userId = req.params.id;
         const result = await cartService.getCartItems(userId);
         const response = {
             status: result.code === 200 ? "SUCCESS" : "FAILURE",
@@ -32,17 +29,14 @@ async function getCartItems(req, res) {
 }
 async function addToCart(req, res) {
     try {
-        if (!req.userId || !req.body.productId || !req.body.quantity) {
+        if (!req.body.userId || !req.body.productId || !req.body.quantity) {
             const response = {
                 status: "FAILURE",
                 message: "Ungültige Anfrage. Bitte stellen Sie sicher, dass userId, productId und quantity im Body enthalten sind.",
             };
             return res.status(400).json(response);
         }
-        const result = await cartService.addToCart({
-            ...req.body,
-            userId: req.userId,
-        });
+        const result = await cartService.addToCart(req.body);
         const response = {
             status: result.code === 200 ? "SUCCESS" : "FAILURE",
             message: result ? result.message : "Fehler beim Hinzufügen des Artikels zum Warenkorb.",
@@ -63,17 +57,14 @@ async function addToCart(req, res) {
 }
 async function removeItem(req, res) {
     try {
-        if (!req.userId || !req.body.productId) {
+        if (!req.body.userId || !req.body.productId) {
             const response = {
                 status: "FAILURE",
                 message: "Ungültige Anfrage. Bitte stellen Sie sicher, dass userId, productId und quantity im Body enthalten sind.",
             };
             return res.status(400).json(response);
         }
-        const remove = await cartService.removeFromCart({
-            ...req.body,
-            userId: req.userId,
-        });
+        const remove = await cartService.removeFromCart(req.body);
         const response = {
             status: remove.code === 200 ? "SUCCESS" : "FAILURE",
             message: remove ? remove.message : "Fehler beim Entfernen des Artikels aus dem Warenkorb.",
@@ -91,10 +82,7 @@ async function removeItem(req, res) {
 }
 async function findItemInCart(req, res) {
     try {
-        const item = await cartService.findCartItem({
-            ...req.body,
-            userId: req.userId,
-        });
+        const item = await cartService.findCartItem(req.body);
         const response = {
             status: item.code === 200 ? "SUCCESS" : "FAILURE",
             message: item ? item.message : "Fehler beim Suchen des Artikels im Warenkorb.",
@@ -113,10 +101,7 @@ async function findItemInCart(req, res) {
 }
 async function updateAmount(req, res) {
     try {
-        const result = await cartService.updateCartItemAmount({
-            ...req.body,
-            userId: req.userId,
-        });
+        const result = await cartService.updateCartItemAmount(req.body);
         const response = {
             status: result.code === 200 ? "SUCCESS" : "FAILURE",
             message: result.message,

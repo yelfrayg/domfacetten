@@ -60,6 +60,13 @@ async function addToCart(data) {
         };
     }
     catch (error) {
+        if (error.code === "P2025") {
+            await redis_1.redis.del(`cart:${data.userId}`);
+            return {
+                code: 404,
+                message: `Artikel ${data.productId} nicht im Warenkorb gefunden.`,
+            };
+        }
         return {
             code: 500,
             message: (0, errorHelper_1.handleError)(error),
@@ -86,6 +93,14 @@ async function removeFromCart(data) {
         };
     }
     catch (error) {
+        if (error.code === "P2025") {
+            await redis_1.redis.del(`cart:${data.userId}`);
+            return {
+                code: 404,
+                message: "Artikel nicht im Warenkorb gefunden.",
+                data: null,
+            };
+        }
         return {
             code: 500,
             message: (0, errorHelper_1.handleError)(error),

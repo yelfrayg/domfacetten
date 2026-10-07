@@ -234,6 +234,7 @@ async function ppCart() {
                 const codeInput = document.getElementById('code-input')
                 const code = codeInput ? codeInput.value.toUpperCase() : ''
                 return actions.order.capture().then(async function (details) {
+                    console.log(details)
                     const completeOrder = await fetch('/api/purchases/completeCartPurchase', {
                         method: 'POST',
                         headers: {
@@ -242,7 +243,9 @@ async function ppCart() {
                         },
                         body: JSON.stringify({
                             userId: localStorage.getItem('userId'),
+                            // Woher kommen data.orderId und details.purchase_units[0].payments.captures[0].id? Was ist korrekt?
                             paypalOrderId: data.orderID,
+                            paypalCaptureId: details.purchase_units[0].payments.captures[0].id,
                             code: code
                         })
                     })

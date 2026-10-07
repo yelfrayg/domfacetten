@@ -7,11 +7,11 @@ async function createNewUser(req, res) {
         const newUser = await userService.createUser(req.body);
         console.log(newUser);
         const response = {
-            status: newUser ? "SUCCESS" : "FAILURE",
+            status: newUser.code == 201 ? "SUCCESS" : "FAILURE",
             message: newUser
                 ? newUser.message
                 : "Fehler beim Weiterreichen des Nutzerdaten",
-            data: newUser ? newUser.data : "",
+            data: newUser ? { reqData: newUser.data } : undefined,
         };
         res.status(newUser.code).json(response);
     }
@@ -80,7 +80,7 @@ async function deleteUser(req, res) {
     }
     catch (error) {
         const response = {
-            status: 'SUCCESS',
+            status: 'FAILURE',
             message: 'Es gab einen Fehler beim Löschen'
         };
         res.status(500).json(response);

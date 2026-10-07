@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const { PrismaPg } = require("@prisma/adapter-pg");
 const path = require('path')
+const { redis } = require('../redis/redis');
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -168,7 +169,7 @@ const createCartOrder = async (userId, code) => {
     }
 }
 
-const completeCartOrder = async (userId, paypalOrderId, code) => {
+const completeCartOrder = async (userId, paypalOrderId, paypalCaptureId, code) => {
     try {
         return await prisma.$transaction(async tx => {
             const allProductsInCart = await tx.cart.findMany({
@@ -205,10 +206,13 @@ const completeCartOrder = async (userId, paypalOrderId, code) => {
                 throw new Error("Warenkorb leer oder bereits abgerechnet");
             }
 
+            console.log('Paypal Order ID:', paypalOrderId)
+            console.log('Paypal Capture ID:', paypalCaptureId)
             // 2. Erstelle die Bestellung in der Datenbank
             const orderDB = await tx.orders.create({
                 data: {
                     orderId: paypalOrderId, // Die tatsächliche PayPal Order ID (wird vom Frontend/PayPal übergeben)
+                    captureId: paypalCaptureId, // Die tatsächliche PayPal Capture ID (wird vom Frontend/PayPal übergeben)
                     products: allProductsInCart, // Speichert die Produkte direkt im JSON-Format
                     customerId: userId,
                     code: checkCode || {}
@@ -221,6 +225,7 @@ const completeCartOrder = async (userId, paypalOrderId, code) => {
                     userId: userId
                 }
             })
+            await redis.del(`cart:${userId}`)
 
 
             return orderDB

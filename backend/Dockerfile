@@ -38,6 +38,8 @@ RUN npm install
 
 COPY . .
 
+RUN npx prisma generate
+
 # Start-Script Permissions
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
