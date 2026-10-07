@@ -34,7 +34,7 @@ async function fetchProductByArtNr(req, res) {
                 ? "Produkt erfolgreich geladen"
                 : "Produkt nicht gefunden",
             data: {
-                reqData: product ? product : "Produkt nicht gefunden",
+                reqData: product,
                 furtherInfo: product
                     ? undefined
                     : "Dieses Produkt existiert nicht in der Datenbank.",
@@ -47,9 +47,7 @@ async function fetchProductByArtNr(req, res) {
         const responseObject = {
             status: "FAILURE",
             message: "Fehler beim Laden des Produkts",
-            data: {
-                reqData: "Fehler beim Laden des Produkts",
-            },
+            error: (0, errorHelper_1.handleError)(error),
         };
         return res.status(500).json(responseObject);
     }
@@ -154,10 +152,11 @@ async function updateProduct(req, res) {
     try {
         const { data } = req.body || {};
         if (!data || typeof data !== "object") {
-            return res.status(400).json({
-                message: "failure",
-                info: "Keine Update-Daten erhalten.",
-            });
+            const response = {
+                status: "FAILURE",
+                message: "Ungültige Daten im Request-Body.",
+            };
+            return res.status(400).json(response);
         }
         const typedData = data;
         const checkedData = {};

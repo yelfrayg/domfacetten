@@ -38,7 +38,8 @@ h1 {
         justify-content: center;
 
         h2 {
-            padding-bottom: var(--3xl);
+            font-weight: 500;
+            padding-bottom: var(--l);
         }
 
         input {
@@ -90,8 +91,13 @@ h1 {
     .order-container {
         background-color: white;
         border: 1px solid black;
-        padding: var(--3xl);
+        padding: var(--xl);
         margin-bottom: var(--m);
+
+        h2 {
+            font-weight: 500;
+            padding-bottom: var(--m);
+        }
 
         .user-orders {
             list-style-type: none;
@@ -197,7 +203,7 @@ h1 {
                         }
                     }
 
-                    #bill-button {
+                    #bill-button, #recall-button {
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -240,6 +246,96 @@ h1 {
     }
 }
 
+#withdrawal-dialog {
+    width: min(90vw, 640px);
+    max-height: calc(100vh - 2 * var(--m));
+    margin: auto;
+    padding: var(--xl);
+    border: 1px solid black;
+    background-color: white;
+    overflow-y: auto;
+
+    &::backdrop {
+        background-color: rgb(0 0 0 / 45%);
+    }
+
+    h3 {
+        margin: 0 0 var(--s);
+        font-weight: 500;
+        font-size: var(--xl);
+    }
+
+    small {
+        color: #555555;
+    }
+
+    p {
+        margin: var(--l) 0;
+    }
+
+    table {
+        width: 100%;
+        margin-bottom: var(--l);
+        border-collapse: collapse;
+
+        th,
+        td {
+            padding: var(--s);
+            text-align: left;
+            border-bottom: 1px solid #cccccc;
+        }
+
+        th {
+            font-weight: 500;
+        }
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--s);
+
+        label {
+            font-weight: 500;
+        }
+
+        textarea {
+            min-height: 100px;
+            padding: var(--s);
+            border: 1px solid black;
+            resize: vertical;
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--s);
+
+            button {
+                padding: var(--s) var(--l);
+                color: white;
+                background-color: black;
+                border: none;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #393939;
+                }
+            }
+
+            #cancel-withdrawal {
+                background-color: #ffffff;
+                color: black;
+                border: 1px solid black;
+
+                &:hover {
+                    background-color: #f0f0f0;
+                }
+            }
+        }
+    }
+}
+
 @media (max-width: 768px) {
     h1 {
         text-align: flex-start;
@@ -265,7 +361,6 @@ h1 {
             padding: var(--m);
 
             #updateUser {
-
                 input {
                     padding: var(--xs) 0 var(--xs) var(--xs);
                     margin-bottom: var(--s);
@@ -280,7 +375,6 @@ h1 {
         }
 
         .account-info {
-
             h2 {
                 margin-bottom: var(--m);
             }
@@ -299,6 +393,23 @@ h1 {
                     padding: var(--s);
                     font-size: 0.8rem;
                 }
+            }
+        }
+
+        #withdrawal-dialog {
+            padding: var(--m);
+
+            table {
+                font-size: 0.9rem;
+
+                th,
+                td {
+                    padding: var(--xs);
+                }
+            }
+
+            form button {
+                width: 100%;
             }
         }
     }

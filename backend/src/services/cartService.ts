@@ -93,6 +93,14 @@ async function removeFromCart(data: {
                 : `Artikel ${productId} nicht im Warenkorb gefunden.`,
         };
     } catch (error) {
+        if ((error as Prisma.PrismaClientKnownRequestError).code === "P2025") {
+            await redis.del(`cart:${data.userId}`);
+            return {
+                code: 404,
+                message: "Artikel nicht im Warenkorb gefunden.",
+                data: null,
+            };
+        }
         return {
             code: 500,
             message: handleError(error),
@@ -162,6 +170,14 @@ async function updateCartItemAmount(data: {
             data: { updatedItem: updatedItem },
         };
     } catch (error) {
+        if ((error as Prisma.PrismaClientKnownRequestError).code === "P2025") {
+            await redis.del(`cart:${data.userId}`);
+            return {
+                code: 404,
+                message: "Artikel nicht im Warenkorb gefunden.",
+                data: null,
+            };
+        }
         return {
             code: 500,
             message: handleError(error),

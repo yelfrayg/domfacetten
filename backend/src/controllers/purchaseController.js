@@ -157,8 +157,8 @@ async function createCartPurchase(req, res) {
 
 async function completeCartPurchase(req, res) {
     try {
-        const { userId, paypalOrderId, code } = req.body
-        const orderDB = await purchaseService.completeCartOrder(userId, paypalOrderId, code)
+        const { userId, paypalOrderId, paypalCaptureId, code } = req.body
+        const orderDB = await purchaseService.completeCartOrder(userId, paypalOrderId, paypalCaptureId, code)
         console.log('OrderDB:', orderDB)
         
         if (!orderDB) {

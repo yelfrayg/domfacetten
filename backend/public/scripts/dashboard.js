@@ -15,6 +15,7 @@ let updateForm = document.getElementById("updateUser");
 const deleteBtn = document.getElementById("deleteAccount");
 const logoutBtn = document.getElementById("logout");
 const updateButton = document.getElementById("updateButton");
+const withdrawalBtn = document.getElementById("withdrawal-btn");
 
 // Selektiere Bestelllistetabelle
 const ordersTableBody = document.querySelector(".user-orders");
@@ -193,24 +194,26 @@ async function deleteUser(userId) {
 async function getOrders(userId) {
     setTimeout(async () => {
         try {
-            // Kurze Pause, um den Loader anzuzeigen
             const req = await fetch(
                 `/api/userManagement/getOrders/${userId}`,
             );
             const res = await req.json();
-            console.log(res);
+            // console.log(res);
             if (res.data.reqData.length == 0) {
-                // console.log("Keine Bestellungen gefunden");
                 ordersTableBody.innerHTML = "<p>Keine Bestellungen gefunden.</p>";
                 return;
             }
-            ordersTableBody.innerHTML = ""; // Leere den Loader
+            ordersTableBody.innerHTML = "";
 
             console.log("Bestellungen gefunden: ", res.data.reqData);
 
             res.data.reqData.forEach((order) => {
                 const orderProducts = Array.isArray(order.products) ? order.products : [order.products];
-                let orderCode = order.code != null ? 1 - order.code.codeValue : 1;
+                const hasOrderCode = order.code && Object.keys(order.code).length > 0;
+                let orderCode = hasOrderCode ? 1 - order.code.codeValue : 1;
+                console.log('Bestellcode: ', orderCode);
+                const tempPrice = orderProducts.map((p) => p.product.price * p.quantity).reduce((a, b) => (a + b), 0) * orderCode;
+                const totalPrice = tempPrice < 39 ? tempPrice + 1.55 : tempPrice;
                 const listItem = document.createElement("li");
                 listItem.classList.add("user-order");
                 listItem.innerHTML = `
@@ -229,7 +232,8 @@ async function getOrders(userId) {
                                     ${orderProducts.map((p) => `<tr><td class="table-img-container"><img src="/uploads/products/${p.product.heroImage}" alt="${p.product.name}"/></td><td class="tg-0lax">A${p.product.artnr}</td><td class="tg-0lax">${p.quantity}</td></tr>`).join("")}
                                 </tbody>
                             </table>
-                            <p class ="order-total">Gesamtpreis: <span class="order-total-price">${(orderProducts.map((p) => p.product.price * p.quantity).reduce((a, b) => (a + b), 0)).toFixed(2).replace('.', ',')} €</span></p>
+                            <p class ="order-total">Gesamtpreis: <span class="order-total-price">${totalPrice.toFixed(2).replace('.', ',')} €</span></p>
+                            <button id="recall-button" type="button" command="show-modal" commandfor="withdrawal-dialog" data-order-id="${order.orderId}">Widerrufen</button>
                             <button id="bill-button" data-order-id="${order.orderId}">Rechnung herunterladen</button>
                         </details>
             `;
@@ -276,4 +280,32 @@ async function getOrders(userId) {
             console.log(error);
         }
     }, 3500);
+}
+
+async function createWithdrawalRequest(orderId, withdrawalItems) {
+    try {
+        const response = await fetch('/api/withdrawals/createWithdrawalRequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: userId,
+                orderId: orderId,
+                withdrawalItems: withdrawalItems,
+            }),
+        });
+        const req = await response.json();
+
+        if (req.status == 'FAILURE') {
+            const errorData = await response.json();
+            alert(`Fehler beim Erstellen der Rücksendung: ${errorData.message}`);
+            return
+        }
+
+        console.log('Rücksendung erfolgreich erstellt:', req);
+
+    } catch (error) {
+        console.error('Fehler beim Erstellen der Rücksendung:', error);
+    }
 }
