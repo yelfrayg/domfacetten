@@ -11,20 +11,29 @@ const prisma = new client_1.PrismaClient({
     adapter: new adapter_pg_1.PrismaPg({ connectionString: process.env.DATABASE_URL }),
     log: ["info", "warn", "error"],
 });
-async function saveWithdrawalRequest(userId, orderId, amount, withdrawalItem) {
+async function saveWithdrawalRequest(userId, orderId, reason, withdrawalItems) {
     try {
+        console.log("WithdrawalItems:", withdrawalItems);
+        console.log("Is array:", Array.isArray(withdrawalItems));
+        console.log('Consists only of numbers:', Array.isArray(withdrawalItems) && withdrawalItems.every(item => typeof item === 'number'));
+        if (!Array.isArray(withdrawalItems) || !withdrawalItems.every(Number.isInteger)) {
+            return {
+                code: 400,
+                message: "withdrawalItems muss ein Array aus Integern sein",
+            };
+        }
         const withdrawalRequest = await prisma.withdrawal.create({
             data: {
-                orderId,
                 userId,
-                amount,
+                orderId,
+                reason: reason || "Kein Grund angegeben",
                 status: withDrawalHelper_1.default.PENDING,
-                withDrawalItem: JSON.stringify({ ...withdrawalItem }), // Store the withdrawal item as a JSON string
+                withDrawalItems: withdrawalItems,
             },
         });
         return {
             code: 200,
-            message: `Withdrawal request saved successfully. STATUS: ${withdrawalRequest.status}`,
+            message: withdrawalRequest.status,
         };
     }
     catch (error) {
@@ -34,3 +43,4 @@ async function saveWithdrawalRequest(userId, orderId, amount, withdrawalItem) {
         };
     }
 }
+module.exports = { saveWithdrawalRequest };

@@ -6,8 +6,8 @@ import { Orders, Users } from "@prisma/client";
 
 async function createWithdrawalRequest(req: Request, res: Response<ResponseObject<string>>) {
     try {
-        const { userId, orderId, amount, withdrawalItem } = req.body;
-        const newWithdrawal: ServiceResponse = await withdrawalService.saveWithdrawalRequest(userId, orderId, amount, withdrawalItem);
+        const { userId, orderId, reason, withdrawalItems } = req.body;
+        const newWithdrawal: ServiceResponse = await withdrawalService.saveWithdrawalRequest(userId, orderId, reason, withdrawalItems);
         const response: ResponseObject<string> = {
             status: newWithdrawal.code === 200 ? "SUCCESS" : "FAILURE",
             message: newWithdrawal.message,

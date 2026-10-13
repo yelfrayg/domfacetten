@@ -142,49 +142,6 @@
                         </button>
                     </div>
                 </div>
-                <dialog id="withdrawal-dialog">
-                    <h3>Rücksendung beantragen</h3>
-                    <small>Id: 5E8747248W765613</small>
-                    <p>
-                        Bitte füllen Sie das folgende Formular aus, um eine
-                        Rücksendung zu beantragen:
-                    </p>
-                    <table>
-                        <tr>
-                            <th>Auswahl</th>
-                            <th>Produkt</th>
-                            <th>Menge</th>
-                            <th>Preis</th>
-                        </tr>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        name="withdrawalItems"
-                                        value="artnr"
-                                        form="withdrawal-form"
-                                        aria-label="Produkt auswählen"
-                                    />
-                                </td>
-                                <td>Produktname</td>
-                                <td>1</td>
-                                <td>19,99 €</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <form id="withdrawal-form">
-                        <label for="reason">Grund der Rücksendung:</label>
-                        <textarea
-                            id="description"
-                            name="description"
-                        ></textarea>
-                        <div class="wrapper">
-                            <button type="submit">Beantragen</button>
-                            <button type="button" id="cancel-withdrawal" command="close" commandfor="withdrawal-dialog">Abbrechen</button>
-                        </div>
-                    </form>
-                </dialog>
             </div>
         </main>
         <footer>

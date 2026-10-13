@@ -203,7 +203,7 @@ h1 {
                         }
                     }
 
-                    #bill-button, #recall-button {
+                    .bill-button, .recall-button {
                         display: flex;
                         justify-content: center;
                         align-items: center;
@@ -246,7 +246,7 @@ h1 {
     }
 }
 
-#withdrawal-dialog {
+[id^="withdrawal-dialog-"] {
     width: min(90vw, 640px);
     max-height: calc(100vh - 2 * var(--m));
     margin: auto;
@@ -271,6 +271,56 @@ h1 {
 
     p {
         margin: var(--l) 0;
+    }
+
+    .success-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--m);
+        padding: var(--xl) var(--m);
+        text-align: center;
+
+        svg {
+            flex: 0 0 auto;
+            padding: var(--s);
+            border: 2px solid #4caf50;
+            border-radius: 50%;
+            background-color: #edf8ee;
+        }
+
+        div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--s);
+        }
+
+        h3,
+        p {
+            margin: 0;
+        }
+
+        h3 {
+            color: #237a2b;
+        }
+
+        p {
+            color: #555555;
+        }
+
+        button {
+            margin-top: var(--s);
+            padding: var(--s) var(--xl);
+            border: none;
+            color: white;
+            background-color: black;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #393939;
+            }
+        }
     }
 
     table {
@@ -396,7 +446,7 @@ h1 {
             }
         }
 
-        #withdrawal-dialog {
+        [id^="withdrawal-dialog-"] {
             padding: var(--m);
 
             table {

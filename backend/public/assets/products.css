@@ -166,7 +166,7 @@
                 cursor: pointer;
                 background-color: white;
                 color: black;
-                border: 1px solid black;
+                /* border: 1px solid black; */
                 animation: fadeIn 0.5s ease-in both;
                 animation-timeline: view();
                 animation-range: entry 0% cover 30%;

@@ -4,8 +4,8 @@ const withdrawalService = require("../services/withdrawalService.ts");
 const errorHelper_1 = require("../utils/errorHelper");
 async function createWithdrawalRequest(req, res) {
     try {
-        const { userId, orderId, amount, withdrawalItem } = req.body;
-        const newWithdrawal = await withdrawalService.saveWithdrawalRequest(userId, orderId, amount, withdrawalItem);
+        const { userId, orderId, reason, withdrawalItems } = req.body;
+        const newWithdrawal = await withdrawalService.saveWithdrawalRequest(userId, orderId, reason, withdrawalItems);
         const response = {
             status: newWithdrawal.code === 200 ? "SUCCESS" : "FAILURE",
             message: newWithdrawal.message,

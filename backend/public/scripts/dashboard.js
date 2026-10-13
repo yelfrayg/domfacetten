@@ -209,6 +209,9 @@ async function getOrders(userId) {
 
             res.data.reqData.forEach((order) => {
                 const orderProducts = Array.isArray(order.products) ? order.products : [order.products];
+                const dialogId = `withdrawal-dialog-${order.orderId}`;
+                const formId = `withdrawal-form-${order.orderId}`;
+                const descriptionId = `withdrawal-description-${order.orderId}`;
                 const hasOrderCode = order.code && Object.keys(order.code).length > 0;
                 let orderCode = hasOrderCode ? 1 - order.code.codeValue : 1;
                 console.log('Bestellcode: ', orderCode);
@@ -233,15 +236,58 @@ async function getOrders(userId) {
                                 </tbody>
                             </table>
                             <p class ="order-total">Gesamtpreis: <span class="order-total-price">${totalPrice.toFixed(2).replace('.', ',')} €</span></p>
-                            <button id="recall-button" type="button" command="show-modal" commandfor="withdrawal-dialog" data-order-id="${order.orderId}">Widerrufen</button>
-                            <button id="bill-button" data-order-id="${order.orderId}">Rechnung herunterladen</button>
+                            <button class="recall-button" type="button" command="show-modal" commandfor="${dialogId}" data-order-id="${order.orderId}">Widerrufen</button>
+                            <button class="bill-button" data-order-id="${order.orderId}">Rechnung herunterladen</button>
+                            <dialog id="${dialogId}">
+                                <h3>Rücksendung beantragen</h3>
+                                <small>Id: ${order.orderId}</small>
+                                <p>
+                                    Bitte füllen Sie das folgende Formular aus, um eine
+                                    Rücksendung zu beantragen:
+                                </p>
+                                <table>
+                                    <tr>
+                                        <th>Auswahl</th>
+                                        <th>Produkt</th>
+                                        <th>Menge</th>
+                                        <th>Preis</th>
+                                    </tr>
+                                    <tbody>
+                                    ${orderProducts.map((p) => `<tr>
+                                            <td>
+                                                <input
+                                                    type="checkbox"
+                                                    name="withdrawalItems"
+                                                    value="${p.product.artnr}"
+                                                    form="${formId}"
+                                                    aria-label="Produkt auswählen"
+                                                />
+                                            </td>
+                                            <td>${p.product.name}</td>
+                                            <td>${p.quantity}</td>
+                                            <td>${(p.product.price * p.quantity).toFixed(2).replace('.', ',')} €</td>
+                                        </tr>`).join("")}
+                                    </tbody>
+                                </table>
+                                <form id="${formId}">
+                                    <label for="${descriptionId}">Grund der Rücksendung:</label>
+                                    <textarea
+                                        id="${descriptionId}"
+                                        name="description"
+                                    ></textarea>
+                                    <div class="wrapper">
+                                        <button class="withdrawal-button" type="submit" disabled>Beantragen</button>
+                                        <button type="button" class="cancel-withdrawal" command="close" commandfor="${dialogId}">Abbrechen</button>
+                                    </div>
+                                </form>
+                            </dialog>
                         </details>
             `;
                 ordersTableBody.appendChild(listItem);
             });
 
             try {
-                const billButtons = document.querySelectorAll("#bill-button");
+                const billButtons = document.querySelectorAll(".bill-button");
                 billButtons.forEach((button) => {
                     button.addEventListener("click", async (e) => {
                         const orderId = e.target.getAttribute("data-order-id");
@@ -272,6 +318,35 @@ async function getOrders(userId) {
                     })
                 })
 
+                const recallButtons = document.querySelectorAll(".withdrawal-button");
+                recallButtons.forEach((button) => {
+                    const details = button.closest("details");
+                    const orderId = details.querySelector(".order-id").textContent.split(": ")[1];
+                    const checkboxes = details.querySelectorAll('input[name="withdrawalItems"]');
+                    const form = button.closest("dialog").querySelector("form");
+
+                    checkboxes.forEach((checkbox) => {
+                        checkbox.addEventListener("change", () => {
+                            button.disabled = !Array.from(checkboxes).some((item) => item.checked);
+                            if (button.disabled) {
+                                button.style.cursor = "not-allowed";
+                            }
+                        });
+                    });
+
+                    button.addEventListener("click", async (e) => {
+                        e.preventDefault();
+
+                        const selectedItems = Array.from(checkboxes)
+                            .filter((checkbox) => checkbox.checked)
+                            .map((checkbox) => parseInt(checkbox.value, 10));
+                        const description = form.querySelector("textarea").value;
+
+                        console.log("Rücksendung beantragt für Bestellung:", orderId, "mit Artikeln:", selectedItems, "und Grund:", description);
+                        await createWithdrawalRequest(orderId, description, selectedItems);
+                    })
+                })
+
             }
             catch (error) {
                 console.log(error)
@@ -279,31 +354,43 @@ async function getOrders(userId) {
         } catch (error) {
             console.log(error);
         }
-    }, 3500);
+    }, 1500);
 }
 
-async function createWithdrawalRequest(orderId, withdrawalItems) {
+async function createWithdrawalRequest(orderId, reason, withdrawalItems) {
     try {
-        const response = await fetch('/api/withdrawals/createWithdrawalRequest', {
+        const withdrawalDialog = document.getElementById(`withdrawal-dialog-${orderId}`);
+        const request = await fetch('/api/withdrawalManagement/createWithdrawalRequest', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem("userToken") || ""
             },
             body: JSON.stringify({
                 userId: userId,
                 orderId: orderId,
+                reason: reason,
                 withdrawalItems: withdrawalItems,
             }),
         });
-        const req = await response.json();
+        const res = await request.json();
 
-        if (req.status == 'FAILURE') {
-            const errorData = await response.json();
-            alert(`Fehler beim Erstellen der Rücksendung: ${errorData.message}`);
-            return
-        }
 
-        console.log('Rücksendung erfolgreich erstellt:', req);
+        withdrawalDialog.innerHTML = `
+                                        <div class="success-message">
+                                        ${res.status === "SUCCESS" ? '<svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#4CAF50"><path d="M420-120 160-380l56-56 204 204 320-320 56 56-376 376Z"/></svg>' : 
+                                            '<svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#F44336"><path d="M480-120q-83 0-141.5-58.5T280-320q0-83 58.5-141.5T480-520q83 0 141.5 58.5T680-320q0 83-58.5 141.5T480-120Zm0-60q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0-80q-17 0-28.5-11.5T440-360v-160q0-17 11.5-28.5T480-560q17 0 28.5 11.5T520-520v160q0 17-11.5 28.5T480-260Zm0-240Z"/></svg>'}
+                                            <div>
+                                                <h3>
+                                                ${res.status === "SUCCESS" ? 'Rücksendung erfolgreich beantragt!' : 'Fehler beim Beantragen der Rücksendung!'}
+                                                </h3>
+                                                <p>Sie erhalten eine Bestätigung per E-Mail.</p><button type="button" command="close" commandfor="${withdrawalDialog.id}">Schließen</button>          
+                                            </div>
+                                        </div>
+                                    `;
+
+
+
 
     } catch (error) {
         console.error('Fehler beim Erstellen der Rücksendung:', error);

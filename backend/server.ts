@@ -33,6 +33,9 @@ app.use('/api/discountManagement', discountRoutes)
 const adminRoutes = require('./src/routes/adminRoutes')
 app.use('/api/adminManagement', adminRoutes)
 
+const withdrawalRoutes = require('./src/routes/withdrawalRoutes')
+app.use('/api/withdrawalManagement', withdrawalRoutes)
+
 app.use(
   '/uploads/products',
   express.static(path.resolve(__dirname, 'uploads', 'products')),

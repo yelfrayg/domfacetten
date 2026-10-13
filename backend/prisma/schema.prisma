@@ -63,13 +63,13 @@ model Cart {
 }
 
 model Withdrawal {
-  withdrawalId   String   @id @default(cuid())
-  userId         String
-  orderId        String
-  amount         Decimal
-  status         String   @default("PENDING")
-  declaredAt     DateTime @default(now())
-  withDrawalItem Json
+  withdrawalId    String   @id @default(cuid())
+  userId          String
+  orderId         String
+  reason          String   @default("")
+  status          String   @default("PENDING")
+  declaredAt      DateTime @default(now())
+  withDrawalItems Int[] @default([])
 
   user  Users  @relation(fields: [userId], references: [userId], onDelete: Cascade)
   order Orders @relation(fields: [orderId], references: [orderId], onDelete: Restrict)
